@@ -1,0 +1,77 @@
+{
+ "note": "Every standards clause cited in the speed path, with its source document and the content relied on. Keys are '<document> <clause>'.",
+ "clauses": {
+  "TR 37.885 Table 6.2.3-1": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "fast-fading parameters (K urban LOS 3.48/2, highway LOS 9/3.5 dB)"
+  },
+  "TR 37.885 Table 6.2.1-1": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "V2V path loss and shadowing"
+  },
+  "TR 37.885 Table 6.2.1-2": {
+   "document": "3GPP TR 37.885 V15.3.0 and TR 38.901",
+   "text": "V2B path loss: urban UMa LOS, highway RMa LOS (below 6 GHz)"
+  },
+  "TR 37.885 Table 6.2-1": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "LOS/NLOSv probability (V2V); urban P_LOS = min(1, 1.05 exp(-0.0114 d))"
+  },
+  "TR 37.885 Table 6.1.4-1": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "UE-type RSU antenna height 5 m"
+  },
+  "TR 37.885 Table 6.1.4-4": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "RSU element pattern"
+  },
+  "TR 37.885 Table 6.1.4-5": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "RSU array and tilt"
+  },
+  "TR 37.885 clause 6.2.1": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "path loss incl. NLOSv blockage (V2R reuses V2V)"
+  },
+  "TR 37.885 clause 6.2.2": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "shadowing"
+  },
+  "TR 37.885 clause 6.2.3": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "fast fading, dual mobility incl. scatterer motion; B2V fast fading from the path-loss model's TR 38.901 scenario (TR 38.901)"
+  },
+  "TR 37.885 clause 6.1.2": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "vehicle types and drop"
+  },
+  "TR 38.901 Table 7.5-6": {
+   "document": "3GPP TR 38.901",
+   "text": "Ricean K: UMi 9/5, UMa 9/3.5, RMa 7/4 dB"
+  },
+  "TS 36.101 clause 6.5.1G": {
+   "document": "3GPP TS 36.101",
+   "text": "V2X UE carrier accuracy 0.1 ppm"
+  },
+  "EN 303 798 clause 5.7.4": {
+   "document": "ETSI EN 303 798",
+   "text": "LTE-V2X GNSS synchronisation"
+  },
+  "EN 302 571 clause 4.2.1.2": {
+   "document": "ETSI EN 302 571",
+   "text": "ITS-G5 carrier within fc +- 20 ppm"
+  },
+  "TR 37.885 clause 6.2": {
+   "document": "3GPP TR 37.885 V15.3.0",
+   "text": "'Baseline is the state is not updated between LOS and NLOSv, and evaluation with state update between LOS and NLOSv is not precluded.'"
+  },
+  "TS 36.101 clause 7.3.1G": {
+   "document": "3GPP TS 36.101 V14.5.0",
+   "text": "V2X reference sensitivity, band 47"
+  },
+  "TS 36.101 Table 7.3.1G-1": {
+   "document": "3GPP TS 36.101 V14.5.0",
+   "text": "-90.4 dBm at 10 MHz (50 RB)"
+  }
+ }
+}

@@ -1,0 +1,46 @@
+{
+  "model": "additive non-negative Poisson (identity link) for NB_Claim, So et al. (2021)",
+  "feature_order": [
+    "days",
+    "offpeak_miles",
+    "rush_miles",
+    "weekend_miles",
+    "hard_brakes",
+    "hard_accels"
+  ],
+  "units": {
+    "days": 1,
+    "offpeak_miles": 0.1,
+    "rush_miles": 0.1,
+    "weekend_miles": 0.1,
+    "hard_brakes": 1,
+    "hard_accels": 1
+  },
+  "w_bits": 22,
+  "scale_S": 4294967296.0,
+  "weights": {
+    "days": 5956,
+    "offpeak_miles": 3609,
+    "rush_miles": 809,
+    "weekend_miles": 0,
+    "hard_brakes": 2348309,
+    "hard_accels": 221761
+  },
+  "max_daily_feature_values": {
+    "days": 1.0,
+    "offpeak_miles": 852.0,
+    "rush_miles": 503.0,
+    "weekend_miles": 362.0,
+    "hard_brakes": 10.0,
+    "hard_accels": 10.0
+  },
+  "interpretation": "expected claims over the epoch = sum_d sum_i w_i x_{i,d} / scale_S",
+  "origin": {
+    "produced_by": "experiments/risk_model/fit_risk_model.py",
+    "dataset": "So, Boucher & Valdez (2021), telematics_syn-032021.csv",
+    "dataset_sha256": "558a9f7a5d1833a153dcc5f3c32218a4882ead6f3ecaca3338b3cbf4b13610c4",
+    "cv_D2_out_of_fold": 0.1362,
+    "cv_gini": 0.495,
+    "source_file_sha256": "879d29e30c857831d65307fb971958294ba3edba6e99da3667d983b9fe6bcf62"
+  }
+}

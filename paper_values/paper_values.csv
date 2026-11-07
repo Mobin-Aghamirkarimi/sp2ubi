@@ -1,0 +1,147 @@
+key,value,printed,unit,q1,q3,n,source,description
+sk|N,8192,8192,,,,,sizes: risk_path_sizes.json context.N,ring dimension chosen by OpenFHE (HEStd_128_classic)
+sk|log2Q,120.0,120,bit,,,,sizes: risk_path_sizes.json context.log2_Q,ciphertext modulus
+sk|modulus_bits,60.0,60,bit,,,,sizes: risk_path_sizes.json context.moduli_bits,each of the two RNS moduli
+sk|p_bits,41,41,bit,,,,sizes: risk_path_sizes.json context.t_bits,plaintext modulus = HomMAC prime
+sk|margin_bits,9,9,bit,,,,sizes: risk_path_sizes.json decryption_margin_bits_result_at_caps,decryption margin of a result at the feature caps
+sk|ct_record,263011,"263,011",B,,,,sizes: risk_path_sizes.json per_record_B.record_ciphertext,record ciphertext
+sk|signed_msg,263087,"263,087",B,,,,sizes: risk_path_sizes.json per_record_B.signed_record_message,group-signed record message
+sk|groupsig,336,336,B,,,,sizes: risk_path_sizes.json per_record_B.group_signature,BBS04 signature
+sk|upload,263423,"263,423",B,,,,sizes: risk_path_sizes.json per_record_B.upload_total,"record upload (payload, without TLS framing and handshake)"
+sk|result_after_fill,263211,"263,211",B,,,,sizes: risk_path_sizes.json per_record_B.result_ciphertext_after_fill,result ciphertext after the slot fill
+sk|receipt,64,64,B,,,,sizes: risk_path_sizes.json per_record_B.tsp_receipt,TSP receipt
+sk|pk,262967,"262,967",B,,,,sizes: risk_path_sizes.json keys_B.public_key,public key
+sk|enc_w,263011,"263,011",B,,,,sizes: risk_path_sizes.json keys_B.enc_w,Enc(w)
+sk|relin,525405,"525,405",B,,,,sizes: risk_path_sizes.json keys_B.relinearisation_key,relinearisation key
+sk|rot,1574829,"1,574,829",B,,,,sizes: risk_path_sizes.json keys_B.rotation_keys_1_2_4,"rotation keys (1, 2, 4)"
+sk|evalkeys,2100234,"2,100,234",B,,,,sizes: risk_path_sizes.json keys_B.relinearisation_key + rotation_keys_1_2_4,evaluation keys (sum)
+msg|commitment,32,32,B,,,,sizes: simpler_designs_sizes.json inputs.dispute_commitments_B / 2,one commitment (SHA-256)
+msg|epoch,4,4,B,,,,sizes: simpler_designs_sizes.json inputs.epoch_B,epoch index
+msg|id_ins,8,8,B,,,,sizes: simpler_designs_sizes.json inputs.id_ins_B,routing identifier ID_Ins
+sk|opening_setup,704,704,B,,,,sizes: risk_path_sizes.json opening_key_generation_B_per_party.messages_total_signed,signed opening-key setup messages per party
+simpler|A|upload,523,523,B,,,,sizes: simpler_designs_sizes.json designs.A.upload_B,design A upload (computed)
+simpler|B|upload,528,528,B,,,,sizes: simpler_designs_sizes.json designs.B.upload_B,design B upload (computed)
+simpler|A|stored_record,187,187,B,,,,sizes: simpler_designs_sizes.json designs.A.tsp_stored_per_record_B,design A record stored at the TSP (upper bound)
+simpler|B|stored_record,192,192,B,,,,sizes: simpler_designs_sizes.json designs.B.tsp_stored_per_record_B,design B record stored at the TSP (upper bound)
+simpler|A|storage_GB,5.8,5.80,GB,,,,sizes: simpler_designs_sizes.json designs.A.tsp_storage_10e6_policies_GB,"design A TSP storage, 10^6 policies, 31 daily records"
+simpler|B|storage_GB,5.95,5.95,GB,,,,sizes: simpler_designs_sizes.json designs.B.tsp_storage_10e6_policies_GB,"design B TSP storage, 10^6 policies, 31 daily records"
+simpler|ratio_A_upload,503.7,503.7,,,,,sizes: simpler_designs_sizes.json ratios_SP2UBI_over.A.upload_per_record,SP2UBI upload / design A upload
+simpler|ratio_B_upload,498.9,498.9,,,,,sizes: simpler_designs_sizes.json ratios_SP2UBI_over.B.upload_per_record,SP2UBI upload / design B upload
+simpler|ratio_A_storage,1407.5,"1,407.5",,,,,sizes: simpler_designs_sizes.json ratios_SP2UBI_over.A.tsp_storage,SP2UBI / design A TSP storage per policy-epoch
+simpler|ratio_B_storage,1370.9,"1,370.9",,,,,sizes: simpler_designs_sizes.json ratios_SP2UBI_over.B.tsp_storage,SP2UBI / design B TSP storage per policy-epoch
+simpler|ratio_A_upload_about,500,500,,,,,sizes: simpler|ratio_A_upload rounded to the nearest 100,printed as an approximate ratio
+simpler|ratio_A_storage_about,1400,"1,400",,,,,sizes: simpler|ratio_A_storage rounded to the nearest 100,printed as an approximate ratio
+month|records,31,31,,,,,sizes: definition,records of a 31-day epoch
+month|upload,8166113,"8,166,113",B,,,,sizes: simpler_designs_sizes.json designs.SP2UBI.upload_per_policy_epoch_B,upload per policy-month (31 x sk|upload)
+month|upload_MB,8.17,8.17,MB,,,,sizes: simpler_designs_sizes.json designs.SP2UBI.upload_per_policy_epoch_B / 10^6,upload per policy-month
+month|tsp_to_insurer,8159541,"8,159,541",B,,,,sizes: simpler_designs_sizes.json designs.SP2UBI.tsp_to_insurer_per_policy_epoch_B,TSP to insurer per policy-month
+tsp|storage_daily_TB,8.16,8.16,TB,,,,sizes: simpler_designs_sizes.json designs.SP2UBI.tsp_storage_10e6_policies_TB,"TSP storage, 10^6 policies, 31 daily records"
+tsp|storage_monthly_TB,0.26,0.26,TB,,,,sizes: 10^6 x risk_path_sizes.json per_record_B.result_ciphertext_after_fill / 10^12,"TSP storage, one record per policy-month"
+ch|cat1_s,0.4,0.40,s,,,,sizes: 8 x sk|upload / (5160 bit per 1-ms TTI),"channel time, UE Category 1 (lower bound, rounded down)"
+ch|m1_s,2.1,2.10,s,,,,sizes: 8 x sk|upload / (1000 bit per 1-ms TTI),"channel time, UE Category M1 (lower bound, rounded down)"
+ch|m1_tbs2984_s,0.7,0.70,s,,,,sizes: 8 x sk|upload / (2984 bit per 1-ms TTI),"channel time, Category M1 with the larger transport block (lower bound, rounded down)"
+set|obu_state_daily,402,402,B,,,,sizes: settlement_sizes.json configurations.daily.obu_dispute_state_per_receipted_record_B_max,"OBU dispute state per receipted record, daily (upper bound)"
+set|obu_state_monthly,489,489,B,,,,sizes: settlement_sizes.json configurations.monthly.obu_dispute_state_per_receipted_record_B_max,"OBU dispute state per receipted record, monthly (upper bound)"
+set|obu_state_epoch,12462,"12,462",B,,,,sizes: settlement_sizes.json configurations.daily.obu_dispute_state_per_31d_epoch_B_max,OBU dispute state per 31-day epoch
+set|msg_per_nonce,8,8,B,,,,sizes: settlement_sizes.json daily.settlement_message_insurer_to_obu_B_honest_epoch / records_per_epoch,settlement message per accepted nonce
+set|msg_daily,248,248,B,,,,sizes: settlement_sizes.json daily.settlement_message_insurer_to_obu_B_honest_epoch,"settlement message, all records accepted"
+set|msg_conflict,8,8,B,,,,sizes: settlement_sizes.json daily.settlement_message_insurer_to_obu_B_conflict_epoch,"settlement message, conflict epoch"
+set|upload_honest,0,0,B,,,,sizes: settlement_sizes.json daily.settlement_upload_obu_to_insurer_B_honest_epoch,"settlement upload, honest epoch"
+set|item_daily,418,418,B,,,,sizes: settlement_sizes.json daily.settlement_upload_item_B_max,settlement upload item (upper bound)
+set|upload_worst_daily,12958,"12,958",B,,,,sizes: settlement_sizes.json daily.settlement_upload_obu_to_insurer_B_worst_case_all_disputed,"settlement upload, every record disputed (upper bound)"
+set|share_pct,0.16,0.16,%,,,,sizes: set|upload_worst_daily / month|upload,"worst-case settlement upload, share of the monthly record uploads"
+sp|beacon,122,122,B,,,,sizes: speed_path.json result.sizes_K40.beacon_B,speed beacon
+sp|cert,408,408,B,,,,sizes: speed_path.json result.sizes_K40.certificate_B,burst certificate
+sp|trailer,340,340,B,,,,sizes: speed_path.json result.sizes_K40.rolling_B,rolling trailer
+sp|air40,7872,"7,872",B,,,,sizes: speed_path.json result.sizes_K40.air_bytes_per_crossing,air bytes of a crossing with 40 beacons
+sp|entry,772,772,B,,,,sizes: speed_path.json result.sizes_K40.entry_B,RSU entry
+sp|Bps,1968,"1,968",B/s,,,,sizes: speed_beacon_emission.json bytes_per_second.total,speed-beacon emission (10 x sp|beacon + sp|cert + sp|trailer)
+sp|kBps,2.0,2.0,kB/s,,,,sizes: speed_beacon_emission.json bytes_per_second.total_kB_per_s,speed-beacon emission
+b3|N,16384,16384,,,,,sizes: baselines_bfv_ckks.json result.baselines.B3_ckks_encrypted_weights_score_only.ring_dimension,baseline B3 ring dimension
+b3|log2Q,129.09,129.09,bit,,,,sizes: baseline_params.json B3_ckks.log2_Q,baseline B3 log2 Q
+b3|ct,787423,"787,423",B,,,,sizes: baselines_bfv_ckks.json result.baselines.B3_ckks_encrypted_weights_score_only.ciphertext_B,baseline B3 ciphertext
+b4|modulus_bits,3072,3072,bit,,,,sizes: baseline_paillier.json result.baselines.B4_paillier_clear_weights.modulus_bits,baseline B4 Paillier modulus
+b4|ct_value,768,768,B,,,,sizes: baseline_paillier.json result.baselines.B4_paillier_clear_weights.ciphertext_one_value_B,baseline B4 ciphertext of one value
+b4|upload,15360,"15,360",B,,,,sizes: baseline_paillier.json result.baselines.B4_paillier_clear_weights.record_upload_B,baseline B4 record upload
+risk_path_budget|obu_bfv_encrypt,3.6058274999959394,3.61,ms,3.58,3.67,1000,risk_path_budget.json result.timings.obu_bfv_encrypt.median_ms,median over the timed repetitions
+risk_path_budget|obu_group_sign,4.130814999996346,4.13,ms,4.08,4.21,1000,risk_path_budget.json result.timings.obu_group_sign.median_ms,median over the timed repetitions
+risk_path_budget|obu_hommac_tags_both_blocks,0.045497499968405464,0.045,ms,0.045,0.046,1000,risk_path_budget.json result.timings.obu_hommac_tags_both_blocks.median_ms,median over the timed repetitions
+risk_path_budget|obu_record_message_total,8.095587999946474,8.10,ms,8.02,8.27,1000,risk_path_budget.json result.timings.obu_record_message_total.median_ms,median over the timed repetitions
+risk_path_budget|tsp_receive_total,23.01348599985431,23.01,ms,22.75,23.48,1000,risk_path_budget.json result.timings.tsp_receive_total.median_ms,median over the timed repetitions
+risk_path_budget|tsp_group_verify,4.423130999953173,4.42,ms,4.35,4.49,1000,risk_path_budget.json result.timings.tsp_group_verify.median_ms,median over the timed repetitions
+risk_path_budget|tsp_deserialize_ciphertext,2.3240244999556126,2.32,ms,2.30,2.36,1000,risk_path_budget.json result.timings.tsp_deserialize_ciphertext.median_ms,median over the timed repetitions
+risk_path_budget|tsp_evaluate,10.707425999953557,10.71,ms,10.64,10.90,1000,risk_path_budget.json result.timings.tsp_evaluate.median_ms,median over the timed repetitions
+risk_path_budget|tsp_fill,6.873894000023029,6.87,ms,6.82,6.99,1000,risk_path_budget.json result.timings.tsp_fill.median_ms,median over the timed repetitions
+risk_path_budget|tsp_receipt_sign,0.5934719999913796,0.593,ms,0.584,0.606,1000,risk_path_budget.json result.timings.tsp_receipt_sign.median_ms,median over the timed repetitions
+risk_path_budget|obu_verify_receipt,0.7634679999455329,0.763,ms,0.749,0.776,1000,risk_path_budget.json result.timings.obu_verify_receipt.median_ms,median over the timed repetitions
+risk_path_budget|tsp_end_epoch_publish,0.00559799991606269,0.006,ms,0.005,0.006,1000,risk_path_budget.json result.timings.tsp_end_epoch_publish.median_ms,median over the timed repetitions
+risk_path_budget|insurer_decrypt,0.6737974999850849,0.674,ms,0.663,0.682,1000,risk_path_budget.json result.timings.insurer_decrypt.median_ms,median over the timed repetitions
+risk_path_budget|insurer_hommac_verify_both_blocks,0.0606840001182718,0.061,ms,0.060,0.062,1000,risk_path_budget.json result.timings.insurer_hommac_verify_both_blocks.median_ms,median over the timed repetitions
+risk_path_budget|chain_end_to_end_compute,32.62230350003392,32.62,ms,32.29,33.31,1000,risk_path_budget.json result.timings.chain_end_to_end_compute.median_ms,median over the timed repetitions
+risk_path_budget|obu_enc_plus_sign,7.736642499992286,7.74,ms,,,,risk_path_budget|obu_bfv_encrypt + risk_path_budget|obu_group_sign,sum of the medians
+risk_path_budget|budget_obu,8.859055999892007,8.86,ms,,,,risk_path_budget.json result.per_record_budget_ms_sum_of_medians.obu,
+risk_path_budget|budget_tsp,23.019083999770373,23.02,ms,,,,risk_path_budget.json result.per_record_budget_ms_sum_of_medians.tsp,
+risk_path_budget|budget_insurer,0.7344815001033567,0.734,ms,,,,risk_path_budget.json result.per_record_budget_ms_sum_of_medians.insurer,
+risk_path_budget|budget_total,32.61262149976574,32.61,ms,,,,risk_path_budget.json result.per_record_budget_ms_sum_of_medians.total,
+baselines|B1|obu_encrypt,3.765794999935679,3.77,ms,3.73,3.81,1000,baselines_bfv_ckks.json result.baselines.B1_single_key_bfv_encrypted_weights.timings.obu_encrypt.median_ms,median over the timed repetitions
+baselines|B1|tsp_evaluate,11.549543000000995,11.55,ms,11.46,11.68,1000,baselines_bfv_ckks.json result.baselines.B1_single_key_bfv_encrypted_weights.timings.tsp_evaluate.median_ms,median over the timed repetitions
+baselines|B1|insurer_decrypt,0.5676815001152136,0.568,ms,0.561,0.580,1000,baselines_bfv_ckks.json result.baselines.B1_single_key_bfv_encrypted_weights.timings.insurer_decrypt.median_ms,median over the timed repetitions
+baselines|B2|tsp_evaluate,4.097955500014905,4.10,ms,4.06,4.16,1000,baselines_bfv_ckks.json result.baselines.B2_sp2ubi_context_clear_weights.timings.tsp_evaluate_clear_weights.median_ms,median over the timed repetitions
+baselines|B2|tsp_fill,7.061151500010965,7.06,ms,6.97,7.13,1000,baselines_bfv_ckks.json result.baselines.B2_sp2ubi_context_clear_weights.timings.tsp_fill.median_ms,median over the timed repetitions
+baselines|B3|obu_encrypt,6.451816999970106,6.45,ms,6.33,6.56,1000,baselines_bfv_ckks.json result.baselines.B3_ckks_encrypted_weights_score_only.timings.obu_encrypt.median_ms,median over the timed repetitions
+baselines|B3|tsp_evaluate,24.140506499975345,24.14,ms,23.74,24.58,1000,baselines_bfv_ckks.json result.baselines.B3_ckks_encrypted_weights_score_only.timings.tsp_evaluate.median_ms,median over the timed repetitions
+baselines|B3|insurer_decrypt,6.640147999974033,6.64,ms,6.52,6.74,1000,baselines_bfv_ckks.json result.baselines.B3_ckks_encrypted_weights_score_only.timings.insurer_decrypt.median_ms,median over the timed repetitions
+baselines|B3|max_rel_err,0.00018959362798018809,1.9e-4,,,,,baselines_bfv_ckks.json result.baselines.B3_ckks_encrypted_weights_score_only.max_relative_error,
+baselines|B4|obu_encrypt,619.4659335000097,619.5,ms,609.9,629.5,1000,baseline_paillier.json result.baselines.B4_paillier_clear_weights.timings.obu_encrypt_20_values.median_ms,median over the timed repetitions
+baselines|B4|tsp_evaluate,3.1646129999671757,3.16,ms,3.10,3.20,1000,baseline_paillier.json result.baselines.B4_paillier_clear_weights.timings.tsp_evaluate_clear_weights.median_ms,median over the timed repetitions
+baselines|B4|insurer_decrypt,43.73519149999083,43.74,ms,42.95,44.47,1000,baseline_paillier.json result.baselines.B4_paillier_clear_weights.timings.insurer_decrypt_5_values.median_ms,median over the timed repetitions
+throughput|workers1,42.65138554190196,42.7,records/s,,,,throughput.json result.throughput.1.records_per_s_median,
+throughput|workers2,76.74280244249651,76.7,records/s,,,,throughput.json result.throughput.2.records_per_s_median,
+throughput|workers3,112.02039628840683,112.0,records/s,,,,throughput.json result.throughput.3.records_per_s_median,
+throughput|workers4,144.54352535324082,144.5,records/s,,,,throughput.json result.throughput.4.records_per_s_median,
+throughput|workers5,122.14203346112997,122.1,records/s,,,,throughput.json result.throughput.5.records_per_s_median,
+throughput|workers6,141.7261734427779,141.7,records/s,,,,throughput.json result.throughput.6.records_per_s_median,
+throughput|workers7,144.7201628603082,144.7,records/s,,,,throughput.json result.throughput.7.records_per_s_median,
+throughput|workers8,144.46959568306957,144.5,records/s,,,,throughput.json result.throughput.8.records_per_s_median,
+throughput|workers1|min,42.61937078484208,42.6,records/s,,,,throughput.json result.throughput.1.records_per_s_min,
+throughput|workers1|max,44.32787221771555,44.3,records/s,,,,throughput.json result.throughput.1.records_per_s_max,
+throughput|workers2|min,75.64101355737318,75.6,records/s,,,,throughput.json result.throughput.2.records_per_s_min,
+throughput|workers2|max,77.35417107883848,77.4,records/s,,,,throughput.json result.throughput.2.records_per_s_max,
+throughput|workers3|min,110.86920766058047,110.9,records/s,,,,throughput.json result.throughput.3.records_per_s_min,
+throughput|workers3|max,112.55393909761149,112.6,records/s,,,,throughput.json result.throughput.3.records_per_s_max,
+throughput|workers4|min,142.4583688628833,142.5,records/s,,,,throughput.json result.throughput.4.records_per_s_min,
+throughput|workers4|max,147.92695847331152,147.9,records/s,,,,throughput.json result.throughput.4.records_per_s_max,
+throughput|workers5|min,119.18502936926416,119.2,records/s,,,,throughput.json result.throughput.5.records_per_s_min,
+throughput|workers5|max,123.99065286593648,124.0,records/s,,,,throughput.json result.throughput.5.records_per_s_max,
+throughput|workers6|min,138.53434301158381,138.5,records/s,,,,throughput.json result.throughput.6.records_per_s_min,
+throughput|workers6|max,142.16035504662395,142.2,records/s,,,,throughput.json result.throughput.6.records_per_s_max,
+throughput|workers7|min,139.08304755386916,139.1,records/s,,,,throughput.json result.throughput.7.records_per_s_min,
+throughput|workers7|max,146.84393258122043,146.8,records/s,,,,throughput.json result.throughput.7.records_per_s_max,
+throughput|workers8|min,143.5179656404699,143.5,records/s,,,,throughput.json result.throughput.8.records_per_s_min,
+throughput|workers8|max,148.340066859355,148.3,records/s,,,,throughput.json result.throughput.8.records_per_s_max,
+speed_path|tee_encrypt_per_beacon,0.38669049996542526,0.387,ms,0.371,0.398,200,speed_path.json result.tee_encrypt_per_beacon.median_ms,median over the timed repetitions
+speed_path|tee_trailer_smudging_term_encrypt,0.3945369999769355,0.395,ms,0.387,0.405,200,speed_path.json result.tee_trailer_smudging_term_encrypt.median_ms,median over the timed repetitions
+speed_path|tee_burst_certificate_bbs04_sign,3.8621144999524404,3.86,ms,3.83,3.89,50,speed_path.json result.tee_burst_certificate_bbs04_sign.median_ms,median over the timed repetitions
+speed_path|tee_rolling_trailer_schnorr_sign,0.21377699999902688,0.214,ms,0.209,0.218,200,speed_path.json result.tee_rolling_trailer_schnorr_sign.median_ms,median over the timed repetitions
+speed_path|rsu_accept_crossing_K40,6.903771499992217,6.90,ms,6.86,6.93,50,speed_path.json result.rsu_accept_crossing_K40.median_ms,median over the timed repetitions
+speed_path|rsu_evaluate_K40,3.103680999970493,3.10,ms,3.08,3.13,50,speed_path.json result.rsu_evaluate_K40.median_ms,median over the timed repetitions
+speed_path|rsu_release_rerandomise_and_sign_K40,5.70493900005431,5.70,ms,5.67,5.75,50,speed_path.json result.rsu_release_rerandomise_and_sign_K40.median_ms,median over the timed repetitions
+speed_path|rsu_accept_crossing_K160,14.753671000050872,14.75,ms,14.71,14.80,50,speed_path.json result.rsu_accept_crossing_K160.median_ms,median over the timed repetitions
+speed_path|tsp_verify_entry,4.20973249998724,4.21,ms,4.21,4.22,50,speed_path.json result.tsp_verify_entry.median_ms,median over the timed repetitions
+speed_path|tsp_shuffle_rerandomize_per_entry,1.7283319999705782,1.73,ms,1.71,1.75,200,speed_path.json result.tsp_shuffle_rerandomize_per_entry.median_ms,median over the timed repetitions
+speed_path|tsp_partials_with_proofs_per_entry,3.1852435000132573,3.19,ms,3.17,3.21,200,speed_path.json result.tsp_partials_with_proofs_per_entry.median_ms,median over the timed repetitions
+speed_path|insurer_verify_open_and_decrypt_per_entry,5.469075000007706,5.47,ms,5.44,5.51,50,speed_path.json result.insurer_verify_open_and_decrypt_per_entry.median_ms,median over the timed repetitions
+speed_path|insurer_decrypt_b+0.00,0.1686605000372765,0.169,ms,0.168,0.170,20,speed_path.json result.insurer_decrypt_b+0.00.median_ms,median over the timed repetitions
+speed_path|insurer_decrypt_b+0.10,32.85856899998407,32.86,ms,32.79,32.94,20,speed_path.json result.insurer_decrypt_b+0.10.median_ms,median over the timed repetitions
+derived|ratio_eval_B1,0.9270865522516896,0.9,,,,,derived,"TSP evaluation, SP2UBI / B1 (single-key BFV)"
+derived|speedup_8workers,3.3872192860215162,3.4,,,,,derived,throughput with 8 workers / with 1 worker
+derived|core_h_daily,198.21988999802264,198,core-h,,,,derived,"TSP core-hours per 31-day month per 10^6 policies, daily records"
+derived|core_h_monthly,6.394189999936215,6,core-h,,,,derived,"TSP core-hours per month per 10^6 policies, one record per policy-month"
+derived|machine_days_daily_8workers,2.4835419148220383,2.5,d,,,,derived,"days of the measurement machine (8 workers) per month for 10^6 policies, daily records"
+derived|speedup_4workers,3.3889526334669027,3.39,,,,,derived,throughput with 4 workers / with 1 worker
+derived|eff_4workers,84.72381583667257,85,%,,,,derived,per cent of linear scaling at 4 workers
+derived|core_ms_8workers,27.687486637499887,27.69,ms,,,,derived,physical-core time per record at 8 workers (4 physical cores)
+derived|chain_minus_budget,0.00968200026818522,0.010,ms,,,,derived,whole chain timed as one minus the sum of the budget medians
+derived|workers5to8_min,122.14203346112997,122.1,records/s,,,,derived,smallest throughput median with 5 to 8 workers
+derived|workers5to8_max,144.7201628603082,144.7,records/s,,,,derived,largest throughput median with 5 to 8 workers
+derived|deser_pct_tsp,10.096077237386144,10,%,,,,derived,"deserialisation of an uploaded ciphertext, share of the TSP budget"

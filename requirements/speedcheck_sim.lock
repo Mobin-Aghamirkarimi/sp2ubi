@@ -1,0 +1,20 @@
+# Speed-check simulation (Python 3.12, Linux x86-64); complete pinned set. System tools: Octave 8.4.0, QuaDRiGa v2.8.1 (see speedcheck_sim/)
+contourpy==1.4.0
+cycler==0.12.1
+eclipse-sumo==1.28.0
+fonttools==4.66.1
+iniconfig==2.3.1
+kiwisolver==1.5.1
+matplotlib==3.11.2
+numpy==2.5.3
+packaging==26.3
+pillow==12.3.0
+pluggy==1.6.0
+py_arkworks_bls12381==0.5.0
+Pygments==2.21.0
+pyparsing==3.3.3
+pytest==8.4.2
+python-dateutil==2.9.0.post0
+scipy==1.18.1
+six==1.17.0
+sumo-data==1.28.0

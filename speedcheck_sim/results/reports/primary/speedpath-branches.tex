@@ -1,0 +1,71 @@
+% written by reports/select_texts.py; do not edit
+\makeatletter
+\expandafter\def\csname spb@Bnote|highway\endcsname{printed}
+\expandafter\def\csname spb@Bnote|urban\endcsname{none}
+\expandafter\def\csname spb@Bstratum|highway\endcsname{covered_short}
+\expandafter\def\csname spb@Bstratum|urban\endcsname{not_covered_unqualified}
+\expandafter\def\csname spb@K|anchor\endcsname{inside}
+\expandafter\def\csname spb@T2|bias|P1-10\endcsname{reduced}
+\expandafter\def\csname spb@T2|bias|P1-15\endcsname{not reduced}
+\expandafter\def\csname spb@T2|bias|P2-20\endcsname{reduced}
+\expandafter\def\csname spb@T2|bias|P2-30\endcsname{reduced}
+\expandafter\def\csname spb@T2|bias|P2-38\endcsname{not reduced}
+\expandafter\def\csname spb@T2|bias|P3-15\endcsname{not reduced}
+\expandafter\def\csname spb@T3N|status\endcsname{some}
+\expandafter\def\csname spb@T3cell|P1-10\endcsname{partly covered}
+\expandafter\def\csname spb@T3cell|P1-15\endcsname{partly covered}
+\expandafter\def\csname spb@T3cell|P2-20\endcsname{covered}
+\expandafter\def\csname spb@T3cell|P2-30\endcsname{covered}
+\expandafter\def\csname spb@T3cell|P2-38\endcsname{covered}
+\expandafter\def\csname spb@T3cell|P3-15\endcsname{partly covered}
+\expandafter\def\csname spb@T3full|highway LOS\endcsname{covered}
+\expandafter\def\csname spb@T3full|urban LOS\endcsname{partly covered}
+\expandafter\def\csname spb@T3full|urban, blocked crossings (NLOSv)\endcsname{partly covered}
+\expandafter\def\csname spb@T3share|P1-10\endcsname{some}
+\expandafter\def\csname spb@T3share|P1-15\endcsname{some}
+\expandafter\def\csname spb@T3share|P2-20\endcsname{none}
+\expandafter\def\csname spb@T3share|P2-30\endcsname{none}
+\expandafter\def\csname spb@T3share|P2-38\endcsname{none}
+\expandafter\def\csname spb@T3share|P3-15\endcsname{some}
+\expandafter\def\csname spb@T3suffix|highway LOS\endcsname{}
+\expandafter\def\csname spb@T3suffix|urban LOS\endcsname{}
+\expandafter\def\csname spb@T3suffix|urban, blocked crossings (NLOSv)\endcsname{}
+\expandafter\def\csname spb@T3u|P1-10\endcsname{borne_out}
+\expandafter\def\csname spb@T3u|P1-15\endcsname{borne_out}
+\expandafter\def\csname spb@T3u|P2-20\endcsname{conservative}
+\expandafter\def\csname spb@T3u|P2-30\endcsname{conservative}
+\expandafter\def\csname spb@T3u|P2-38\endcsname{conservative}
+\expandafter\def\csname spb@T3u|P3-15\endcsname{borne_out}
+\expandafter\def\csname spb@T3|highway LOS\endcsname{covered}
+\expandafter\def\csname spb@T3|urban LOS\endcsname{partly covered}
+\expandafter\def\csname spb@T3|urban, blocked crossings (NLOSv)\endcsname{partly covered}
+\expandafter\def\csname spb@T4|P1-10\endcsname{contradicted}
+\expandafter\def\csname spb@T4|P1-15\endcsname{contradicted}
+\expandafter\def\csname spb@T4|P2-20\endcsname{undetermined}
+\expandafter\def\csname spb@T4|P2-30\endcsname{contradicted}
+\expandafter\def\csname spb@T4|P2-38\endcsname{contradicted}
+\expandafter\def\csname spb@T4|P3-15\endcsname{not run}
+\expandafter\def\csname spb@T6|highway LOS\endcsname{separates}
+\expandafter\def\csname spb@T6|urban LOS\endcsname{separates}
+\expandafter\def\csname spb@T7\endcsname{not adopted}
+\expandafter\def\csname spb@T8|P1-10\endcsname{applies}
+\expandafter\def\csname spb@T8|P1-15\endcsname{applies}
+\expandafter\def\csname spb@T8|P2-20\endcsname{applies}
+\expandafter\def\csname spb@T8|P2-30\endcsname{applies}
+\expandafter\def\csname spb@T8|P2-38\endcsname{applies}
+\expandafter\def\csname spb@T8|P3-15\endcsname{applies}
+\expandafter\def\csname spb@abs|qual\endcsname{some}
+\expandafter\def\csname spb@dqual|N\endcsname{no}
+\expandafter\def\csname spb@dqual|U\endcsname{no}
+\expandafter\def\csname spb@esc|status\endcsname{adopted}
+\expandafter\def\csname spb@feas|status\endcsname{claim}
+\expandafter\def\csname spb@fnb|freq_clause\endcsname{, and frequency-only manipulation at urban LOS, highway LOS sites}
+\expandafter\def\csname spb@fnb|freq_types\endcsname{urban LOS, highway LOS}
+\expandafter\def\csname spb@r3|m5\endcsname{exists}
+\expandafter\def\csname spb@splace|status\endcsname{finished}
+\expandafter\def\csname spb@types|clause\endcsname{ at all site types}
+\expandafter\def\csname spb@ucont\endcsname{no}
+\expandafter\def\csname spb@v2v|majority\endcsname{computed}
+\expandafter\def\csname spb@v2v|status\endcsname{computed}
+\providecommand{\spb}[1]{\@ifundefined{spb@#1}{\textbf{??#1??}\PackageWarning{speedpath}{undefined branch #1}}{\csname spb@#1\endcsname}}
+\makeatother

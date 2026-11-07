@@ -1,0 +1,5 @@
+model,D2_out_of_fold,gini_mean,gini_std,nonpositive_predictions
+additive_nonneg_poisson (protocol model),0.1361823662568621,0.4947597553828351,0.015437203954177704,0
+additive_nonneg_poisson x exp(traditional) (protocol model + insurer-side factor),0.15151967286173917,0.5163788777435361,0.015809929769478263,0
+"ols_on_counts (additive, unconstrained)",0.1267774036060738,0.4926171529823108,0.01570629698691656,158
+"loglink_glm_log1p_totals (reference, NOT additive)",0.1408336776148642,0.5062261178933071,0.01542803591850683,0

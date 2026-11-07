@@ -1,0 +1,2 @@
+The urban stratum is not covered at the decision level (no site and speed class qualified under the decision rules' own qualification); its Table B rows are not reported, and the suburban rows take the other stratum alone.
+Decision-level rows of the highway stratum use 42 gated test crossings per site and speed class, fewer than the planned 50 in 7 of 30 rows; every row is truncated to that number in track order, so each row's empirical error pool is correspondingly smaller.

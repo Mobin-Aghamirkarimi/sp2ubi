@@ -1,0 +1,41 @@
+{
+  "V1_accepted_per_slot": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 500,
+    "4": 0,
+    "5": 0
+  },
+  "V2": {
+    "accepted": 317,
+    "agree_with_predicate": 500
+  },
+  "V3": {
+    "correct_ratio_accepted": 500,
+    "wrong_ratio_accepted": 0
+  },
+  "V4": {
+    "predicate_false": [
+      0,
+      125
+    ],
+    "predicate_true": [
+      375,
+      0
+    ]
+  },
+  "V4_note": "[accepted, rejected] counts",
+  "all_predicates_exact": true,
+  "every_accepted_output_has_the_honest_score": true,
+  "p": 1099512938497,
+  "records_per_check": 500,
+  "weights": [
+    5956,
+    3609,
+    809,
+    0,
+    2348309,
+    221761
+  ]
+}

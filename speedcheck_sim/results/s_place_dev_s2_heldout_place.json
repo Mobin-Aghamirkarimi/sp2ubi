@@ -1,0 +1,76 @@
+{
+ "tag": "dev_s2_heldout_place",
+ "provenance": {
+  "tag": "dev_s2_heldout_place",
+  "stage": 2,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {}
+ },
+ "rule": "S-place light (reduced design): the correction applies whenever rho_hat > 1.10 (point estimate, never below 1; either mapping, the larger applies), whatever the CI; the CI is reported",
+ "statistic": "ls",
+ "cells": {
+  "P1": {
+   "n_sites_run": 5,
+   "e1": {
+    "n_sites": 5,
+    "passes": 99,
+    "sigma_w": {
+     "B": 0.1501262220089929,
+     "A": 0.1471534392769743,
+     "N": 0.14876728571864073
+    },
+    "rho": 0.9801981113476598,
+    "rho_ci": [
+     0.9024566361857922,
+     1.1143926146439678
+    ],
+    "rho_ci_nonfinite_share": 0.0,
+    "rho_null": 0.9909480417733368,
+    "rho_null_ci": [
+     0.9592040698831883,
+     1.0554743719976516
+    ],
+    "correct": false,
+    "correct_v3_rule": false
+   },
+   "lb": {
+    "n_sites": 5,
+    "passes": 99,
+    "sigma_w": {
+     "B": 0.14992406813137443,
+     "A": 0.14459058417388854,
+     "N": 0.14600764576917913
+    },
+    "rho": 0.9644254319939324,
+    "rho_ci": [
+     0.8725104133146546,
+     1.1588182037873438
+    ],
+    "rho_ci_nonfinite_share": 0.0,
+    "rho_null": 0.9738772939461364,
+    "rho_null_ci": [
+     0.8931954706044795,
+     1.0295673569731876
+    ],
+    "correct": false,
+    "correct_v3_rule": false
+   },
+   "decision": {
+    "correct": false,
+    "factor": 1.0,
+    "statement": null
+   }
+  }
+ },
+ "stratum_factor": {
+  "urban": 1.0,
+  "highway": 1.0
+ }
+}

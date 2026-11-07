@@ -1,0 +1,68 @@
+{
+ "levels": [
+  0.014885919009151429,
+  0.01698999738022349,
+  0.0193914806873893,
+  0.022132406193722785,
+  0.025260752998737968,
+  0.028831281898496396,
+  0.03290649395732956,
+  0.037557724570694145
+ ],
+ "grid": "data",
+ "data_derived_levels": [
+  0.014885919009151429,
+  0.01698999738022349,
+  0.0193914806873893,
+  0.022132406193722785,
+  0.025260752998737968,
+  0.028831281898496396,
+  0.03290649395732956,
+  0.037557724570694145
+ ],
+ "top_level_clipped_share": 0.0,
+ "tag": "primary",
+ "strata": {
+  "urban": "not covered (no qualified (site, class))",
+  "highway": {
+   "mapping": "lb",
+   "prb": 10,
+   "tau": 0.003130299195063301,
+   "uncovered_speeds": [],
+   "truncation": 317,
+   "uncovered_traffic_share": {
+    "urban": 0.0,
+    "suburban": 0.0,
+    "highway": 0.0
+   },
+   "n_eval": 42,
+   "rows_below_min_eval": 7,
+   "rows": 30,
+   "status": "covered_short",
+   "n_eval_note": "the decision simulation / the matching simulation on 42 gated test passes per (site, speed), fewer than min_eval_e2 = 50 (7 of 30 rows below; 317 passes truncated)"
+  }
+ },
+ "stratum_status": {
+  "urban": "not_covered_unqualified",
+  "highway": "covered_short"
+ },
+ "input_sha256": {
+  "highway": "6b98739591611acdecb016f06e09dce1e71996ad8d82fe71e19617cb549bf956"
+ },
+ "provenance": {
+  "tag": "primary",
+  "stage": 3,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {
+   "what": "e2",
+   "smoke": false
+  }
+ }
+}

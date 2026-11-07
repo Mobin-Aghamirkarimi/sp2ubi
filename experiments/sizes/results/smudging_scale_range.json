@@ -1,0 +1,227 @@
+{
+ "model": "(sp2ubi/speedcheck.py SensingRSU.accept / evaluate_weighted; the statistic b_hat and Enc(B) of the scheme):\n  * W' = round(W (1 + beta_s)) carries the speed units: profile W = sum_i v_i^2, matched W = sum_i w_i v_i with\n    w_i = round(64 g_i^2), speeds in UNIT_MPS = 0.1 m/s; site bias beta_s over SITE_BIASES (see below);\n  * crossing window [-0.05 L, 1.05 L], L = 100 m (T_w = 110 m / v), beacons every BEACON_PERIOD_MS, at most K_MAX per\n    entry; constant speed v over the window;\n  * acceptance as in the code: the used beacons span >= SPAN_MIN of the window, i.e. an index range of\n    m >= ceil(SPAN_MIN T_w / 0.1 s) + 1 beacons, which must fit one burst (m <= BURST_MS / BEACON_PERIOD_MS), and at\n    least ceil(MIN_COVER m) of them are kept. Speeds therefore start at\n    V_MIN = SPAN_MIN * 110 m / ((BURST_MS - BEACON_PERIOD_MS) / 1 s) (= 2.481 m/s), not at 110 m / 40 s;\n  * the kept beacons are chosen adversarially: the ones with the smallest weights anywhere in the window (a relaxation\n    of the contiguous-span constraint, so the reported c is an upper bound for the code path);\n  * speeds: a 0.005 m/s grid from V_MIN to 5 m/s, the top of every 0.1 m/s speed unit there (where c peaks within a\n    unit), and a coarse grid to V_MAX; rho (closest approach) 1-50 m;\n  * SITE_BIASES: 0, -3 %, -6 % and +6 %. The largest site biases of the site-accuracy simulation are -1.35 % ... +1.6 %,\n    so +-6 % is a conservative envelope. Only a negative bias raises c.\n  A stop-and-go crossing whose fast beacons are lost can have a smaller W' than any constant-speed crossing; for it,\n  and for any site bias, only the guard C_MAX applies (sigma / c >= 16.4). The privacy statement rests on that guard.\nThe wrapped-Gaussian distance from uniform on Z/cZ is <= 2 sum_k exp(-2 pi^2 k^2 (sigma/c)^2); its log10 is reported\nfor k = 1.",
+ "sigma_one_term": 17179869.184,
+ "C_MAX": 1048576,
+ "C_MIN": 64,
+ "v_min_mps": 2.481203007518797,
+ "v_window_fits_burst_mps": 2.75,
+ "n_speeds": 545,
+ "rho_m": [
+  1,
+  2,
+  3,
+  5,
+  8,
+  10,
+  15,
+  20,
+  30,
+  40,
+  50
+ ],
+ "site_biases": [
+  0.0,
+  -0.03,
+  -0.06,
+  0.06
+ ],
+ "cases": {
+  "code|bias=+0.00": {
+   "profile": {
+    "c": 88102,
+    "W": 195000,
+    "v_mps": 2.546203,
+    "rho_m": 1,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 194.99976372840572,
+    "log10_tv_bound_k1": -325973.4452811809
+   },
+   "matched": {
+    "c": 26672,
+    "W": 644125,
+    "v_mps": 2.546203,
+    "rho_m": 50,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 644.1162711457708,
+    "log10_tv_bound_k1": -3556661.980874592
+   },
+   "evaluated_classes_c_max": 26173
+  },
+  "code|bias=-0.03": {
+   "profile": {
+    "c": 90827,
+    "W": 195000,
+    "v_mps": 2.546203,
+    "rho_m": 1,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 189.14936289869752,
+    "log10_tv_bound_k1": -306707.09177999175
+   },
+   "matched": {
+    "c": 27497,
+    "W": 644125,
+    "v_mps": 2.546203,
+    "rho_m": 50,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 624.7906747645197,
+    "log10_tv_bound_k1": -3346440.673809044
+   },
+   "evaluated_classes_c_max": 26982
+  },
+  "code|bias=-0.06": {
+   "profile": {
+    "c": 93725,
+    "W": 195000,
+    "v_mps": 2.546203,
+    "rho_m": 1,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 183.30081818084824,
+    "log10_tv_bound_k1": -288033.4055586196
+   },
+   "matched": {
+    "c": 28374,
+    "W": 644125,
+    "v_mps": 2.546203,
+    "rho_m": 50,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 605.4792832875168,
+    "log10_tv_bound_k1": -3142770.2161245095
+   },
+   "evaluated_classes_c_max": 27843
+  },
+  "code|bias=+0.06": {
+   "profile": {
+    "c": 83115,
+    "W": 195000,
+    "v_mps": 2.546203,
+    "rho_m": 1,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 206.6999841665163,
+    "log10_tv_bound_k1": -366264.59457326325
+   },
+   "matched": {
+    "c": 25162,
+    "W": 644125,
+    "v_mps": 2.546203,
+    "rho_m": 50,
+    "n_window": 433,
+    "n_kept": 312,
+    "sigma_over_c": 682.7704150703441,
+    "log10_tv_bound_k1": -3996349.3078244235
+   },
+   "evaluated_classes_c_max": 24691
+  },
+  "all|bias=+0.00": {
+   "profile": {
+    "c": 56770,
+    "W": 302624,
+    "v_mps": 2.849999,
+    "rho_m": 1,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 302.62232136691915,
+    "log10_tv_bound_k1": -785083.7153160741
+   },
+   "matched": {
+    "c": 16811,
+    "W": 1021944,
+    "v_mps": 2.849999,
+    "rho_m": 50,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 1021.9421321753614,
+    "log10_tv_bound_k1": -8952960.351193573
+   },
+   "evaluated_classes_c_max": 16518
+  },
+  "all|bias=-0.03": {
+   "profile": {
+    "c": 58526,
+    "W": 302624,
+    "v_mps": 2.849999,
+    "rho_m": 1,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 293.5425141646448,
+    "log10_tv_bound_k1": -738679.5425404628
+   },
+   "matched": {
+    "c": 17331,
+    "W": 1021944,
+    "v_mps": 2.849999,
+    "rho_m": 50,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 991.2797405804628,
+    "log10_tv_bound_k1": -8423770.242139583
+   },
+   "evaluated_classes_c_max": 17029
+  },
+  "all|bias=-0.06": {
+   "profile": {
+    "c": 60393,
+    "W": 302624,
+    "v_mps": 2.849999,
+    "rho_m": 1,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 284.46788839766197,
+    "log10_tv_bound_k1": -693714.1456691762
+   },
+   "matched": {
+    "c": 17884,
+    "W": 1021944,
+    "v_mps": 2.849999,
+    "rho_m": 50,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 960.627889957504,
+    "log10_tv_bound_k1": -7910873.412446345
+   },
+   "evaluated_classes_c_max": 17573
+  },
+  "all|bias=+0.06": {
+   "profile": {
+    "c": 53556,
+    "W": 302624,
+    "v_mps": 2.849999,
+    "rho_m": 1,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 320.78327701844796,
+    "log10_tv_bound_k1": -882139.9521323469
+   },
+   "matched": {
+    "c": 15859,
+    "W": 1021944,
+    "v_mps": 2.849999,
+    "rho_m": 50,
+    "n_window": 386,
+    "n_kept": 386,
+    "sigma_over_c": 1083.2883021628097,
+    "log10_tv_bound_k1": -10060096.792652303
+   },
+   "evaluated_classes_c_max": 15583
+  }
+ },
+ "summary": {
+  "c_max_code_path": 93725,
+  "sigma_over_c_min_code_path": 183.30081818084824,
+  "c_max_code_path_bias0": 88102,
+  "sigma_over_c_min_code_path_bias0": 194.99976372840572,
+  "c_max_evaluated_classes_code_path": 27843,
+  "more_than_150_times": true,
+  "sigma_over_c_at_guard": 16.384,
+  "log10_tv_bound_at_guard": -2301.1976981932794,
+  "guard_ever_reached_by_constant_speed_crossing": false,
+  "c_lower_bound_check_bounds": 88,
+  "note": "the privacy statement rests on the guard c <= C_MAX (sigma/c >= 16, any crossing, any site bias); c_max_code_path is the evaluated-geometry figure (constant speed, site bias in SITE_BIASES)"
+ }
+}

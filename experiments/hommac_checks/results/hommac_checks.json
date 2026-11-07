@@ -1,0 +1,135 @@
+{
+ "A": {
+  "p": 1099512938497,
+  "p_minus_2^40": 1310721,
+  "bits": 41,
+  "is_prime": true,
+  "p_mod_2^16": 1,
+  "smallest_prime_above_2^40_with_p=1_mod_2^16": true,
+  "log2_single_block_1_over_(p-1)": -40.000001719825484,
+  "log2_two_blocks_1_over_(p-1)^2": -80.00000343965097,
+  "log2_bound_q_over_(p-1)^2": {
+   "q=2^0": -80.00000343965097,
+   "q=2^20": -60.00000343965097,
+   "q=2^30": -50.00000343965097,
+   "q=2^40": -40.00000343965097
+  },
+  "nonce_bits_param": 40
+ },
+ "B": {
+  "weights": [
+   5956,
+   3609,
+   809,
+   0,
+   2348309,
+   221761
+  ],
+  "max_31_day_score": 328501503700,
+  "p_half": 549756469248,
+  "below_p_half": true,
+  "weights_below_2^22": true
+ },
+ "C": {
+  "records": 10000,
+  "honest_records_verified_both_blocks": 10000
+ },
+ "D": {
+  "trials": 2000,
+  "D1_earlier_honest_with_intercept_rejected": 2000,
+  "D2_earlier_sum_of_two_records_accepted": 2000,
+  "D3_current_honest_with_intercept_accepted": 2000,
+  "D3_current_sum_of_two_records_accepted": 0
+ },
+ "E": [
+  {
+   "p": 17,
+   "trials": 200000,
+   "E1_altered_score": {
+    "accepted": 744,
+    "rate": 0.00372,
+    "wilson99.9": [
+     0.0032981439021964733,
+     0.0041955873612894365
+    ],
+    "bound": 0.00390625,
+    "bound_within_or_above_interval": true
+   },
+   "E2_injected_untagged_nonce": {
+    "accepted": 676,
+    "rate": 0.00338,
+    "wilson99.9": [
+     0.0029790087139009882,
+     0.0038347593607189283
+    ],
+    "bound": 0.0034602076124567475,
+    "bound_within_or_above_interval": true
+   },
+   "E3_moved_to_other_policy_key": {
+    "accepted": 678,
+    "rate": 0.00339,
+    "wilson99.9": [
+     0.0029883803587483306,
+     0.0038453866331911737
+    ],
+    "bound": 0.0034602076124567475,
+    "bound_within_or_above_interval": true
+   },
+   "E4_adaptive_q=16": {
+    "accepted": 12572,
+    "rate": 0.06286,
+    "wilson99.9": [
+     0.06109774128572938,
+     0.06466958700580007
+    ],
+    "bound": 0.0625,
+    "bound_within_or_above_interval": true
+   }
+  },
+  {
+   "p": 13,
+   "trials": 200000,
+   "E1_altered_score": {
+    "accepted": 1302,
+    "rate": 0.00651,
+    "wilson99.9": [
+     0.005944403920367148,
+     0.007129025275283819
+    ],
+    "bound": 0.006944444444444444,
+    "bound_within_or_above_interval": true
+   },
+   "E2_injected_untagged_nonce": {
+    "accepted": 1233,
+    "rate": 0.006165,
+    "wilson99.9": [
+     0.0056151975674191106,
+     0.006768268980706069
+    ],
+    "bound": 0.005917159763313609,
+    "bound_within_or_above_interval": true
+   },
+   "E3_moved_to_other_policy_key": {
+    "accepted": 1178,
+    "rate": 0.00589,
+    "wilson99.9": [
+     0.005353111023581149,
+     0.0064803852982553605
+    ],
+    "bound": 0.005917159763313609,
+    "bound_within_or_above_interval": true
+   },
+   "E4_adaptive_q=12": {
+    "accepted": 16503,
+    "rate": 0.082515,
+    "wilson99.9": [
+     0.08051305184516523,
+     0.08456214843801448
+    ],
+    "bound": 0.08333333333333333,
+    "bound_within_or_above_interval": true
+   }
+  }
+ ],
+ "failures": []
+}

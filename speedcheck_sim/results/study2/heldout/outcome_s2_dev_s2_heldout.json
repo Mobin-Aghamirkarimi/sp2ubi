@@ -1,0 +1,57 @@
+{
+ "template": "S2|L0",
+ "named_cells": [
+  "P1-10",
+  "P1-15"
+ ],
+ "per_cell": {
+  "P1-10": "L0",
+  "P1-15": "L0"
+ },
+ "gate": "not run",
+ "h2": "not run",
+ "l3": {
+  "holds": false,
+  "reason": "no U2 cell reaches L2 (a covered stratum has a qualified class, which would have to reach L2)",
+  "adapter_run": false
+ },
+ "gate_G": {
+  "status": "not run",
+  "reason": "no estimator candidate adopted: H2 not run, G not applicable"
+ },
+ "step0": {
+  "D0_R1": "kinematic cause supported",
+  "chosen": null,
+  "n2_rule": null,
+  "candidates": [
+   {
+    "name": "E-a",
+    "eligible": false
+   },
+   {
+    "name": "E-b",
+    "eligible": false
+   },
+   {
+    "name": "E-c",
+    "eligible": false
+   },
+   {
+    "name": "E-f",
+    "eligible": false
+   },
+   {
+    "name": "E-d",
+    "eligible": false
+   },
+   {
+    "name": "E-db",
+    "eligible": false
+   },
+   {
+    "name": "E-e",
+    "eligible": false
+   }
+  ]
+ }
+}

@@ -1,0 +1,255 @@
+{
+ "policies": 300,
+ "seed": 7,
+ "epoch_days": 31,
+ "log2_30_factorial": 107.70906734197342,
+ "coalition_insurer_plus_TSP": {
+  "W_7_days": {
+   "weekday": {
+    "records": 5475,
+    "share_date_determined": 0.028127853881278538,
+    "median_support_days_given_matching": 5,
+    "mean_log2_support_bits_upper_bound_on_entropy": 2.077106856859377,
+    "median_feasible_days_own_window": 5,
+    "median_max_posterior": 0.3040468035564235,
+    "share_max_posterior_ge_0.5": 0.1395433789954338,
+    "share_max_posterior_gt_0.999": 0.028127853881278538,
+    "median_entropy_bits": 2.2102389456390896,
+    "mean_entropy_bits": 1.9937546701162354
+   },
+   "weekend": {
+    "records": 1882,
+    "share_date_determined": 0.20828905419766205,
+    "median_support_days_given_matching": 2,
+    "mean_log2_support_bits_upper_bound_on_entropy": 0.7917109458023379,
+    "median_feasible_days_own_window": 2,
+    "median_max_posterior": 0.5,
+    "share_max_posterior_ge_0.5": 1.0,
+    "share_max_posterior_gt_0.999": 0.20828905419766205,
+    "median_entropy_bits": 1.0,
+    "mean_entropy_bits": 0.7798499635692108
+   },
+   "nondriving": {
+    "records": 1943,
+    "share_date_determined": 0.04220277920741122,
+    "median_support_days_given_matching": 6,
+    "mean_log2_support_bits_upper_bound_on_entropy": 2.3150137791070358,
+    "median_feasible_days_own_window": 7,
+    "median_max_posterior": 0.2776414545323646,
+    "share_max_posterior_ge_0.5": 0.1523417395779722,
+    "share_max_posterior_gt_0.999": 0.04220277920741122,
+    "median_entropy_bits": 2.3134941121635157,
+    "mean_entropy_bits": 2.180053968725508
+   },
+   "W_days": 7.0,
+   "naive_entropy_bits_uniform_W": 2.807354922057604,
+   "exact_posterior": true
+  },
+  "W_14_days": {
+   "weekday": {
+    "records": 5475,
+    "share_date_determined": 0.007671232876712329,
+    "median_support_days_given_matching": 10,
+    "mean_log2_support_bits_upper_bound_on_entropy": 3.0030665693259944,
+    "median_feasible_days_own_window": 10,
+    "median_max_posterior": 0.15579291118864577,
+    "share_max_posterior_ge_0.5": 0.023561643835616437,
+    "share_max_posterior_gt_0.999": 0.007671232876712329,
+    "median_entropy_bits": 3.195676329564103,
+    "mean_entropy_bits": 2.939406579197972
+   },
+   "weekend": {
+    "records": 1882,
+    "share_date_determined": 0.038788522848034,
+    "median_support_days_given_matching": 4,
+    "mean_log2_support_bits_upper_bound_on_entropy": 1.6027150837408293,
+    "median_feasible_days_own_window": 4,
+    "median_max_posterior": 0.367117527036628,
+    "share_max_posterior_ge_0.5": 0.37778958554729014,
+    "share_max_posterior_gt_0.999": 0.038788522848034,
+    "median_entropy_bits": 1.863120568566631,
+    "mean_entropy_bits": 1.5488088377598697
+   },
+   "nondriving": {
+    "records": 1943,
+    "share_date_determined": 0.006176016469377252,
+    "median_support_days_given_matching": 13,
+    "mean_log2_support_bits_upper_bound_on_entropy": 3.383722583445135,
+    "median_feasible_days_own_window": 14,
+    "median_max_posterior": 0.14194228628091865,
+    "share_max_posterior_ge_0.5": 0.02573340195573855,
+    "share_max_posterior_gt_0.999": 0.006176016469377252,
+    "median_entropy_bits": 3.5079867562536178,
+    "mean_entropy_bits": 3.258009655466067
+   },
+   "W_days": 14.0,
+   "naive_entropy_bits_uniform_W": 3.807354922057604,
+   "exact_posterior": true
+  },
+  "W_30_days": {
+   "weekday": {
+    "records": 5475,
+    "share_date_determined": 0.0029223744292237444,
+    "median_support_days_given_matching": 15,
+    "mean_log2_support_bits_upper_bound_on_entropy": 3.7473763833838576,
+    "median_feasible_days_own_window": 15
+   },
+   "weekend": {
+    "records": 1882,
+    "share_date_determined": 0.009032943676939426,
+    "median_support_days_given_matching": 6,
+    "mean_log2_support_bits_upper_bound_on_entropy": 2.338232628430246,
+    "median_feasible_days_own_window": 6
+   },
+   "nondriving": {
+    "records": 1943,
+    "share_date_determined": 0.003088008234688626,
+    "median_support_days_given_matching": 21,
+    "mean_log2_support_bits_upper_bound_on_entropy": 4.147272529345408,
+    "median_feasible_days_own_window": 21
+   },
+   "W_days": 30.0,
+   "naive_entropy_bits_uniform_W": 4.906890595608519,
+   "exact_posterior": false
+  }
+ },
+ "insurer_alone": {
+  "record_share_per_class": {
+   "score_eq_w0": 0.39570967741935487,
+   "event_only_explainable": 0.005887096774193548,
+   "weekday_mileage_needed": 0.5984032258064517
+  },
+  "per_epoch_length": {
+   "epoch_28_days": {
+    "weekend_days_range": [
+     8,
+     8
+    ],
+    "weekdays_range": [
+     20,
+     20
+    ],
+    "P_exact_score_eq_w0": 0.03571428571428571,
+    "P_exact_event_only": [
+     0.125,
+     0.125
+    ],
+    "P_exact_weekday_mileage": [
+     0.05,
+     0.05
+    ],
+    "entropy_bits": {
+     "score_eq_w0": 4.807354922057604,
+     "event_only": [
+      3.0,
+      3.0
+     ],
+     "weekday_mileage": [
+      4.321928094887363,
+      4.321928094887363
+     ]
+    }
+   },
+   "epoch_29_days": {
+    "weekend_days_range": [
+     8,
+     9
+    ],
+    "weekdays_range": [
+     20,
+     21
+    ],
+    "P_exact_score_eq_w0": 0.034482758620689655,
+    "P_exact_event_only": [
+     0.1111111111111111,
+     0.125
+    ],
+    "P_exact_weekday_mileage": [
+     0.047619047619047616,
+     0.05
+    ],
+    "entropy_bits": {
+     "score_eq_w0": 4.857980995127572,
+     "event_only": [
+      3.0,
+      3.169925001442312
+     ],
+     "weekday_mileage": [
+      4.321928094887363,
+      4.392317422778761
+     ]
+    }
+   },
+   "epoch_30_days": {
+    "weekend_days_range": [
+     8,
+     10
+    ],
+    "weekdays_range": [
+     20,
+     22
+    ],
+    "P_exact_score_eq_w0": 0.03333333333333333,
+    "P_exact_event_only": [
+     0.1,
+     0.125
+    ],
+    "P_exact_weekday_mileage": [
+     0.045454545454545456,
+     0.05
+    ],
+    "entropy_bits": {
+     "score_eq_w0": 4.906890595608519,
+     "event_only": [
+      3.0,
+      3.321928094887362
+     ],
+     "weekday_mileage": [
+      4.321928094887363,
+      4.459431618637297
+     ]
+    }
+   },
+   "epoch_31_days": {
+    "weekend_days_range": [
+     8,
+     10
+    ],
+    "weekdays_range": [
+     21,
+     23
+    ],
+    "P_exact_score_eq_w0": 0.03225806451612903,
+    "P_exact_event_only": [
+     0.1,
+     0.125
+    ],
+    "P_exact_weekday_mileage": [
+     0.043478260869565216,
+     0.047619047619047616
+    ],
+    "entropy_bits": {
+     "score_eq_w0": 4.954196310386875,
+     "event_only": [
+      3.0,
+      3.321928094887362
+     ],
+     "weekday_mileage": [
+      4.392317422778761,
+      4.523561956057013
+     ]
+    }
+   }
+  },
+  "generator_epoch_31_days_from_monday": {
+   "weekend_days": 8,
+   "weekdays": 23,
+   "P_exact": {
+    "score_eq_w0": 0.03225806451612903,
+    "event_only": 0.125,
+    "weekday_mileage": 0.043478260869565216
+   }
+  },
+  "note": "uniform within class (no driving-habit prior), so these are lower bounds; the order of the records carries no information (global shuffle); compare 1/D for a class-blind guess"
+ }
+}

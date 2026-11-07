@@ -1,0 +1,37 @@
+{
+ "record": "study-2 evaluation design record: timestamp and seed source",
+ "bundle_sha256": "61cd6f2f2f19d5f68873ed257a8c9091af5d10c5a9b94247f9d51ae1aafb9e3c",
+ "proof_sha256": "44ce136f95505a4d218d8b8542f3a7494ebc77ff8b62cf3a311adc88115988a8",
+ "block_height": 974170,
+ "block_header_hex": "00201220580b06b848a49426f31785bd06cce75c817b50ebcc750000000000000000000015611644437107327ec671ddda022083c1f90ffbbf9d4c8f66bf31cb7fde22eece9ee76aace50117629cb00e",
+ "block_hash": "00000000000000000000f78ac28442b90ea9c308a0d593d850d6ac469ebe5b3c",
+ "block_time": "2026-11-01T20:19:26Z",
+ "block_merkle_root": "ee22de7fcb31bf668f4c9dbffb0ff9c1832002dadd71c67e3207714344166115",
+ "calendars": {
+  "https://alice.btc.calendar.opentimestamps.org": {
+   "bitcoin_block_height": 974170
+  },
+  "https://bob.btc.calendar.opentimestamps.org": {
+   "bitcoin_block_height": 974170
+  },
+  "https://finney.calendar.eternitywall.com": {
+   "bitcoin_block_height": 974195
+  },
+  "https://btc.calendar.catallaxy.com": {
+   "bitcoin_block_height": 974212
+  }
+ },
+ "unresolved_pending": [],
+ "rule": "H = the block of lowest height among the Bitcoin attestations of the OpenTimestamps proof; every calendar's pending entry is resolved by its own attestation; seeds derived as in pipeline/s2_seeds.py",
+ "explorer_check": {
+  "urls": [
+   "https://blockstream.info/api/block-height/<h>",
+   "https://blockstream.info/api/block/<hash>",
+   "https://blockstream.info/api/block/<hash>/header",
+   "https://mempool.space/api/block-height/<h>",
+   "https://mempool.space/api/block/<hash>",
+   "https://mempool.space/api/block/<hash>/header"
+  ],
+  "result": "blocks 974170, 974195, 974212: hash, height, time, merkle root, nBits 0x1701e5ac and the 80-byte header identical on both explorers; each merkle root equals the root the proof computes; checks (1)-(3) of pipeline/s2_seeds.py pass on each header"
+ }
+}

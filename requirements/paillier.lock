@@ -1,0 +1,3 @@
+# Paillier baseline of the risk-path timings (Python 3.12)
+phe==1.5.0
+gmpy2==2.2.1

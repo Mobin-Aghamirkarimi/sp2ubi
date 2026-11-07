@@ -1,0 +1,128 @@
+{
+ "tag": "sens_place",
+ "provenance": {
+  "tag": "sens_place",
+  "stage": 2,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {}
+ },
+ "rule": "S-place light (reduced design): the correction applies whenever rho_hat > 1.10 (point estimate, never below 1; either mapping, the larger applies), whatever the CI; the CI is reported",
+ "statistic": "ls",
+ "cells": {
+  "P1": {
+   "n_sites_run": 5,
+   "e1": {
+    "n_sites": 5,
+    "passes": 100,
+    "sigma_w": {
+     "B": 0.061989853009418575,
+     "A": 0.09539723278551442,
+     "N": 0.08003150895124564
+    },
+    "rho": 1.5389169058203769,
+    "rho_ci": [
+     0.8435779062000354,
+     1.7759687233437984
+    ],
+    "rho_ci_nonfinite_share": 0.0,
+    "rho_null": 1.2910420829532514,
+    "rho_null_ci": [
+     0.7047137920705129,
+     1.6596350490661922
+    ],
+    "correct": true,
+    "correct_v3_rule": false
+   },
+   "lb": {
+    "n_sites": 5,
+    "passes": 100,
+    "sigma_w": {
+     "B": 0.06282168166214377,
+     "A": 0.08643139010651478,
+     "N": 0.08008343309254014
+    },
+    "rho": 1.3758210194267717,
+    "rho_ci": [
+     0.834480101431636,
+     1.4901796999361665
+    ],
+    "rho_ci_nonfinite_share": 0.0,
+    "rho_null": 1.2747737878656353,
+    "rho_null_ci": [
+     0.7068004848451912,
+     1.6261874344460943
+    ],
+    "correct": true,
+    "correct_v3_rule": false
+   },
+   "decision": {
+    "correct": true,
+    "factor": 1.5389169058203769,
+    "statement": "G1 depends on QuaDRiGa's snapshot placement"
+   }
+  },
+  "P2": {
+   "n_sites_run": 5,
+   "e1": {
+    "n_sites": 5,
+    "passes": 100,
+    "sigma_w": {
+     "B": 0.02333830805023916,
+     "A": 0.02458246076135627,
+     "N": 0.017403934616196645
+    },
+    "rho": 1.0533094647837749,
+    "rho_ci": [
+     0.781742987400129,
+     1.2525518621249665
+    ],
+    "rho_ci_nonfinite_share": 0.0,
+    "rho_null": 0.745723922176882,
+    "rho_null_ci": [
+     0.6172145984874409,
+     1.3052771085873125
+    ],
+    "correct": false,
+    "correct_v3_rule": false
+   },
+   "lb": {
+    "n_sites": 5,
+    "passes": 100,
+    "sigma_w": {
+     "B": 0.01992751685190443,
+     "A": 0.024584992293131547,
+     "N": 0.01738117944710632
+    },
+    "rho": 1.2337208130767185,
+    "rho_ci": [
+     0.777881850881805,
+     1.6190503355410186
+    ],
+    "rho_ci_nonfinite_share": 0.0,
+    "rho_null": 0.872220035053953,
+    "rho_null_ci": [
+     0.6306910266484271,
+     1.3006021048330612
+    ],
+    "correct": true,
+    "correct_v3_rule": false
+   },
+   "decision": {
+    "correct": true,
+    "factor": 1.2337208130767185,
+    "statement": "G1 depends on QuaDRiGa's snapshot placement"
+   }
+  }
+ },
+ "stratum_factor": {
+  "urban": 1.5389169058203769,
+  "highway": 1.2337208130767185
+ }
+}

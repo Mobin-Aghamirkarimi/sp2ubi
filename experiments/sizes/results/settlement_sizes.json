@@ -1,0 +1,32 @@
+{
+ "record_upload_per_record_B": 263423,
+ "configurations": {
+  "daily": {
+   "records_per_epoch": 31,
+   "settlement_message_insurer_to_obu_B_honest_epoch": 248,
+   "settlement_message_insurer_to_obu_B_conflict_epoch": 8,
+   "settlement_upload_item_B_max": 418,
+   "settlement_upload_obu_to_insurer_B_honest_epoch": 0,
+   "settlement_upload_obu_to_insurer_B_worst_case_all_disputed": 12958,
+   "record_uploads_per_policy_month_B": 8166113,
+   "settlement_upload_worst_case_share_of_record_uploads": 0.001586801456213011,
+   "obu_committed_record_encoding_B_max": 172,
+   "obu_dispute_state_per_receipted_record_B_max": 402,
+   "obu_dispute_state_per_31d_epoch_B_max": 12462
+  },
+  "monthly": {
+   "records_per_epoch": 1,
+   "settlement_message_insurer_to_obu_B_honest_epoch": 8,
+   "settlement_message_insurer_to_obu_B_conflict_epoch": 8,
+   "settlement_upload_item_B_max": 426,
+   "settlement_upload_obu_to_insurer_B_honest_epoch": 0,
+   "settlement_upload_obu_to_insurer_B_worst_case_all_disputed": 426,
+   "record_uploads_per_policy_month_B": 263423,
+   "settlement_upload_worst_case_share_of_record_uploads": 0.0016171708620735471,
+   "obu_committed_record_encoding_B_max": 180,
+   "obu_dispute_state_per_receipted_record_B_max": 489,
+   "obu_dispute_state_per_31d_epoch_B_max": 489
+  }
+ },
+ "note": "Sizes before the end-to-end authenticated encryption of the settlement channel; JSON record encodings are upper bounds (a binary encoding is smaller). No padding: the settlement message carries the accepted nonces, the upload one item per receipted record that was not accepted. Keeping the receipted record message instead would need one record message (record_upload_per_record_B) per disputed record."
+}

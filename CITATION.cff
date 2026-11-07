@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "SP2UBI: Secure and Privacy-Preserving Usage-Based Insurance (reference implementation and evaluation code)"
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/mobin-aghamirkarimi/sp2ubi"
+version: "1.0.0"
+authors:
+  - given-names: Mobin
+    family-names: Aghamirkarimi
+  - given-names: Matin
+    family-names: Aghamirkarimi
+  - given-names: Farid
+    family-names: Zaredar
+  - given-names: Morteza
+    family-names: Amini

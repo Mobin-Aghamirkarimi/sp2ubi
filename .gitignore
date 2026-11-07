@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.venv-*/
+data/*.csv
+experiments/timings/out/
+speedcheck_sim/quadriga_patched/
+speedcheck_sim/runs/
+speedcheck_sim/tr37885/runs/
+speedcheck_sim/out/
+speedcheck_sim/out2/
+paper_values/figures/
+experiments/figures/results/*.pdf
+speedcheck_sim/results/reports/primary/fig_*

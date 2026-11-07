@@ -1,0 +1,169 @@
+{
+ "inputs": {
+  "records_per_policy_epoch": 31,
+  "policies": 1000000,
+  "single_key_json": "experiments/sizes/results/risk_path_sizes.json",
+  "N": 8192,
+  "log2_Q": 120.0,
+  "id_ins_B": 8,
+  "id_B": 4,
+  "nonce_B": 5,
+  "R_B": 6,
+  "x_coefficient_widths_B": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2
+  ],
+  "x_B": 11,
+  "x_daily_caps": [
+   1,
+   16383,
+   16383,
+   16383,
+   4095,
+   4095
+  ],
+  "x_coefficients": 6,
+  "mac_B": 32,
+  "dispute_commitments_B": 64,
+  "epoch_B": 4,
+  "kem_point_B": 48,
+  "aead_tag_B": 16,
+  "group_signature_B": 336,
+  "p_bits": 41,
+  "interval_days": 1
+ },
+ "hybrid_construction": "ephemeral DH in G1 of BLS12-381 (compressed point) + hash KDF + AES-256-GCM (16-byte tag, nonce derived from the KDF, not transmitted); associated data (t, ID_Ins) not transmitted; inside the plaintext an HMAC-SHA-256 tag under the policy's key K over (ID, t, R, u) in A and (ID, t, x, u) in B",
+ "tsp_storage_rule": "A and B: the signed message without its group signature (an upper bound: the insurer needs only the ciphertext); SP2UBI: the result ciphertext after the fill",
+ "designs": {
+  "A": {
+   "plaintext_B": 47,
+   "ciphertext_B": 111,
+   "signed_message_B": 187,
+   "upload_B": 523,
+   "tsp_stored_per_record_B": 187,
+   "tsp_stored_with_signature_per_record_B": 523,
+   "tsp_to_insurer_per_record_B": 111,
+   "upload_per_policy_epoch_B": 16213,
+   "tsp_storage_per_policy_epoch_B": 5797,
+   "tsp_storage_10e6_policies_B": 5797000000,
+   "tsp_to_insurer_per_policy_epoch_B": 3441,
+   "tsp_storage_10e6_policies_TB": 0.006,
+   "tsp_storage_10e6_policies_GB": 5.797
+  },
+  "B": {
+   "plaintext_B": 52,
+   "ciphertext_B": 116,
+   "signed_message_B": 192,
+   "upload_B": 528,
+   "tsp_stored_per_record_B": 192,
+   "tsp_stored_with_signature_per_record_B": 528,
+   "tsp_to_insurer_per_record_B": 116,
+   "upload_per_policy_epoch_B": 16368,
+   "tsp_storage_per_policy_epoch_B": 5952,
+   "tsp_storage_10e6_policies_B": 5952000000,
+   "tsp_to_insurer_per_policy_epoch_B": 3596,
+   "tsp_storage_10e6_policies_TB": 0.006,
+   "tsp_storage_10e6_policies_GB": 5.952
+  },
+  "SP2UBI": {
+   "plaintext_B": null,
+   "ciphertext_B": 263011,
+   "signed_message_B": 263087,
+   "upload_B": 263423,
+   "tsp_stored_per_record_B": 263211,
+   "tsp_to_insurer_per_record_B": 263211,
+   "upload_per_policy_epoch_B": 8166113,
+   "tsp_storage_per_policy_epoch_B": 8159541,
+   "tsp_storage_10e6_policies_B": 8159541000000,
+   "tsp_to_insurer_per_policy_epoch_B": 8159541,
+   "tsp_storage_10e6_policies_TB": 8.16,
+   "tsp_storage_10e6_policies_GB": 8159.541
+  }
+ },
+ "ratios_SP2UBI_over": {
+  "A": {
+   "upload_per_record": 503.7,
+   "tsp_storage": 1407.5
+  },
+  "B": {
+   "upload_per_record": 498.9,
+   "tsp_storage": 1370.9
+  }
+ },
+ "operations_per_daily_record": {
+  "SP2UBI": {
+   "OBU": {
+    "bfv_encrypt": 1,
+    "hommac_tag_blocks": 2,
+    "sha256_commitments": 2,
+    "bbs04_sign": 1
+   },
+   "TSP": {
+    "bbs04_verify": 1,
+    "bfv_ct_ct_product": 1,
+    "bfv_rotation": 3,
+    "bfv_add": 4,
+    "bfv_encrypt_fill": 1,
+    "shuffle_entries": 1
+   },
+   "insurer": {
+    "bfv_decrypt": 1,
+    "hommac_verify_blocks": 2
+   }
+  },
+  "A": {
+   "OBU": {
+    "dot_product_mults": 6,
+    "hmac_sha256": 1,
+    "sha256_commitments": 2,
+    "kem_g1_scalar_mult": 2,
+    "kdf": 1,
+    "aead_encrypt": 1,
+    "bbs04_sign": 1
+   },
+   "TSP": {
+    "bbs04_verify": 1,
+    "shuffle_entries": 1
+   },
+   "insurer": {
+    "kem_g1_scalar_mult": 1,
+    "kdf": 1,
+    "aead_decrypt": 1,
+    "hmac_sha256": 1
+   }
+  },
+  "B": {
+   "OBU": {
+    "hmac_sha256": 1,
+    "sha256_commitments": 2,
+    "kem_g1_scalar_mult": 2,
+    "kdf": 1,
+    "aead_encrypt": 1,
+    "bbs04_sign": 1
+   },
+   "TSP": {
+    "bbs04_verify": 1,
+    "shuffle_entries": 1
+   },
+   "insurer": {
+    "kem_g1_scalar_mult": 1,
+    "kdf": 1,
+    "aead_decrypt": 1,
+    "hmac_sha256": 1,
+    "dot_product_mults": 6
+   }
+  },
+  "bbs04_sign_cost": {
+   "g1_scalar_mult": 12,
+   "multi_pairing_2": 1
+  },
+  "bbs04_verify_cost": {
+   "g1_scalar_mult": 13,
+   "multi_pairing_2": 1
+  }
+ }
+}

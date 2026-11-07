@@ -1,0 +1,18 @@
+{
+ "case": "single_key_ternary",
+ "attack": "bkw",
+ "log2_rop": null,
+ "infeasible": true,
+ "detail": {
+  "b": "3",
+  "ell": "2",
+  "t1": "0",
+  "t2": "3",
+  "#cod": "1256",
+  "#top": "0",
+  "#test": "7095",
+  "rop": "+Infinity",
+  "m": "+Infinity"
+ },
+ "estimator_commit": "53da5982597709ba0fdf94ea37a84d822310fd84"
+}

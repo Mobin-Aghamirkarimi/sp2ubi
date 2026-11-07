@@ -1,0 +1,32 @@
+{
+ "policies": 2000,
+ "records": 62000,
+ "weights": [
+  5956,
+  3609,
+  809,
+  0,
+  2348309,
+  221761
+ ],
+ "classes_from_score_alone_share": {
+  "score_eq_w0": 0.39570967741935487,
+  "event_only_explainable": 0.005887096774193548,
+  "weekday_mileage_needed": 0.5984032258064517
+ },
+ "score_eq_w0_split": {
+  "non_driving_day": 13762,
+  "event_free_weekend_drive": 10772
+ },
+ "weekday_driving_records": 35795,
+ "weekday_vector_unique_share": 0.7976533035340131,
+ "weekday_candidates_median": 1.0,
+ "weekday_candidates_q90": 8.0,
+ "per_policy_share_of_records_with_unique_weekday_feature_vector": {
+  "median": 0.9032258064516129,
+  "q10": 0.6774193548387096
+ },
+ "policies_whose_driving_day_count_is_determined": 0.0125,
+ "bounds": "mileage <= 16,383 (OBU cap), hard events <= 30 per day for the candidate count",
+ "note": "score = w_0 means no weekday mileage and no hard events: a non-driving day or an event-free weekend drive (weekend miles have weight 0)"
+}

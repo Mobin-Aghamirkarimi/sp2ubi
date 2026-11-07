@@ -1,0 +1,5 @@
+# Reference implementation and unit tests (Python 3.12, Linux x86-64); exact versions: core.lock
+openfhe==1.5.1.0.24.4
+py-arkworks-bls12381==0.5.0
+numpy==2.5.3
+pytest

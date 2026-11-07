@@ -1,0 +1,24 @@
+SP2UBI
+Copyright 2026 The SP2UBI authors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE), with the exceptions below.
+
+QuaDRiGa
+--------
+The speed-check simulation (speedcheck_sim/) uses QuaDRiGa v2.8.1 (Fraunhofer Heinrich Hertz Institute,
+https://github.com/fraunhoferhhi/QuaDRiGa, git 277866650eb115adb5b3e8ac252b0d1df073596d) under the QuaDRiGa Software
+License (non-commercial scientific use). QuaDRiGa is not part of this repository and is not covered by the Apache
+License. The file speedcheck_sim/tr37885/quadriga/patch/get_channels.diff modifies one file of QuaDRiGa,
+@qd_builder/get_channels.m: an optional fifth input ray_out; when it is set, every output channel also carries the
+per-ray coefficients (with the per-cluster factors applied) and the cluster index of each ray. With ray_out = 0 the
+function is unchanged. The modification serves the per-ray scatterer-mobility term of 3GPP TR 37.885 V15.3.0,
+clause 6.2.3. The patch is distributed under the QuaDRiGa Software License, whose text is reproduced in
+speedcheck_sim/tr37885/quadriga/patch/QuaDRiGa_License.txt (modification notice: NOTICE.md in the same folder). The
+script speedcheck_sim/tr37885/quadriga/patch/build_patched_tree.sh copies an unmodified QuaDRiGa checkout and applies
+the patch to that copy (default location speedcheck_sim/quadriga_patched); the patch is not merged into this
+repository.
+
+Data
+----
+The synthetic telematics data set of So, Boucher and Valdez (2021) is not part of this repository; data/fetch_so2021.sh
+downloads it from its authors' page under their terms (see data/README.md).

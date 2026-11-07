@@ -1,0 +1,38 @@
+{
+  "model": "additive non-negative Poisson (identity link) for NB_Claim, So et al. (2021)",
+  "feature_order": [
+    "days",
+    "offpeak_miles",
+    "rush_miles",
+    "weekend_miles",
+    "hard_brakes",
+    "hard_accels"
+  ],
+  "units": {
+    "days": 1,
+    "offpeak_miles": 0.1,
+    "rush_miles": 0.1,
+    "weekend_miles": 0.1,
+    "hard_brakes": 1,
+    "hard_accels": 1
+  },
+  "w_bits": 22,
+  "scale_S": 4294967296.0,
+  "weights": {
+    "days": 5956,
+    "offpeak_miles": 3609,
+    "rush_miles": 809,
+    "weekend_miles": 0,
+    "hard_brakes": 2348309,
+    "hard_accels": 221761
+  },
+  "max_daily_feature_values": {
+    "days": 1.0,
+    "offpeak_miles": 852.0,
+    "rush_miles": 503.0,
+    "weekend_miles": 362.0,
+    "hard_brakes": 10.0,
+    "hard_accels": 10.0
+  },
+  "interpretation": "expected claims over the epoch = sum_d sum_i w_i x_{i,d} / scale_S"
+}

@@ -1,0 +1,62 @@
+{
+ "message_bytes": {
+  "beacon": 122,
+  "certificate": 408,
+  "trailer": 340,
+  "trailer_without_smudging_term": 244
+ },
+ "enc_e_s_bytes": 96,
+ "bytes_per_second": {
+  "total": 1968,
+  "without_smudging_term": 1872,
+  "total_kB_per_s": 2.0,
+  "without_smudging_term_kB_per_s": 1.9
+ },
+ "subchannels_at_mcs11_10MHz": {
+  "beacon": {
+   "subchannels": 1,
+   "spare_bytes_to_tbs": 51
+  },
+  "certificate": {
+   "subchannels": 3,
+   "spare_bytes_to_tbs": 213
+  },
+  "trailer": {
+   "subchannels": 2,
+   "spare_bytes_to_tbs": 49
+  },
+  "trailer_without_smudging_term": {
+   "subchannels": 2,
+   "spare_bytes_to_tbs": 145
+  }
+ },
+ "subchannels_at_mcs8_10MHz_at_or_above_160kmh": {
+  "beacon": {
+   "subchannels": 1,
+   "spare_bytes_to_tbs": 15
+  },
+  "certificate": {
+   "subchannels": 3,
+   "spare_bytes_to_tbs": 77
+  },
+  "trailer": {
+   "subchannels": 3,
+   "spare_bytes_to_tbs": 145
+  },
+  "trailer_without_smudging_term": {
+   "subchannels": 2,
+   "spare_bytes_to_tbs": 73
+  }
+ },
+ "trailer_subchannel_count_unchanged_by_smudging_term_mcs11": true,
+ "trailer_subchannel_count_unchanged_by_smudging_term_mcs8": false,
+ "subchannel_subframes_per_second": 15,
+ "share_of_10MHz_pool_per_second_single_transmission": 0.003,
+ "share_of_10MHz_pool_per_second_one_blind_retransmission": 0.006,
+ "caveats": [
+  "payload level: MAC/RLC/PDCP and lower-layer headers are not included",
+  "one transport block per message (no packing), PSSCH PRB = 10 n - 2 per n sub-channels",
+  "pool shares are given at MCS 11 (below 160 km/h); MCS 8 (at or above 160 km/h) is given per message",
+  "the pool shares are not the CR of TS 103 574 for a given PPPP; they are channel-use figures for the congestion-control discussion"
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "passes": 500,
+ "Q": 16,
+ "prb": 50,
+ "seed": 2026101001,
+ "profile": {
+  "mean_diff": 3.0640063206965883e-07,
+  "sd_inhouse": 0.009045165695669983,
+  "sd_generator": 0.00904360278375136,
+  "sd_ratio": 0.9998272102500709,
+  "max_abs_pass_diff": 0.0001129205287262458,
+  "pass_criterion": true
+ },
+ "matched": {
+  "mean_diff": 6.827455034310592e-07,
+  "sd_inhouse": 0.0035269793118212285,
+  "sd_generator": 0.0035255280039444845,
+  "sd_ratio": 0.9995885125064726,
+  "max_abs_pass_diff": 0.00013039904056921792,
+  "pass_criterion": true
+ },
+ "C8_pass": true,
+ "arm": "interface",
+ "provenance": {
+  "tag": "primary",
+  "stage": 1,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {
+   "arm": "interface",
+   "passes": 500,
+   "Q": 16,
+   "prb": 50,
+   "seed": 2026101001
+  }
+ }
+}

@@ -1,0 +1,111 @@
+{
+  "openfhe": "1.5.1.0.24.4",
+  "N": 8192,
+  "moduli": [
+    1152921504606830593,
+    1152921504606748673
+  ],
+  "context_sigma": 3.19,
+  "p": 1099512938497,
+  "secret_key_ternary": true,
+  "public_key_error": {
+    "n": 16384,
+    "rms": 3.1989,
+    "max_abs": 13,
+    "mean": 0.0099
+  },
+  "relinearisation_key_error": {
+    "n": 32768,
+    "rms": 1.0139,
+    "max_abs": 4,
+    "mean": 0.0056,
+    "per_digit": [
+      {
+        "n": 16384,
+        "rms": 1.018,
+        "max_abs": 4,
+        "mean": 0.0171
+      },
+      {
+        "n": 16384,
+        "rms": 1.0097,
+        "max_abs": 4,
+        "mean": -0.0059
+      }
+    ]
+  },
+  "rotation_key_errors": {
+    "automorphism_5": {
+      "n": 32768,
+      "rms": 0.9981,
+      "max_abs": 4,
+      "mean": -0.011,
+      "per_digit": [
+        {
+          "n": 16384,
+          "rms": 0.9985,
+          "max_abs": 4,
+          "mean": -0.011
+        },
+        {
+          "n": 16384,
+          "rms": 0.9976,
+          "max_abs": 4,
+          "mean": -0.0111
+        }
+      ]
+    },
+    "automorphism_25": {
+      "n": 32768,
+      "rms": 1.0074,
+      "max_abs": 4,
+      "mean": -0.0017,
+      "per_digit": [
+        {
+          "n": 16384,
+          "rms": 1.0085,
+          "max_abs": 3,
+          "mean": 0.001
+        },
+        {
+          "n": 16384,
+          "rms": 1.0062,
+          "max_abs": 4,
+          "mean": -0.0044
+        }
+      ]
+    },
+    "automorphism_625": {
+      "n": 32768,
+      "rms": 1.0067,
+      "max_abs": 4,
+      "mean": 0.0094,
+      "per_digit": [
+        {
+          "n": 16384,
+          "rms": 1.0112,
+          "max_abs": 3,
+          "mean": 0.0007
+        },
+        {
+          "n": 16384,
+          "rms": 1.0022,
+          "max_abs": 4,
+          "mean": 0.0181
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "public_key_rms_expected": 3.19,
+    "evalkey_rms_expected": 1.0,
+    "public_key_rms_measured": 3.1989,
+    "relinearisation_rms_measured": 1.0139,
+    "rotation_rms_measured": [
+      0.9981,
+      1.0074,
+      1.0067
+    ],
+    "confirmed": true
+  }
+}

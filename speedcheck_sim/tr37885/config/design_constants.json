@@ -1,0 +1,345 @@
+{
+ "note": "Design constants of the speed path, fixed before any evaluation data. In the marked speed-path regions they are written as \\dcn{key} (printed value); every result as \\spn{key}; standards clauses as \\stdref{doc}{clause}. Only the identifier patterns below may appear as bare digits.",
+ "constants": [
+  {
+   "name": "site qualification limit",
+   "value": "6 %",
+   "origin": "Section V-C",
+   "key": "qual_limit"
+  },
+  {
+   "name": "survey crossings per site and speed class",
+   "value": "30",
+   "origin": "Section V-C",
+   "key": "survey_n"
+  },
+  {
+   "name": "traffic crossings per site and speed class (evaluation)",
+   "value": "60",
+   "origin": "",
+   "key": "traffic_n"
+  },
+  {
+   "name": "simulated sites per site type",
+   "value": "10",
+   "origin": "study-1 (no extension)",
+   "key": "sites_n"
+  },
+  {
+   "name": "residual gate",
+   "value": "1.3",
+   "origin": "Section V-C",
+   "key": "gate"
+  },
+  {
+   "name": "falsification margin",
+   "value": "1.5",
+   "origin": "falsification margin of the speed-check design",
+   "key": "margin"
+  },
+  {
+   "name": "decoding window",
+   "value": "25 %",
+   "origin": "Section V-C",
+   "key": "window"
+  },
+  {
+   "name": "consistency cut",
+   "value": "1.5",
+   "origin": "the consistency simulation study-1",
+   "key": "zcut"
+  },
+  {
+   "name": "speed classes",
+   "value": "10, 15, 20, 30, 38 m/s",
+   "origin": "",
+   "key": "speeds"
+  },
+  {
+   "name": "RSU head height",
+   "value": "5 m",
+   "origin": "TR 37.885 Table 6.1.4-1",
+   "key": "head_h"
+  },
+  {
+   "name": "site length",
+   "value": "100 m",
+   "origin": "Section V-C",
+   "key": "site_L"
+  },
+  {
+   "name": "carrier",
+   "value": "5.9 GHz",
+   "origin": "Section V-C",
+   "key": "fc"
+  },
+  {
+   "name": "standard and tool versions",
+   "value": "TR 37.885 V15.3.0; TR 38.901; QuaDRiGa v2.8.1",
+   "origin": "TR 37.885, TR 38.901 and tool versions",
+   "key": "versions"
+  },
+  {
+   "name": "head frequency stability",
+   "value": "0.1 ppb",
+   "origin": "Section V-C",
+   "key": "head_ppb"
+  },
+  {
+   "name": "PRB allocations",
+   "value": "10, 20, 50",
+   "origin": "(variants)",
+   "key": "prbs"
+  },
+  {
+   "name": "Huber constant of the fit (d)",
+   "value": "1.345",
+   "origin": "",
+   "key": "huber_c"
+  },
+  {
+   "name": "scope thresholds",
+   "value": "0.7, 0.3",
+   "origin": "",
+   "key": "scope_thr"
+  },
+  {
+   "name": "optimism-check alpha",
+   "value": "0.025",
+   "origin": "",
+   "key": "alpha"
+  },
+  {
+   "name": "Holm family size",
+   "value": "6",
+   "origin": "",
+   "key": "holm_m"
+  },
+  {
+   "name": "bootstrap resamples",
+   "value": "10,000",
+   "origin": "",
+   "key": "boot_B"
+  },
+  {
+   "name": "P_LOS formula constants",
+   "value": "1.05, 0.0114",
+   "origin": "TR 37.885 Table 6.2-1",
+   "key": "plos_consts"
+  },
+  {
+   "name": "honest VSS offsets",
+   "value": "U(-3, +6) %, 0.5 % epoch term",
+   "origin": "the base decision simulation (inhouse/decisions_base.py HONEST)",
+   "key": "vss_model"
+  },
+  {
+   "name": "urban LOS speed classes",
+   "value": "10–15 m/s",
+   "origin": "(P1)",
+   "key": "v_P1"
+  },
+  {
+   "name": "highway LOS speed classes",
+   "value": "20–38 m/s",
+   "origin": "(P2)",
+   "key": "v_P2"
+  },
+  {
+   "name": "urban blocked-crossing speed",
+   "value": "15 m/s",
+   "origin": "(P3)",
+   "key": "v_P3"
+  },
+  {
+   "name": "qualified-site traffic error flag (margin x limit)",
+   "value": "9 %",
+   "origin": "(1.5 x 6 %)",
+   "key": "over_margin"
+  },
+  {
+   "name": "MAD consistency constant",
+   "value": "1.4826",
+   "origin": "(normal consistency of the MAD)",
+   "key": "mad_c"
+  },
+  {
+   "name": "frequency-only manipulation tested",
+   "value": "−10 %",
+   "origin": "(beta)",
+   "key": "beta_freq"
+  },
+  {
+   "name": "separation threshold of the frequency-only claim",
+   "value": "1",
+   "origin": "(Z < 1 restricts)",
+   "key": "z_sep"
+  },
+  {
+   "name": "patch identity: largest relative difference (term off vs unpatched)",
+   "value": "4.5·10⁻¹⁶",
+   "origin": "identity test of the QuaDRiGa patch (max 4.544e-16, before the pilot)",
+   "key": "patch_id_max"
+  },
+  {
+   "name": "patch identity: test passes",
+   "value": "120",
+   "origin": "identity test of the QuaDRiGa patch",
+   "key": "patch_id_n"
+  },
+  {
+   "name": "D-qual: sites with traffic crossings",
+   "value": "5",
+   "origin": "branch 4 (sites 0–4 full)",
+   "key": "dqual_sites"
+  },
+  {
+   "name": "U memory contingency: traffic crossings",
+   "value": "40",
+   "origin": "constants evaluation_v5.memory.u_contingency",
+   "key": "ucont_traffic_n"
+  },
+  {
+   "name": "freshness check",
+   "value": "2 ms",
+   "origin": "Section IV-C, threat classes",
+   "key": "fresh_ms"
+  },
+  {
+   "name": "measured V2V K: carrier range",
+   "value": "5.6–5.9 GHz",
+   "origin": "published V2V measurements",
+   "key": "lit_fc"
+  },
+  {
+   "name": "measured V2V K: highway (general LOS obstruction, approaching traffic jam), means",
+   "value": "7.6–8.1 dB",
+   "origin": "published V2V measurements (7.6, 8.1 dB)",
+   "key": "lit_k_highway"
+  },
+  {
+   "name": "measured V2V K: pure LOS (values around)",
+   "value": "15 dB",
+   "origin": "published V2V measurements (Section IV-A of the measurement paper: 'values around 15 dB')",
+   "key": "lit_k_los"
+  },
+  {
+   "name": "measured V2V K: iron bridge, urban viaduct with soundproof walls, bridge with road lamps (means)",
+   "value": "0.7–4.0 dB",
+   "origin": "published V2V measurements (0.67–3.96 dB)",
+   "key": "lit_k_viaduct"
+  },
+  {
+   "name": "TR 37.885 sidelink K: urban LOS",
+   "value": "3.48 dB",
+   "origin": "TR 37.885 Table 6.2.3-1",
+   "key": "tr_k_urban"
+  },
+  {
+   "name": "TR 37.885 sidelink K: highway LOS",
+   "value": "9 dB",
+   "origin": "TR 37.885 Table 6.2.3-1",
+   "key": "tr_k_highway"
+  },
+  {
+   "name": "TR 38.901 UMa / RMa LOS K",
+   "value": "9 / 7 dB",
+   "origin": "TR 38.901 Table 7.5-6 via TR 37.885 Table 6.2.1-2",
+   "key": "tr_k_bs"
+  },
+  {
+   "name": "measured V2V K: road crossings, urban and suburban (means; the K-anchor range)",
+   "value": "−0.6 to 4.5 dB",
+   "origin": "published V2V measurements (crossing-urban −0.6, 0.1 dB; crossing-suburban 3.7, 4.5 dB)",
+   "key": "lit_k_crossing"
+  },
+  {
+   "name": "measured V2V K: slow traffic (mean)",
+   "value": "4.4 dB",
+   "origin": "published V2V measurements (slow-traffic 4.4 dB)",
+   "key": "lit_k_slow"
+  },
+  {
+   "name": "honest false-punitive target per vehicle-year (fallback and claim condition)",
+   "value": "10⁻³",
+   "origin": "the decision simulation design target (residual-rule alpha)",
+   "key": "punitive_target"
+  },
+  {
+   "name": "reach share for the claim branch",
+   "value": "30 %",
+   "origin": "scope rule partly-covered threshold",
+   "key": "feas_share"
+  },
+  {
+   "name": "notice-rule threshold",
+   "value": "−4 %",
+   "origin": "Section V-C; inhouse/decisions_base.py S_RULE",
+   "key": "r1_thr"
+  },
+  {
+   "name": "honest VSS band edge",
+   "value": "−3 %",
+   "origin": "the decision simulation honest model U(-3, +6) %",
+   "key": "band_edge"
+  },
+  {
+   "name": "oversized-tyre sensitivity scale",
+   "value": "−5 %",
+   "origin": "decision-rule design (oversized tyre)",
+   "key": "tyre_s"
+  },
+  {
+   "name": "planned minimum of gated test crossings per site and speed class for the decision-level simulation",
+   "value": "50",
+   "origin": "study1_constants.json conventions.min_eval_e2",
+   "key": "min_eval_e2"
+  },
+  {
+   "name": "floor of gated test crossings per site and speed class (below it the stratum is not covered)",
+   "value": "20",
+   "origin": "study1_constants.json conventions.min_eval_e2_floor = min_ref",
+   "key": "min_eval_e2_floor"
+  },
+  {
+   "name": "entry keep probability at burst boundaries applied by the decision-level simulation",
+   "value": "1 − 110 m/(v · 40 s)",
+   "origin": "inhouse/decisions_monitor.py keep_prob (ARC_M = 110 m, BURST_S = 40 s); Table A footnote",
+   "key": "burst_keep"
+  },
+  {
+   "name": "largest honest share of z_q = −1 for which the consistency rule has a critical region at five entries (α^{1/5})",
+   "value": "0.11",
+   "origin": "inhouse/results/consistency_min_crossings.json alpha_pow_1_5 = 0.1108 (α = 10⁻³/12/5)",
+   "key": "alpha_pow_1_5"
+  },
+  {
+   "name": "minimum number of entries per epoch for the three detection rules",
+   "value": "5",
+   "origin": "the decision simulation M_MIN = 5; the consistency simulation ladder first threshold at M = 5",
+   "key": "m_min"
+  }
+ ],
+ "allowed_patterns": [
+  "V\\d+\\.\\d+\\.\\d+",
+  "v\\d+\\.\\d+\\.\\d+",
+  "(?<=TR )\\d{2}\\.\\d{3}",
+  "(?<=TS )\\d{2}\\.\\d{3}",
+  "(?<=EN )\\d{3} \\d{3}",
+  "(?<=Section )[IVX]+(-[A-Z])?",
+  "(?<=Supplement S)\\d+",
+  "(?<=S-)x",
+  "95(?=~?\\\\? ?\\\\?%?\\s*(CI|confidence))",
+  "(?<=Rel-)\\d+",
+  "(?<=R)\\d\\.\\d+",
+  "(?<=Table )[AB]\\b",
+  "\\b3GPP\\b",
+  "\\b(?:LTE-)?V2[VXRBIP]\\b",
+  "\\bq(?:10|50|90|99)\\b",
+  "\\bUB95\\b",
+  "(?<=\\()R[23](?=\\))",
+  "z_q\\s*=\\s*[−-]1",
+  "\\b99th(?=[- ]percentile)",
+  "\\b2-of-2\\b"
+ ]
+}

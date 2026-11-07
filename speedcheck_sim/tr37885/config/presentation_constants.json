@@ -1,0 +1,557 @@
+{
+ "note": "Design-constant keys of the final paper (presentation only); each value is taken unchanged from the source named. The pre-specified constants are in design_constants.json. Printed only as \\dcn{key}. Stored as data.",
+ "constants": [
+  {
+   "name": "crossing-window margin beyond each head (fraction of the baseline L)",
+   "value": "0.05",
+   "origin": "study1_constants.json pipeline_constants_from_code.window_margin_L",
+   "key": "window_margin"
+  },
+  {
+   "name": "traffic crossings over which the consistency test standardizes d (median and MAD)",
+   "value": "150–200",
+   "origin": "study1_constants.json pipeline_constants_from_code.traffic_window",
+   "key": "traffic_window"
+  },
+  {
+   "name": "residual monitor: crossings in the running median",
+   "value": "25",
+   "origin": "study1_constants.json pipeline_constants_from_code.monitor_window",
+   "key": "monitor_window"
+  },
+  {
+   "name": "residual monitor: ratio to the surveyed reference that raises the precision level",
+   "value": "1.25",
+   "origin": "study1_constants.json pipeline_constants_from_code.monitor_raise",
+   "key": "monitor_raise"
+  },
+  {
+   "name": "residual monitor: ratio to the surveyed reference that stops the class",
+   "value": "1.6",
+   "origin": "study1_constants.json pipeline_constants_from_code.monitor_stop",
+   "key": "monitor_stop"
+  },
+  {
+   "name": "receive-head offset (GNSS-disciplined reference)",
+   "value": "5 ppb",
+   "origin": "Section V-C; TS 36.101 clause 6.5.1G; no code constant",
+   "key": "head_offset"
+  },
+  {
+   "name": "OBU oscillator: own carrier error (GNSS-disciplined)",
+   "value": "5 ppb",
+   "origin": "Section V-C; TS 36.101 clause 6.5.1G (300 Hz + 30 Hz own error, 5 ppb); no code constant",
+   "key": "obu_osc_ppb"
+  },
+  {
+   "name": "OBU carrier randomization (two components, per burst and per beacon)",
+   "value": "±300 Hz",
+   "origin": "study1_constants.json beacon.carrier_randomisation_hz; Section V-C; TS 36.101 clause 6.5.1G",
+   "key": "carrier_rand"
+  },
+  {
+   "name": "speed-beacon rate",
+   "value": "10 Hz",
+   "origin": "sp2ubi/speedcheck.py BEACON_PERIOD_MS = 100 ms; study1_constants.json pipeline_constants_from_code.BEACON_PERIOD_MS",
+   "key": "beacon_rate"
+  },
+  {
+   "name": "period of the burst certificate and the rolling trailer",
+   "value": "1 s",
+   "origin": "sp2ubi/speedcheck.py ROLL_PERIOD_MS; study1_constants.json pipeline_constants_from_code.ROLL_PERIOD_MS",
+   "key": "roll_period"
+  },
+  {
+   "name": "burst length",
+   "value": "40 s",
+   "origin": "sp2ubi/speedcheck.py BURST_MS; study1_constants.json pipeline_constants_from_code.BURST_MS",
+   "key": "burst_s"
+  },
+  {
+   "name": "minimum span of the crossing window by the beacons of one burst",
+   "value": "90 %",
+   "origin": "sp2ubi/speedcheck.py SPAN_MIN; study1_constants.json pipeline_constants_from_code.SPAN_MIN",
+   "key": "span_min"
+  },
+  {
+   "name": "minimum received share of the beacon indices spanned inside the window",
+   "value": "80 %",
+   "origin": "sp2ubi/speedcheck.py MIN_COVER; study1_constants.json pipeline_constants_from_code.MIN_COVER",
+   "key": "min_cover"
+  },
+  {
+   "name": "RSU memory of bursts already used (two burst lengths)",
+   "value": "80 s",
+   "origin": "sp2ubi/speedcheck.py USED_HORIZON_MS = 2 * BURST_MS",
+   "key": "used_burst_memory"
+  },
+  {
+   "name": "speed scale exponent (scale 2^s_bits)",
+   "value": "34",
+   "origin": "sp2ubi/speedcheck.py S_BITS; study1_constants.json pipeline_constants_from_code.S_BITS",
+   "key": "s_bits"
+  },
+  {
+   "name": "largest c for which an entry is formed (exponent: c <= 2^c_max_bits)",
+   "value": "20",
+   "origin": "sp2ubi/speedcheck.py C_MAX = 1 << 20 (check_bounds)",
+   "key": "c_max_bits"
+  },
+  {
+   "name": "standard deviation of the smudging term (share of the speed scale)",
+   "value": "0.1 %",
+   "origin": "sp2ubi/speedcheck.py SMUDGE_FRAC; study1_constants.json pipeline_constants_from_code.SMUDGE_FRAC",
+   "key": "smudge_frac"
+  },
+  {
+   "name": "integer speed unit",
+   "value": "0.1 m/s",
+   "origin": "sp2ubi/speedcheck.py UNIT_MPS; study1_constants.json pipeline_constants_from_code.UNIT_MPS",
+   "key": "speed_unit"
+  },
+  {
+   "name": "scale of the integer matched weights (round(scale * g^2))",
+   "value": "64",
+   "origin": "sp2ubi/speedcheck.py (W_MAX_WEIGHT comment, G = 64); Section V-C",
+   "key": "matched_scale"
+  },
+  {
+   "name": "number of precision levels",
+   "value": "8",
+   "origin": "sp2ubi/speedcheck.py N_LEVELS; study1_constants.json pipeline_constants_from_code.N_LEVELS",
+   "key": "n_levels"
+  },
+  {
+   "name": "lowest precision level",
+   "value": "0.26 %",
+   "origin": "study1_constants.json evaluation_v4.level_grid.levels[0] = 0.002585",
+   "key": "level_min"
+  },
+  {
+   "name": "highest precision level",
+   "value": "6.89 %",
+   "origin": "study1_constants.json evaluation_v4.level_grid.levels[-1] = 0.068900",
+   "key": "level_max"
+  },
+  {
+   "name": "minimum qualified sites per pair of precision level and speed class (deployment parameter)",
+   "value": "5",
+   "origin": "Section V-C; deployment parameter, no code constant",
+   "key": "n_s"
+  },
+  {
+   "name": "release of an entry: uniform delay after the end of its epoch, upper end",
+   "value": "24 h",
+   "origin": "sp2ubi/speedcheck.py FORWARD_DELAY_S = 86,400 s; study1_constants.json pipeline_constants_from_code.FORWARD_DELAY_S",
+   "key": "release_window"
+  },
+  {
+   "name": "release of an entry after the end of its epoch (uniform)",
+   "value": "[0, 24) h",
+   "origin": "sp2ubi/speedcheck.py FORWARD_DELAY_S",
+   "key": "release_interval"
+  },
+  {
+   "name": "spread of the count-report time",
+   "value": "1 h",
+   "origin": "sp2ubi/speedcheck.py COUNT_REPORT_SPREAD_S = 3,600 s",
+   "key": "count_spread"
+  },
+  {
+   "name": "count report after the end of the epoch (uniform)",
+   "value": "[24, 25) h",
+   "origin": "sp2ubi/speedcheck.py FORWARD_DELAY_S, COUNT_REPORT_SPREAD_S (speedcheck.count_report_time)",
+   "key": "count_interval"
+  },
+  {
+   "name": "epochs per year",
+   "value": "12",
+   "origin": "inhouse/decisions_base.py EPOCHS",
+   "key": "epochs_per_year"
+  },
+  {
+   "name": "honest between-epoch term in sigma_eff",
+   "value": "0.5 %",
+   "origin": "inhouse/decisions_base.py HONEST['SIGMA0'] (used as the added term of sigma_eff)",
+   "key": "sigma_epoch"
+  },
+  {
+   "name": "winsorization of the epoch mean and cap of the standardized residual (in sigma_eff)",
+   "value": "2.5",
+   "origin": "inhouse/decisions_base.py C_WIN",
+   "key": "c_win"
+  },
+  {
+   "name": "gap below the honest band edge after a passed inspection (notice rule)",
+   "value": "1 %",
+   "origin": "inhouse/decisions.py S_GAP = S_RULE - S_EDGE (-0.04 - (-0.03))",
+   "key": "notice_gap"
+  },
+  {
+   "name": "one-sided level of the notice rule",
+   "value": "10⁻³",
+   "origin": "inhouse/decisions_base.py ALPHA_R1",
+   "key": "alpha_notice"
+  },
+  {
+   "name": "normal quantile of the notice rule (z subscript)",
+   "value": "0.999",
+   "origin": "1 - ALPHA_R1; inhouse/decisions.py; study1_constants.json evaluation_v5.escalation.rule (z_0.999)",
+   "key": "notice_q"
+  },
+  {
+   "name": "consecutive flagged epochs of the notice rule",
+   "value": "3",
+   "origin": "inhouse/decisions.py ESC_K; inhouse/decisions_levels.py runs(r1, 3, 3)",
+   "key": "esc_k"
+  },
+  {
+   "name": "safety factor in the false-flag level of the residual and consistency rules (alpha = target / (epochs per year * factor))",
+   "value": "5",
+   "origin": "inhouse/decisions_base.py ALPHA_R2 = TARGET_YEAR / EPOCHS / 5",
+   "key": "alpha_safety"
+  },
+  {
+   "name": "flagged epochs that make a punitive outcome",
+   "value": "2",
+   "origin": "inhouse/decisions_levels.py runs(r2, 2, 3)",
+   "key": "punitive_k"
+  },
+  {
+   "name": "consecutive epochs over which the punitive count runs",
+   "value": "3",
+   "origin": "inhouse/decisions_levels.py runs(r2, 2, 3)",
+   "key": "punitive_span"
+  },
+  {
+   "name": "alpha_pow_1_5 in percent (largest honest share of z_q = -1 with a consistency-rule threshold at five entries)",
+   "value": "11 %",
+   "origin": "inhouse/results/consistency_min_crossings.json alpha_pow_1_5 = 0.1108 (same source as the constant alpha_pow_1_5)",
+   "key": "alpha_pow_1_5_pct"
+  },
+  {
+   "name": "honest share of z_q = -1, in-house channel model (model result, not a design constant)",
+   "value": "7.1 %",
+   "origin": "inhouse/results/consistency_min_crossings.json by_kind.trf.p_minus = 0.0705 (governing_kind = trf); in-house channel only",
+   "key": "p_minus_inhouse"
+  },
+  {
+   "name": "share of epochs with fewer than five entries at five crossings per epoch on average (Poisson; model result, not a design constant)",
+   "value": "44 %",
+   "origin": "inhouse/results/consistency_min_crossings.json poisson_share_M_below_5.5 = 0.4405",
+   "key": "poisson_low_m"
+  },
+  {
+   "name": "largest evaluated share of a site's traffic adopting a frequency-only manipulation (in-house re-standardisation analysis; in-house channel only)",
+   "value": "0.3",
+   "origin": "contamination check of the consistency test (in-house re-standardisation; f in 0.0, 0.1, 0.2, 0.3)",
+   "key": "trf_share_eval"
+  },
+  {
+   "name": "share at which detection is expected to be lost (breakdown point of the running median; not simulated)",
+   "value": "0.5",
+   "origin": "breakdown point of the running median of the consistency test (not simulated)",
+   "key": "trf_share_break"
+  },
+  {
+   "name": "lowest simulated crossing speed",
+   "value": "10 m/s",
+   "origin": "study1_constants.json evaluation_v4.run_cells (= design constant speeds)",
+   "key": "v_min"
+  },
+  {
+   "name": "range of the simulated crossing speeds (straight crossings)",
+   "value": "10–38 m/s",
+   "origin": "study1_constants.json evaluation_v4.run_cells (= design constant speeds)",
+   "key": "v_range"
+  },
+  {
+   "name": "smaller beacon-erasure rate of the erasure sensitivities (i.i.d. and Gilbert-Elliott)",
+   "value": "10 %",
+   "origin": "study1_constants.json erasures.iid[0] (= gilbert_elliott.rates[0]; evaluation_v5.k5_erasures_v5)",
+   "key": "erasure_lo"
+  },
+  {
+   "name": "larger beacon-erasure rate of the erasure sensitivities",
+   "value": "30 %",
+   "origin": "study1_constants.json erasures.iid[1] (= gilbert_elliott.rates[1])",
+   "key": "erasure_hi"
+  },
+  {
+   "name": "mean burst length of the Gilbert-Elliott erasures (beacons)",
+   "value": "3",
+   "origin": "study1_constants.json erasures.gilbert_elliott.mean_burst",
+   "key": "erasure_burst"
+  },
+  {
+   "name": "manipulation scale of the intermittent and framing rows printed in Table 9",
+   "value": "−15 %",
+   "origin": "rows printed in Table 9; in the grid of inhouse/decisions.py",
+   "key": "t14_s"
+  },
+  {
+   "name": "shares of days of the intermittent rows printed in Table 9",
+   "value": "10 and 30 %",
+   "origin": "rows printed in Table 9; days grid of inhouse/decisions.py (0.05, 0.1, 0.2, 0.3, 0.5)",
+   "key": "t14_days"
+  },
+  {
+   "name": "smaller share of days printed",
+   "value": "10 %",
+   "origin": "rows printed in Table 9",
+   "key": "t14_days_lo"
+  },
+  {
+   "name": "larger share of days printed",
+   "value": "30 %",
+   "origin": "rows printed in Table 9",
+   "key": "t14_days_hi"
+  },
+  {
+   "name": "relayed passes per epoch of the framing rows printed in Table 9",
+   "value": "1, 3 and 8",
+   "origin": "rows printed in Table 9; framing grid of inhouse/decisions.py (1, 2, 3, 5, 8)",
+   "key": "t14_relay"
+  },
+  {
+   "name": "speed range of the highway vehicle profile",
+   "value": "15–38 m/s",
+   "origin": "inhouse/decisions_levels.py PROFILES['highway'] = {15: 0.1, 20: 0.3, 30: 0.4, 38: 0.2}",
+   "key": "prof_hw_v"
+  },
+  {
+   "name": "speed range of the suburban vehicle profile",
+   "value": "10–30 m/s",
+   "origin": "inhouse/decisions_levels.py PROFILES['suburban'] = {10: 0.1, 15: 0.3, 20: 0.4, 30: 0.2}",
+   "key": "prof_sub_v"
+  },
+  {
+   "name": "speed range of the urban vehicle profile",
+   "value": "10–20 m/s",
+   "origin": "inhouse/decisions_levels.py PROFILES['urban'] = {10: 0.6, 15: 0.3, 20: 0.1}",
+   "key": "prof_urb_v"
+  },
+  {
+   "name": "profile speeds below the lowest highway class (they take that class in lambda_eff)",
+   "value": "10 and 15 m/s",
+   "origin": "inhouse/decisions_levels.py PROFILES; study1_constants.json grid.P2.speeds",
+   "key": "prof_below_hw"
+  },
+  {
+   "name": "simulated highway speed classes",
+   "value": "20, 30 and 38 m/s",
+   "origin": "study1_constants.json grid.P2.speeds",
+   "key": "v_P2_classes"
+  },
+  {
+   "name": "lowest simulated highway speed class",
+   "value": "20 m/s",
+   "origin": "study1_constants.json grid.P2.speeds[0]",
+   "key": "v_P2_min"
+  },
+  {
+   "name": "speed of the urban LOS cell of the frequency-only separation figure",
+   "value": "15 m/s",
+   "origin": "study1_constants.json evaluation_v4.k3_c4_light.cells (criteria c4_light; make_reports.fig_d)",
+   "key": "fig6_v_urban"
+  },
+  {
+   "name": "speed of the highway LOS cell of the frequency-only separation figure",
+   "value": "30 m/s",
+   "origin": "study1_constants.json evaluation_v4.k3_c4_light.cells",
+   "key": "fig6_v_highway"
+  },
+  {
+   "name": "Ricean K-factor of the in-house curve on which the SNR floor of Fig. 6 (C|k4|snr_floor_db) is read",
+   "value": "3.5 dB",
+   "origin": "tr37885/reports/make_reports.py fig_c (the C|k4|snr_floor_db rule reads the K_db == 3.5 curve)",
+   "key": "fig5_k"
+  },
+  {
+   "name": "residual-gate factors of the gate sensitivity (and no gate)",
+   "value": "1.2, 1.3 and 1.5",
+   "origin": "study1_constants.json evaluation_v5.sensitivity.gate",
+   "key": "sens_gate"
+  },
+  {
+   "name": "qualification limits of the qualification sensitivity",
+   "value": "5, 6 and 7 %",
+   "origin": "study1_constants.json evaluation_v5.sensitivity.sigma_q",
+   "key": "sens_qual"
+  },
+  {
+   "name": "accepted windows of the window sensitivity",
+   "value": "20, 25 and 30 %",
+   "origin": "study1_constants.json evaluation_v5.sensitivity.window",
+   "key": "sens_window"
+  },
+  {
+   "name": "consistency cuts of the cut sensitivity",
+   "value": "1, 1.5 and 2",
+   "origin": "study1_constants.json evaluation_v5.sensitivity.z_cut",
+   "key": "sens_zcut"
+  },
+  {
+   "name": "link-budget offsets of the SNR sensitivity",
+   "value": "−10 and −20 dB",
+   "origin": "study1_constants.json evaluation_v5.sensitivity.snr_offsets_db (non-zero entries)",
+   "key": "sens_snr"
+  },
+  {
+   "name": "largest link-budget reduction of the SNR sensitivity",
+   "value": "−20 dB",
+   "origin": "study1_constants.json evaluation_v5.sensitivity.snr_offsets_db",
+   "key": "sens_snr_min"
+  },
+  {
+   "name": "channel-agreement ratio of cell P1-10 with the snapshot-placement factor (TR 37.885 central spread times s_place over our channel model's; variant that sets the verdict)",
+   "value": "1.90",
+   "origin": "results/criteria_primary.json optimism_governing_s_place['P1-10'].R = 1.904036747516468; verdict contradicted (= optimism_governing verdict); dec2 as the pre-specified A|<cell>|R",
+   "key": "A|P1-10|R_splace"
+  },
+  {
+   "name": "channel-agreement ratio of cell P1-15 with the snapshot-placement factor (TR 37.885 central spread times s_place over our channel model's; variant that sets the verdict)",
+   "value": "1.53",
+   "origin": "results/criteria_primary.json optimism_governing_s_place['P1-15'].R = 1.5322032380777202; verdict contradicted (= optimism_governing verdict); dec2 as the pre-specified A|<cell>|R",
+   "key": "A|P1-15|R_splace"
+  },
+  {
+   "name": "channel-agreement ratio of cell P2-20 with the snapshot-placement factor (TR 37.885 central spread times s_place over our channel model's; variant that sets the verdict)",
+   "value": "1.31",
+   "origin": "results/criteria_primary.json optimism_governing_s_place['P2-20'].R = 1.312499923752246; verdict undetermined (= optimism_governing verdict); dec2 as the pre-specified A|<cell>|R",
+   "key": "A|P2-20|R_splace"
+  },
+  {
+   "name": "channel-agreement ratio of cell P2-30 with the snapshot-placement factor (TR 37.885 central spread times s_place over our channel model's; variant that sets the verdict)",
+   "value": "1.60",
+   "origin": "results/criteria_primary.json optimism_governing_s_place['P2-30'].R = 1.600140725816405; verdict contradicted (= optimism_governing verdict); dec2 as the pre-specified A|<cell>|R",
+   "key": "A|P2-30|R_splace"
+  },
+  {
+   "name": "channel-agreement ratio of cell P2-38 with the snapshot-placement factor (TR 37.885 central spread times s_place over our channel model's; variant that sets the verdict)",
+   "value": "1.61",
+   "origin": "results/criteria_primary.json optimism_governing_s_place['P2-38'].R = 1.605161126876705; verdict contradicted (= optimism_governing verdict); dec2 as the pre-specified A|<cell>|R",
+   "key": "A|P2-38|R_splace"
+  },
+  {
+   "name": "evaluated pass rate 1 of the decision simulation (Table 9 column header)",
+   "value": "5",
+   "origin": "inhouse/decisions.py lams = (5, 15, 40); columns of numbers_primary.json B|honest|...",
+   "key": "t14_lam_1"
+  },
+  {
+   "name": "evaluated pass rate 2 of the decision simulation (Table 9 column header)",
+   "value": "15",
+   "origin": "inhouse/decisions.py lams = (5, 15, 40); columns of numbers_primary.json B|honest|...",
+   "key": "t14_lam_2"
+  },
+  {
+   "name": "evaluated pass rate 3 of the decision simulation (Table 9 column header)",
+   "value": "40",
+   "origin": "inhouse/decisions.py lams = (5, 15, 40); columns of numbers_primary.json B|honest|...",
+   "key": "t14_lam_3"
+  },
+  {
+   "name": "entries per crossing of a qualified site at highway-type sites (burst-boundary loss, quality-gate discard and qualification; both channel models, highway and suburban profiles)",
+   "value": "0.78–0.86",
+   "origin": "tr37885/config/entry_yield_recount.json yields.<tr|inhouse>.<highway|suburban>.y_gate",
+   "key": "entry_yield_total"
+  },
+  {
+   "name": "entries per crossing of a qualified site as simulated in the decision-level rows (qualification and burst-boundary loss only; gate discard not removed)",
+   "value": "0.81–0.89",
+   "origin": "tr37885/config/entry_yield_recount.json yields.<tr|inhouse>.<highway|suburban>.y_sim",
+   "key": "entry_yield_sim"
+  },
+  {
+   "name": "share of epochs with fewer than five entries at the lowest pass rate (homogeneous exposure; burst-boundary loss and gate discard included; both channel models, highway and suburban profiles)",
+   "value": "57–65 %",
+   "origin": "tr37885/config/entry_yield_recount.json epoch.<arm>|y_gate|cv0|lam5",
+   "key": "low_m_epoch_lam5"
+  },
+  {
+   "name": "share of epochs with fewer than five entries at the lowest pass rate in the stored decision-level rows (homogeneous exposure; both channel models, highway and suburban profiles)",
+   "value": "54–62 %",
+   "origin": "results/adapter/e2_extracted_primary.json and inhouse/results/decisions_L8_full.json honest cv0.0|<profile>|5 low_m_share",
+   "key": "low_m_epoch_lam5_sim"
+  },
+  {
+   "name": "share of honest policy-years with fewer than five entries, TR 37.885, heterogeneous exposure (CV 1), lowest pass rate, gate discard included (highway and suburban profiles)",
+   "value": "9.9–10.1 %",
+   "origin": "tr37885/config/entry_yield_recount.json annual.tr|<profile>|y_gate|cv1|lam5|m5",
+   "key": "silence_m5_cv1_lam5"
+  },
+  {
+   "name": "as silence_m5_cv1_lam5 with fewer than three entries",
+   "value": "6.1–6.2 %",
+   "origin": "tr37885/config/entry_yield_recount.json annual.tr|<profile>|y_gate|cv1|lam5|m3",
+   "key": "silence_m3_cv1_lam5"
+  },
+  {
+   "name": "as silence_m5_cv1_lam5 at the middle pass rate",
+   "value": "3.5 %",
+   "origin": "tr37885/config/entry_yield_recount.json annual.tr|<profile>|y_gate|cv1|lam15|m5",
+   "key": "silence_m5_cv1_lam15"
+  },
+  {
+   "name": "as silence_m5_cv1_lam5 at the highest pass rate",
+   "value": "1.3 %",
+   "origin": "tr37885/config/entry_yield_recount.json annual.tr|<profile>|y_gate|cv1|lam40|m5",
+   "key": "silence_m5_cv1_lam40"
+  },
+  {
+   "name": "bound on the share of honest policy-years with fewer than three, four or five entries under homogeneous exposure (every printed pass rate, both channel models, every yield variant)",
+   "value": "\\ensuremath{10^{-14}}",
+   "origin": "tr37885/config/entry_yield_recount.json annual.*|cv0|* max = 4.5e-15",
+   "key": "silence_cv0_bound"
+  },
+  {
+   "name": "motion gate of the speed beacons (deployment option, not simulated): the OBU sends beacons only while max(VSS speed, speed of its GNSS receiver) exceeds this value",
+   "value": "5 m/s",
+   "origin": "design value of the deployment option (not simulated); below the lowest simulated speed",
+   "key": "beacon_gate_v"
+  },
+  {
+   "name": "mean of the Ricean K-factor population of the K-population value (TR 38.901 UMi LOS)",
+   "value": "9 dB",
+   "origin": "inhouse/decisions_levels.py K_MEAN; = UMi-Street Canyon LOS row of TR 38.901 Table 7.5-6",
+   "key": "kpop_mu"
+  },
+  {
+   "name": "standard deviation of that population",
+   "value": "5 dB",
+   "origin": "inhouse/decisions_levels.py K_SD; TR 38.901 Table 7.5-6",
+   "key": "kpop_sd"
+  },
+  {
+   "name": "survey exclusion: sites with a smaller K-factor are outside the population",
+   "value": "5 dB",
+   "origin": "inhouse/decisions_levels.py K_MIN_SURVEY",
+   "key": "kpop_kmin"
+  },
+  {
+   "name": "simulated K-factor grid of the site-accuracy simulation to which each K-factor is assigned (floor mapping)",
+   "value": "6, 10, 15 and 20 dB",
+   "origin": "inhouse/results/estimator_selection_summary.json rows.K; weights k_weights_floor = 6: 0.466, 10: 0.388, 15: 0.128, 20: 0.018",
+   "key": "kpop_grid"
+  },
+  {
+   "name": "mean of the TR 38.901 RMa LOS K-factor distribution (sensitivity)",
+   "value": "7 dB",
+   "origin": "TR 38.901 Table 7.5-6",
+   "key": "kpop_mu_rma"
+  },
+  {
+   "name": "standard deviation of the TR 38.901 RMa LOS K-factor distribution (sensitivity)",
+   "value": "4 dB",
+   "origin": "TR 38.901 Table 7.5-6",
+   "key": "kpop_sd_rma"
+  },
+  {
+   "name": "K-population value under the RMa LOS distribution (same estimator output, exclusion and mapping) at the highway speed classes",
+   "value": "4.6, 3.8 and 3.2 % at 20, 30 and 38 m/s",
+   "origin": "inhouse/results/estimator_selection_summary.json rows.sigma_within pooled as in the estimator-selection summary (floor mapping) with N(7, 4^2) dB, K >= 5 dB: v=20: 4.601, v=30: 3.834, v=38: 3.161; UMi check reproduces population_sigma_floor (3.997, 3.320, 2.734)",
+   "key": "kpop_rma_hw"
+  }
+ ]
+}

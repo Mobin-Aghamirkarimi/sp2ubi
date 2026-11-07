@@ -1,0 +1,39 @@
+{
+ "policies": 2000,
+ "seed": 20261003,
+ "records": 62000,
+ "epoch": "31 days from a Monday (23 weekdays, 8 weekend days)",
+ "class_shares": {
+  "score_eq_w0": 0.39570967741935487,
+  "event_only_unique": 0.005887096774193548,
+  "ambiguous_event_only_or_weekday": 0.02106451612903226,
+  "weekday_mileage_only": 0.5773387096774194
+ },
+ "P_best_guess_score_eq_w0": {
+  "n": 24534,
+  "mean": 0.07965985978641885,
+  "median": 0.07692307692307693,
+  "q10": 0.045454545454545456,
+  "q90": 0.125,
+  "max": 0.4375,
+  "median_as_1_over": 13.0,
+  "share_ge_1_over_8": 0.11437189206815032,
+  "share_eq_1": 0.0
+ },
+ "share_of_w0_records_best_guessed_on_a_weekend_day": 0.9974728947582946,
+ "P_best_guess_score_eq_w0_sensitivity_ambiguous_as_weekend": {
+  "n": 24534,
+  "mean": 0.07300959449353338,
+  "median": 0.06944444444444445,
+  "q10": 0.043478260869565216,
+  "q90": 0.1111111111111111,
+  "max": 0.125,
+  "median_as_1_over": 14.399999999999999,
+  "share_ge_1_over_8": 0.05441428222059183,
+  "share_eq_1": 0.0
+ },
+ "P_exact_weekday_mileage_record": 0.043478260869565216,
+ "P_exact_event_only_record": 0.125,
+ "class_blind_value_replaced": 0.03225806451612903,
+ "note": "uniform over the class-consistent assignments of the policy-epoch (per-policy class counts used); no driving-habit prior, so lower bounds on the best-guess probability"
+}

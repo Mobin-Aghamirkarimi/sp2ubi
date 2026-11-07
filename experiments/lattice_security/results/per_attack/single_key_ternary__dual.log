@@ -1,0 +1,1 @@
+{'case': 'single_key_ternary', 'attack': 'dual', 'log2_rop': 245.9, 'infeasible': False, 'detail': {'rop': '1.07615589768044e74', 'mem': '52826978695567806239240874112818713080765162170136', 'm': '8095', 'beta': '752', 'd': '16287', 'repetitions': '1', 'tag': 'dual'}, 'estimator_commit': '53da5982597709ba0fdf94ea37a84d822310fd84'}

@@ -1,0 +1,566 @@
+{
+ "urban": null,
+ "highway": {
+  "e5": {
+   "L4|z q1.0|lam5": {
+    "anon_median": 14681.0,
+    "anon_p01": 491.0,
+    "anon_min": 285,
+    "distinct_values": 14,
+    "k1": {
+     "n": 1984,
+     "median_candidates": 10155.0,
+     "p10_candidates": 4119.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 1918,
+     "median_candidates": 3761.0,
+     "p10_candidates": 1235.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 1762,
+     "median_candidates": 1580.0,
+     "p10_candidates": 279.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1083,
+     "median_candidates": 167.0,
+     "p10_candidates": 25.0,
+     "p_unique": 0.00554016620498615
+    },
+    "k8": {
+     "n": 246,
+     "median_candidates": 5.0,
+     "p10_candidates": 1.0,
+     "p_unique": 0.18292682926829268
+    },
+    "passes": 99060,
+    "n_levels": 4,
+    "lam": 5,
+    "z": "z q1.0"
+   },
+   "L4|z q3.0|lam5": {
+    "anon_median": 52749.0,
+    "anon_p01": 2560.0,
+    "anon_min": 2560,
+    "distinct_values": 6,
+    "k1": {
+     "n": 1984,
+     "median_candidates": 18181.0,
+     "p10_candidates": 4391.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 1918,
+     "median_candidates": 13342.0,
+     "p10_candidates": 2508.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 1762,
+     "median_candidates": 7912.0,
+     "p10_candidates": 1682.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1083,
+     "median_candidates": 1495.0,
+     "p10_candidates": 268.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 246,
+     "median_candidates": 118.0,
+     "p10_candidates": 12.0,
+     "p_unique": 0.02032520325203252
+    },
+    "passes": 99060,
+    "n_levels": 4,
+    "lam": 5,
+    "z": "z q3.0"
+   },
+   "L4|level only|lam5": {
+    "anon_median": 61709.0,
+    "anon_p01": 37351.0,
+    "anon_min": 37351,
+    "distinct_values": 2,
+    "k1": {
+     "n": 1984,
+     "median_candidates": 18713.0,
+     "p10_candidates": 15814.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 1918,
+     "median_candidates": 14671.0,
+     "p10_candidates": 10528.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 1762,
+     "median_candidates": 11535.0,
+     "p10_candidates": 9643.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1083,
+     "median_candidates": 5308.0,
+     "p10_candidates": 2530.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 246,
+     "median_candidates": 712.0,
+     "p10_candidates": 399.5,
+     "p_unique": 0.0
+    },
+    "passes": 99060,
+    "n_levels": 4,
+    "lam": 5,
+    "z": "level only"
+   },
+   "L4|z q1.0|lam15": {
+    "anon_median": 44068.0,
+    "anon_p01": 1611.0,
+    "anon_min": 886,
+    "distinct_values": 14,
+    "k1": {
+     "n": 2000,
+     "median_candidates": 17319.0,
+     "p10_candidates": 7530.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 2000,
+     "median_candidates": 12542.0,
+     "p10_candidates": 5356.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 2000,
+     "median_candidates": 9618.0,
+     "p10_candidates": 3632.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1999,
+     "median_candidates": 4219.0,
+     "p10_candidates": 840.6,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 1951,
+     "median_candidates": 1091.0,
+     "p10_candidates": 144.0,
+     "p_unique": 0.0
+    },
+    "passes": 300304,
+    "n_levels": 4,
+    "lam": 15,
+    "z": "z q1.0"
+   },
+   "L4|z q3.0|lam15": {
+    "anon_median": 159243.0,
+    "anon_p01": 8107.0,
+    "anon_min": 8107,
+    "distinct_values": 6,
+    "k1": {
+     "n": 2000,
+     "median_candidates": 19810.0,
+     "p10_candidates": 10390.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 2000,
+     "median_candidates": 18455.0,
+     "p10_candidates": 7489.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 2000,
+     "median_candidates": 17212.0,
+     "p10_candidates": 6294.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1999,
+     "median_candidates": 9220.0,
+     "p10_candidates": 3062.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 1951,
+     "median_candidates": 5142.0,
+     "p10_candidates": 1176.0,
+     "p_unique": 0.0
+    },
+    "passes": 300304,
+    "n_levels": 4,
+    "lam": 15,
+    "z": "z q3.0"
+   },
+   "L4|level only|lam15": {
+    "anon_median": 186298.0,
+    "anon_p01": 114006.0,
+    "anon_min": 114006,
+    "distinct_values": 2,
+    "k1": {
+     "n": 2000,
+     "median_candidates": 19834.0,
+     "p10_candidates": 18827.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 2000,
+     "median_candidates": 18661.0,
+     "p10_candidates": 18043.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 2000,
+     "median_candidates": 18568.0,
+     "p10_candidates": 17877.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1999,
+     "median_candidates": 17542.0,
+     "p10_candidates": 14467.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 1951,
+     "median_candidates": 14055.0,
+     "p10_candidates": 9548.0,
+     "p_unique": 0.0
+    },
+    "passes": 300304,
+    "n_levels": 4,
+    "lam": 15,
+    "z": "level only"
+   },
+   "L8|z q1.0|lam5": {
+    "anon_median": 11022.0,
+    "anon_p01": 518.0,
+    "anon_min": 118,
+    "distinct_values": 21,
+    "k1": {
+     "n": 1984,
+     "median_candidates": 8228.0,
+     "p10_candidates": 2649.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 1918,
+     "median_candidates": 2705.0,
+     "p10_candidates": 417.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 1762,
+     "median_candidates": 656.0,
+     "p10_candidates": 108.10000000000002,
+     "p_unique": 0.0005675368898978433
+    },
+    "k5": {
+     "n": 1083,
+     "median_candidates": 51.0,
+     "p10_candidates": 6.0,
+     "p_unique": 0.017543859649122806
+    },
+    "k8": {
+     "n": 246,
+     "median_candidates": 1.0,
+     "p10_candidates": 1.0,
+     "p_unique": 0.5609756097560976
+    },
+    "passes": 99060,
+    "n_levels": 8,
+    "lam": 5,
+    "z": "z q1.0"
+   },
+   "L8|z q3.0|lam5": {
+    "anon_median": 32230.0,
+    "anon_p01": 1020.0,
+    "anon_min": 1020,
+    "distinct_values": 9,
+    "k1": {
+     "n": 1984,
+     "median_candidates": 14997.0,
+     "p10_candidates": 2847.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 1918,
+     "median_candidates": 9225.0,
+     "p10_candidates": 1821.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 1762,
+     "median_candidates": 4265.0,
+     "p10_candidates": 633.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1083,
+     "median_candidates": 662.0,
+     "p10_candidates": 98.0,
+     "p_unique": 0.0009233610341643582
+    },
+    "k8": {
+     "n": 246,
+     "median_candidates": 30.5,
+     "p10_candidates": 4.0,
+     "p_unique": 0.044715447154471545
+    },
+    "passes": 99060,
+    "n_levels": 8,
+    "lam": 5,
+    "z": "z q3.0"
+   },
+   "L8|level only|lam5": {
+    "anon_median": 37836.0,
+    "anon_p01": 14441.0,
+    "anon_min": 14441,
+    "distinct_values": 3,
+    "k1": {
+     "n": 1984,
+     "median_candidates": 15843.0,
+     "p10_candidates": 8800.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 1918,
+     "median_candidates": 12972.0,
+     "p10_candidates": 6759.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 1762,
+     "median_candidates": 8204.0,
+     "p10_candidates": 4292.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1083,
+     "median_candidates": 2369.0,
+     "p10_candidates": 1257.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 246,
+     "median_candidates": 240.0,
+     "p10_candidates": 85.0,
+     "p_unique": 0.0
+    },
+    "passes": 99060,
+    "n_levels": 8,
+    "lam": 5,
+    "z": "level only"
+   },
+   "L8|z q1.0|lam15": {
+    "anon_median": 33397.0,
+    "anon_p01": 1479.0,
+    "anon_min": 366,
+    "distinct_values": 21,
+    "k1": {
+     "n": 2000,
+     "median_candidates": 15557.0,
+     "p10_candidates": 6876.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 2000,
+     "median_candidates": 9746.0,
+     "p10_candidates": 2605.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 2000,
+     "median_candidates": 4963.0,
+     "p10_candidates": 1402.8,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1999,
+     "median_candidates": 1848.0,
+     "p10_candidates": 287.8,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 1951,
+     "median_candidates": 289.0,
+     "p10_candidates": 29.0,
+     "p_unique": 0.0030753459764223477
+    },
+    "passes": 300304,
+    "n_levels": 8,
+    "lam": 15,
+    "z": "z q1.0"
+   },
+   "L8|z q3.0|lam15": {
+    "anon_median": 97509.0,
+    "anon_p01": 3201.0,
+    "anon_min": 3201,
+    "distinct_values": 9,
+    "k1": {
+     "n": 2000,
+     "median_candidates": 18569.0,
+     "p10_candidates": 7399.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 2000,
+     "median_candidates": 17497.0,
+     "p10_candidates": 5838.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 2000,
+     "median_candidates": 11758.0,
+     "p10_candidates": 3071.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1999,
+     "median_candidates": 6296.0,
+     "p10_candidates": 1524.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 1951,
+     "median_candidates": 2374.0,
+     "p10_candidates": 405.0,
+     "p_unique": 0.0
+    },
+    "passes": 300304,
+    "n_levels": 8,
+    "lam": 15,
+    "z": "z q3.0"
+   },
+   "L8|level only|lam15": {
+    "anon_median": 114428.0,
+    "anon_p01": 43927.0,
+    "anon_min": 43927,
+    "distinct_values": 3,
+    "k1": {
+     "n": 2000,
+     "median_candidates": 18723.0,
+     "p10_candidates": 13747.0,
+     "p_unique": 0.0
+    },
+    "k2": {
+     "n": 2000,
+     "median_candidates": 18193.0,
+     "p10_candidates": 12860.0,
+     "p_unique": 0.0
+    },
+    "k3": {
+     "n": 2000,
+     "median_candidates": 17520.0,
+     "p10_candidates": 12308.0,
+     "p_unique": 0.0
+    },
+    "k5": {
+     "n": 1999,
+     "median_candidates": 14268.0,
+     "p10_candidates": 9080.0,
+     "p_unique": 0.0
+    },
+    "k8": {
+     "n": 1951,
+     "median_candidates": 8427.0,
+     "p10_candidates": 5226.0,
+     "p_unique": 0.0
+    },
+    "passes": 300304,
+    "n_levels": 8,
+    "lam": 15,
+    "z": "level only"
+   }
+  }
+ },
+ "provenance": {
+  "tag": "primary",
+  "stage": 3,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {
+   "what": "e5",
+   "smoke": false
+  }
+ },
+ "input_sha256": {
+  "highway": "6b98739591611acdecb016f06e09dce1e71996ad8d82fe71e19617cb549bf956"
+ },
+ "e3_z_source": {
+  "highway": {
+   "file": "../inhouse/results/consistency_z_full.npz",
+   "sha256": "bc8c11850350d07774d53e4e787af9076ec829cf9cc6d98df178b96f4f1b413e",
+   "realised_K_median_db": 9.305272223328387,
+   "inhouse_K_cell_db": 6.0,
+   "label": "in-house consistency z (P5 not run)"
+  }
+ },
+ "uncovered_traffic_share": {
+  "highway": {
+   "urban": 0.0,
+   "suburban": 0.0,
+   "highway": 0.0
+  }
+ },
+ "lambda_eff": {
+  "highway": {
+   "class_qualified_share": {
+    "20": 1.0,
+    "30": 1.0,
+    "38": 1.0
+   },
+   "class_qualified_share_tableA": {
+    "20": 1.0,
+    "30": 1.0,
+    "38": 1.0
+   },
+   "profiles": {
+    "urban": {
+     "q": 1.0,
+     "q_tableA": 1.0,
+     "lambda_eff": {
+      "5": 5.0,
+      "15": 15.0,
+      "40": 40.0
+     }
+    },
+    "suburban": {
+     "q": 1.0,
+     "q_tableA": 1.0,
+     "lambda_eff": {
+      "5": 5.0,
+      "15": 15.0,
+      "40": 40.0
+     }
+    },
+    "highway": {
+     "q": 1.0,
+     "q_tableA": 1.0,
+     "lambda_eff": {
+      "5": 5.0,
+      "15": 15.0,
+      "40": 40.0
+     }
+    }
+   },
+   "note": "q: the decision simulation's qualification (survey sd inflated by the C2 (ii) excess tau, which drives the decision simulation's power); q_tableA: survey sd <= 6 % as in Table A"
+  }
+ }
+}

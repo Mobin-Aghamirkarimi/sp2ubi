@@ -1,0 +1,115 @@
+--- get_channels.m
++++ get_channels.m
+@@ -1,4 +1,9 @@
+-function h_channel = get_channels( h_builder, vb_dots, use_gpu, only_coeff )
++function h_channel = get_channels( h_builder, vb_dots, use_gpu, only_coeff, ray_out )
++% SP2UBI PATCH (Third-Party Modified Version, 2026-10-10; QuaDRiGa v2.8.1 git 2778666): optional input
++% "ray_out" (default 0). If 1, every output channel additionally carries par.ray_coeff
++% [n_rx_ant x n_tx_ant x n_rays x n_snapshots] (per-ray coefficients with exactly the per-cluster factors
++% applied to their cluster) and par.ray_cluster [1 x n_rays] (cluster index of each ray). Drifting mode only.
++% Nothing else is changed. Per-ray term of TR 37.885 for the SP2UBI speed-check simulation.
+ %GET_CHANNELS Calculate the channel coefficients
+ %
+ % Calling object:
+@@ -36,6 +41,10 @@
+     use_gpu = 0;
+ end
+ 
++if ~exist( 'ray_out','var' ) || isempty( ray_out )
++    ray_out = 0;
++end
++
+ if ~exist( 'only_coeff','var' ) || isempty( only_coeff )
+     only_coeff = 0;
+ elseif numel(h_builder) > 1
+@@ -84,7 +93,7 @@
+     for i_cb = 1 : numel(h_builder)
+         [ i1,i2,i3,i4 ] = qf.qind2sub( sic, i_cb );
+         if h_builder( i1,i2,i3,i4 ).no_rx_positions > 0
+-            tmp = h_builder( i1,i2,i3,i4 ).get_channels( vb_dots(i_cb), use_gpu );
++            tmp = h_builder( i1,i2,i3,i4 ).get_channels( vb_dots(i_cb), use_gpu, [], ray_out ); % SP2UBI PATCH: pass ray_out
+             h_channel( 1, cnt : cnt+size(tmp,2)-1 ) = tmp;
+             cnt = cnt + size(tmp,2);
+         end
+@@ -455,6 +464,15 @@
+                 ccp = gG .* exp(-1j*( repmat(permute(pin,[1,3,2]),n_rxant,n_txant) +  permute(phase,[3,4,2,1] )));
+             end
+             ccp = reshape( ccp, n_rxant*n_txant,n_paths );
++            if ray_out                                                  % SP2UBI PATCH
++                if use_3GPP_baseline || only_coeff
++                    error('SP2UBI patch: ray_out requires drifting mode');
++                end
++                if i_snapshot == 1
++                    cr = zeros( n_rxant*n_txant, n_paths, n_snapshots );
++                end
++                cr(:,:,i_snapshot) = ccp;
++            end
+             
+             % Sum over the sub-paths in a cluster. This changes the cluster power due to the random
+             % phases. This is corrected later.
+@@ -538,6 +556,9 @@
+             p_correct = sqrt( p_cl .* p_pat ./ p_coeff ./ n_subpaths(o_links,:) );
+             p_correct( p_pat < 1e-30 ) = 0; % Fix NaN caused by 0/0
+             cn = p_correct(:,:,ones(1,n_snapshots)) .* cn;
++            if ray_out                                                  % SP2UBI PATCH: track per-cluster factors
++                S = p_correct(:,:,ones(1,n_snapshots));
++            end
+             
+             % Now we apply the K-Factor and the shadowing profile
+             if use_3GPP_baseline || isempty( h_builder.sos )
+@@ -600,6 +621,12 @@
+                     if use_ground_reflection
+                         cn(:,2,:) = cn(:,2,:) .* repmat( sqrt(kf_scale),[n_links,1,1] );
+                     end
++                    if ray_out                                          % SP2UBI PATCH
++                        S(:,1,:) = S(:,1,:) .* repmat( sqrt(kf_scale),[n_links,1,1] );
++                        if use_ground_reflection
++                            S(:,2,:) = S(:,2,:) .* repmat( sqrt(kf_scale),[n_links,1,1] );
++                        end
++                    end
+                     
+                     % The power adjustment of the LOS component changes the total RX power
+                     % This needs to be compensated in the total RX power
+@@ -609,6 +636,9 @@
+                 % Adjust the overall power of the channel coefficients
+                 rx_power = sqrt( rx_power );
+                 cn = cn .* rx_power(o_txrxant,o_clusters,:);
++                if ray_out                                              % SP2UBI PATCH
++                    S = S .* rx_power(o_txrxant,o_clusters,:);
++                end
+             end
+         end
+         
+@@ -627,6 +657,18 @@
+             end
+         end
+         clear cn
++        if ray_out                                                      % SP2UBI PATCH: per-ray output
++            ray_cluster = repelem( 1:n_clusters, n_subpaths );
++            crs = cr .* S(:,ray_cluster,:);
++            crs = reshape( crs, n_rxant, n_txant, n_paths, n_snapshots );
++            ray_coeff = zeros( size(Cr,1), size(Ct,2), n_paths, n_snapshots );
++            for i_snapshot = 1:n_snapshots
++                for i_ray = 1:n_paths
++                    ray_coeff(:,:,i_ray,i_snapshot) = Cr * crs(:,:,i_ray,i_snapshot) * Ct;
++                end
++            end
++            clear cr crs S
++        end
+         
+         if only_coeff
+             h_channel(:,:,iClst,i_mobile) = c;
+@@ -731,7 +773,12 @@
+                         abs(mp(2,2)-get_length(h_builder.rx_track(1,i_mobile))) < 1e-6
+                     par_struct.update_rate = mp(1,2)/n_snapshots;
+                 end
+-                h_channel(1,i_mobile).par = par_struct;
++                if ray_out                                                  % SP2UBI PATCH: add per-ray output to par
++                par_struct.ray_coeff = ray_coeff;
++                par_struct.ray_cluster = ray_cluster;
++                clear ray_coeff
++            end
++            h_channel(1,i_mobile).par = par_struct;
+             end
+         end
+     end

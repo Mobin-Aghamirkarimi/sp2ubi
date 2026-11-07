@@ -1,0 +1,20 @@
+{
+  "openfhe": "1.5.1.0.24.4",
+  "source": "experiments/timings/bench_risk_path.py (_bfv_single_key; part_baselines B3), same calls",
+  "B1_single_key_bfv": {
+    "N": 8192,
+    "log2_Q": 120.0,
+    "security_level": "HEStd_128_classic",
+    "plaintext_modulus_bits": 41
+  },
+  "B3_ckks": {
+    "N": 16384,
+    "log2_Q": 129.09,
+    "security_level": "HEStd_128_classic"
+  },
+  "SP2UBI_bfv_from_risk_path_budget": {
+    "N": 8192,
+    "log2_Q": 120.0,
+    "security_level": "HEStd_128_classic"
+  }
+}

@@ -1,0 +1,38 @@
+{
+ "branches": {
+  "S2b|template": "L0",
+  "S2b|gate": "not run",
+  "S2b|h2": "not run",
+  "S2b|estimator": "none",
+  "S2b|n2rule": "none",
+  "S2b|d0r1": "supported",
+  "S2b|summary": "L0",
+  "S2b|rung|P1-10": "L0",
+  "S2b|k0|P1-10": "yes",
+  "S2b|named|P1-10": "yes",
+  "S2b|rung|P1-15": "L0",
+  "S2b|k0|P1-15": "no",
+  "S2b|named|P1-15": "yes",
+  "S2b|T3N": "none",
+  "S2b|splace2": "quantified"
+ },
+ "texts": {
+  "S2|text|VIID|opening": "Study 2 was designed after the study-1 results had been seen. Its candidate changes were chosen on development data by rules fixed before any candidate statistic was computed, and it was evaluated once, on held-out sites with seeds derived from the timestamped design record and the Bitcoin block that holds its timestamp.",
+  "S2|text|VIID|disclosure": "The development outputs were read three times as they arrived, before the full development run, whose decision equals that of the last reading (supplement); no held-out value was read before all held-out families had completed their final stage. The held-out evaluation, which the design prescribes after every development outcome, was run with the development outcome known.",
+  "S2|text|VIID|cause": "The development stage of study 2 supports a kinematic cause of the urban bias, in the sense of its pre-specified criterion. On \\spn{S2|design|dev3_n_sites} development sites (the study-1 urban sites \\spn{S2|design|dev3_sites}), each simulated traffic crossing was paired with a free-flow control crossing in the same lane, which cruises near the nominal speed without other traffic or lane change and reuses the crossing's beacon, erasure, noise and impairment seeds under the same site and channel model. At the variant with the largest bias, the mean paired difference of the uncalibrated speed error (traffic minus control) was \\spn{S2|d0r1|P1-10|diff}\\,\\% at \\spn{S2|P1-10|v0}\\,m/s and \\spn{S2|d0r1|P1-15|diff}\\,\\% at \\spn{S2|P1-15|v0}\\,m/s (site-bootstrap 95\\,\\% intervals \\spn{S2|d0r1|P1-10|ci_lo} to \\spn{S2|d0r1|P1-10|ci_hi}\\,\\% and \\spn{S2|d0r1|P1-15|ci_lo} to \\spn{S2|d0r1|P1-15|ci_hi}\\,\\%), against excess biases of \\spn{S2|d0r1|P1-10|eb}\\,\\% and \\spn{S2|d0r1|P1-15|eb}\\,\\%. On the study-1 urban records (development data for study 2), crossings without a stop between the heads carried most of the uncalibrated excess bias at the variant D0-R2 evaluates (\\spn{S2|d0r2|P1-10|Dev-2|share}\\,\\% at \\spn{S2|P1-10|v0}\\,m/s and \\spn{S2|d0r2|P1-15|Dev-2|share}\\,\\% at \\spn{S2|P1-15|v0}\\,m/s), so stops alone do not explain it. This is a development diagnosis under one traffic model (SUMO, Krauss car following, degree of saturation \\spn{S2|design|saturation}): it concerns the mean error, not its spread, it was not tested on held-out sites, and it changed no part of the configuration.",
+  "S2|text|future_work": "The fit of Eq. (\\ref{eq:fdoa}) already allows a constant acceleration, and none of the motion-related candidates pre-specified for study 2 (a two-segment speed profile, an acceleration gate, a stop detector, a spatial-core statistic and a combination of the last two) met its adoption rule on development data (Section VI-D). A motion model for urban street crossings in traffic, evaluated on its own held-out sites, is left to future work.",
+  "S2|text|VIID|K": "The dependence of the within-site error on the Ricean K factor is descriptive (E1, in-house model) and enters no rule of study 2.",
+  "S2|text|VIID|candidates": "No estimator candidate met the pre-specified adoption rule (E-a, E-b, E-c, E-f, E-d, E-db, E-e); neither rule for blocked crossings (L-B, L-B\u2032) was adopted.",
+  "S2|text|VIID|h2": "No estimator change was adopted, so highway processing is unchanged and the highway check was not run; gate G does not apply.",
+  "S2|text|VIID|yield": "Neither an estimator candidate nor a rule for blocked crossings was adopted, so no candidate yield loss arises; the entry yield under the traffic survey is given in Table A2.",
+  "S2|text|VIID|highway_survey": "Study-1 highway qualification used the free-road survey.",
+  "S2|text|VIID|r8iii": "The rank correlation between the survey standard deviation and the test standard deviation (qualification-validity row (iii)) is \\spn{S2|P1-10|r8iii} over \\spn{S2|P1-10|r8iii_n} sites at \\spn{S2|P1-10|v0}\\,m/s and \\spn{S2|P1-15|r8iii} over \\spn{S2|P1-15|r8iii_n} sites at \\spn{S2|P1-15|v0}\\,m/s.",
+  "S2|text|VIID|l1_statistic": "The bias statistic of the validity rung is the calibrated bias of the between-site check and its site-bootstrap interval over all sites with a valid survey (generator arm), with its Holm-adjusted equivalence test at a band of \\spn{S2|l1_band}\\,\\% on the same draws; it differs from the calibrated bias of Table A, which uses qualified sites and gated passes, and both are printed.",
+  "S2|text|VIID|k0|P1-10": "At \\spn{S2|P1-10|v0}\\,m/s the traffic survey qualified no site; the rank correlation over \\spn{S2|P1-10|r8iii_n} sites (row (iii)) is \\spn{S2|P1-10|r8iii}.",
+  "S2|text|VIID|N2": "The blocked urban crossings (NLOSv) are reported with the study-1 NLOSv template on the study-2 records; they are not on the ladder.",
+  "S2|text|T3N": "At the held-out urban sites of study 2, no site qualified on a survey in traffic in the far lane (\\spn{S2|P3-15|k}/\\spn{S2|P3-15|n}, 95\\,\\% CI \\spn{S2|P3-15|cp_lo}--\\spn{S2|P3-15|cp_hi}\\,\\%, at \\spn{S2|P3-15|v0}\\,m/s); we state this as a limitation of the site-qualified design.",
+  "S2|text|VIIC": "a second, separately pre-specified design (Section VI-D) also did not cover them",
+  "S2|text|summary": "A second, separately pre-specified study of urban street sites (Section VI-D; design record timestamped before its development stage and again before its held-out run, with seeds derived from the Bitcoin block that holds the timestamp) replaced the free-road survey by a survey in traffic and was judged once on ten held-out sites under the unchanged study-1 criteria. No estimator change was adopted on development data, so highway processing and every highway number are unchanged and the highway check was not run. The design did not cover urban street sites either; every urban number is reported in Section VI-D and the abstract is unchanged. The development-stage diagnosis and every rejected candidate are reported in Section VI-D and the supplement."
+ },
+ "table_b_notes": []
+}

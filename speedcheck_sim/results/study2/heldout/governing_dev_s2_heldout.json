@@ -1,0 +1,159 @@
+{
+ "urban": {
+  "mapping": "lb",
+  "prb": 10,
+  "sigma": 0.14449872343205997
+ },
+ "highway": {
+  "mapping": "e1",
+  "prb": 10,
+  "sigma": null,
+  "note": "no data: default e1/10"
+ },
+ "c5_failing": [],
+ "c2_tau": {
+  "P1-10": 0.12561226288677382,
+  "P1-15": 0.1354553209373175,
+  "P3-15": 0.06792760941002486
+ },
+ "scope": {
+  "P1-10": {
+   "k": 0,
+   "n": 10,
+   "share": 0.0,
+   "cp95": [
+    0.0,
+    0.3084971078187607
+   ],
+   "rating": "not covered",
+   "variant": [
+    "e1",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 0
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 1
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 4
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 0
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 1
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 4
+    }
+   ]
+  },
+  "P1-15": {
+   "k": 4,
+   "n": 10,
+   "share": 0.4,
+   "cp95": [
+    0.12155225811982719,
+    0.7376219233930549
+   ],
+   "rating": "partly covered",
+   "variant": [
+    "e1",
+    20
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 5
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 4
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 4
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 4
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 4
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 4
+    }
+   ]
+  },
+  "P3-15": {
+   "k": 0,
+   "n": 10,
+   "share": 0.0,
+   "cp95": [
+    0.0,
+    0.3084971078187607
+   ],
+   "rating": "not covered",
+   "variant": [
+    "e1",
+    20
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 1
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 0
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 1
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 1
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 0
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 1
+    }
+   ]
+  }
+ }
+}

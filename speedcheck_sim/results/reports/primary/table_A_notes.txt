@@ -1,0 +1,1 @@
+Entry yield before the loss at burst boundaries; the decision-level results (Table B) apply it as 1 - 110 m / (v * 40 s), i.e. they require the whole evaluation window inside one burst, as the per-pass window rule does.

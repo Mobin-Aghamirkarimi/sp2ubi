@@ -1,0 +1,48 @@
+{
+ "what": "single insurer BFV key on the risk path; sizes in bytes, OpenFHE BINARY serialization",
+ "context": {
+  "scheme": "BFV",
+  "N": 8192,
+  "log2_Q": 120.0,
+  "moduli_bits": [
+   60.0,
+   60.0
+  ],
+  "log2_Delta": 80.0,
+  "t_bits": 41,
+  "security": "HEStd_128_classic",
+  "depth": 1,
+  "keys": "single key pair (insurer)",
+  "openfhe": "1.5.1.0.24.4"
+ },
+ "security_note": "HEStd_128_classic: OpenFHE selects N and log2 Q from the HE-standard table for 128-bit classical security (N = 8192 admits log2 Q <= 218)",
+ "keys_B": {
+  "public_key": 262967,
+  "secret_key_insurer_only": 131801,
+  "relinearisation_key": 525405,
+  "rotation_keys_1_2_4": 1574829,
+  "enc_w": 263011,
+  "signed_bundle_to_tsp": 2626352,
+  "signed_public_key_to_obu": 263075
+ },
+ "per_record_B": {
+  "record_ciphertext": 263011,
+  "signed_record_message": 263087,
+  "group_signature": 336,
+  "upload_total": 263423,
+  "result_ciphertext_after_fill": 263211,
+  "tsp_receipt": 64
+ },
+ "decryption_margin_bits_result_at_caps": 9,
+ "opening_key_generation_B_per_party": {
+  "commitment": 32,
+  "reveal_nonce_A_B_two_pok": 256,
+  "h_share_H_V_with_two_dleq": 224,
+  "signature_per_message_long_term_key": 64,
+  "messages_total_signed": 704,
+  "share_secret_kept": 64,
+  "share_commitments_public": 96,
+  "group_public_key": 384,
+  "group_signature": 336
+ }
+}

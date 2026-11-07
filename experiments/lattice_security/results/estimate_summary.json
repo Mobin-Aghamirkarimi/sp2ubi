@@ -1,0 +1,21 @@
+{
+ "estimator_commit": "53da5982597709ba0fdf94ea37a84d822310fd84",
+ "sigma": 3.19,
+ "cases": {
+  "single_key_ternary": {
+   "log2_rop": {
+    "usvp": 243.8,
+    "bdd": 243.1,
+    "dual": 245.9,
+    "dual_hybrid": 242.6,
+    "bkw": "infeasible (rop = +inf)",
+    "bdd_hybrid": 354.9,
+    "bdd_mitm_hybrid": 354.9
+   },
+   "min_log2_rop_completed": 242.6,
+   "not_completed": [
+    "arora-gb: not completed (job stopped by the time limit)"
+   ]
+  }
+ }
+}

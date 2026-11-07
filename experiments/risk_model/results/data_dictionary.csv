@@ -1,0 +1,7 @@
+feature,derivation,meaning,integer_unit
+days,Duration,x_0: one per insured day (intercept slot),1.0
+offpeak_miles,Pct.drive.wkday * M - rush_miles,weekday miles outside the am/pm rush hours,0.1
+rush_miles,"min(Pct.drive.rush am + Pct.drive.rush pm, Pct.drive.wkday) * M",weekday miles in the am/pm rush hours (capped at weekday miles: 141 inconsistent records),0.1
+weekend_miles,Pct.drive.wkend * M,miles on Saturday/Sunday,0.1
+hard_brakes,Brake.08miles * M / 1000,decelerations >= 8 mph/s (Brake.08miles = count per 1000 miles),1.0
+hard_accels,Accel.08miles * M / 1000,accelerations >= 8 mph/s (Accel.08miles = count per 1000 miles),1.0

@@ -1,0 +1,105 @@
+{
+ "arm": "g1",
+ "passes": 100,
+ "Q": 16,
+ "prb": 10,
+ "seed": 2026101001,
+ "groups": {
+  "g1_off_e1": {
+   "profile": {
+    "mean_diff": -1.7473828825853577e-06,
+    "sd_inhouse": 0.008117751808354725,
+    "sd_generator": 0.0081160602687376,
+    "sd_ratio": 0.9997916246200845,
+    "max_abs_pass_diff": 8.420699863065373e-05,
+    "pass_criterion": true
+   },
+   "matched": {
+    "mean_diff": -1.8661310552048339e-06,
+    "sd_inhouse": 0.002993792607009445,
+    "sd_generator": 0.0029934346589590476,
+    "sd_ratio": 0.9998804365908448,
+    "max_abs_pass_diff": 0.00010316928622633448,
+    "pass_criterion": true
+   },
+   "C8_pass": true
+  },
+  "g1_off_lb": {
+   "profile": {
+    "mean_diff": -1.7470680640629955e-06,
+    "sd_inhouse": 0.008117622424672968,
+    "sd_generator": 0.008115928904955848,
+    "sd_ratio": 0.999791377372767,
+    "max_abs_pass_diff": 8.421091603350028e-05,
+    "pass_criterion": true
+   },
+   "matched": {
+    "mean_diff": -1.8660241949597367e-06,
+    "sd_inhouse": 0.0029935916946678483,
+    "sd_generator": 0.0029932309905620303,
+    "sd_ratio": 0.9998795079147031,
+    "max_abs_pass_diff": 0.00010316992636383304,
+    "pass_criterion": true
+   },
+   "C8_pass": true
+  },
+  "g1_on_e1": {
+   "profile": {
+    "mean_diff": -1.7473828825853577e-06,
+    "sd_inhouse": 0.008117751808354725,
+    "sd_generator": 0.0081160602687376,
+    "sd_ratio": 0.9997916246200845,
+    "max_abs_pass_diff": 8.420699863065373e-05,
+    "pass_criterion": true
+   },
+   "matched": {
+    "mean_diff": -1.8661310552048339e-06,
+    "sd_inhouse": 0.002993792607009445,
+    "sd_generator": 0.0029934346589590476,
+    "sd_ratio": 0.9998804365908448,
+    "max_abs_pass_diff": 0.00010316928622633448,
+    "pass_criterion": true
+   },
+   "C8_pass": true
+  },
+  "g1_on_lb": {
+   "profile": {
+    "mean_diff": -1.7470680640629955e-06,
+    "sd_inhouse": 0.008117622424672968,
+    "sd_generator": 0.008115928904955848,
+    "sd_ratio": 0.999791377372767,
+    "max_abs_pass_diff": 8.421091603350028e-05,
+    "pass_criterion": true
+   },
+   "matched": {
+    "mean_diff": -1.8660241949597367e-06,
+    "sd_inhouse": 0.0029935916946678483,
+    "sd_generator": 0.0029932309905620303,
+    "sd_ratio": 0.9998795079147031,
+    "max_abs_pass_diff": 0.00010316992636383304,
+    "pass_criterion": true
+   },
+   "C8_pass": true
+  }
+ },
+ "C8_pass": true,
+ "provenance": {
+  "tag": "primary",
+  "stage": 1,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {
+   "arm": "g1",
+   "passes": 100,
+   "Q": 16,
+   "prb": 10,
+   "seed": 2026101001
+  }
+ }
+}

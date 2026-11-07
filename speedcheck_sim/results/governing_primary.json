@@ -1,0 +1,312 @@
+{
+ "urban": {
+  "mapping": "lb",
+  "prb": 10,
+  "sigma": 0.12078574914996867
+ },
+ "highway": {
+  "mapping": "lb",
+  "prb": 10,
+  "sigma": 0.023931199055595594
+ },
+ "c5_failing": [],
+ "c2_tau": {
+  "P1-10": 0.13417755811759854,
+  "P1-15": 0.11256652617851909,
+  "P2-20": 0.0,
+  "P2-30": 0.003130299195063301,
+  "P2-38": 0.0023427432932395967,
+  "P3-15": 0.15212848838711038
+ },
+ "scope": {
+  "P1-10": {
+   "k": 4,
+   "n": 10,
+   "share": 0.4,
+   "cp95": [
+    0.12155225811982719,
+    0.7376219233930549
+   ],
+   "rating": "partly covered",
+   "variant": [
+    "lb",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 5
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 5
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 9
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 4
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 5
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 9
+    }
+   ]
+  },
+  "P1-15": {
+   "k": 6,
+   "n": 10,
+   "share": 0.6,
+   "cp95": [
+    0.26237807660694507,
+    0.8784477418801728
+   ],
+   "rating": "partly covered",
+   "variant": [
+    "e1",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 6
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 6
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 6
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 6
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 10
+    }
+   ]
+  },
+  "P2-20": {
+   "k": 10,
+   "n": 10,
+   "share": 1.0,
+   "cp95": [
+    0.6915028921812392,
+    1.0
+   ],
+   "rating": "covered",
+   "variant": [
+    "e1",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 10
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 10
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 10
+    }
+   ]
+  },
+  "P2-30": {
+   "k": 10,
+   "n": 10,
+   "share": 1.0,
+   "cp95": [
+    0.6915028921812392,
+    1.0
+   ],
+   "rating": "covered",
+   "variant": [
+    "e1",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 10
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 10
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 10
+    }
+   ]
+  },
+  "P2-38": {
+   "k": 10,
+   "n": 10,
+   "share": 1.0,
+   "cp95": [
+    0.6915028921812392,
+    1.0
+   ],
+   "rating": "covered",
+   "variant": [
+    "e1",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 10
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 10
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 10
+    }
+   ]
+  },
+  "P3-15": {
+   "k": 3,
+   "n": 10,
+   "share": 0.3,
+   "cp95": [
+    0.06673951117773447,
+    0.6524528500599973
+   ],
+   "rating": "partly covered",
+   "variant": [
+    "e1",
+    10
+   ],
+   "variants": [
+    {
+     "mapping": "e1",
+     "prb": 10,
+     "k": 3
+    },
+    {
+     "mapping": "e1",
+     "prb": 20,
+     "k": 5
+    },
+    {
+     "mapping": "e1",
+     "prb": 50,
+     "k": 10
+    },
+    {
+     "mapping": "lb",
+     "prb": 10,
+     "k": 3
+    },
+    {
+     "mapping": "lb",
+     "prb": 20,
+     "k": 5
+    },
+    {
+     "mapping": "lb",
+     "prb": 50,
+     "k": 10
+    }
+   ]
+  }
+ },
+ "provenance": {
+  "tag": "primary",
+  "stage": null,
+  "versions": {
+   "octave": "GNU Octave, version 8.4.0",
+   "quadriga_commit": "277866650eb115adb5b3e8ac252b0d1df073596d",
+   "numpy": "2.5.3",
+   "scipy": "1.18.1",
+   "sumo": "1.28.0",
+   "sumo_binary": "Eclipse SUMO sumo 1.28.0"
+  },
+  "knobs": {}
+ }
+}

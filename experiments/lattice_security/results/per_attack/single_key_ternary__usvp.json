@@ -1,0 +1,16 @@
+{
+ "case": "single_key_ternary",
+ "attack": "usvp",
+ "log2_rop": 243.8,
+ "infeasible": false,
+ "detail": {
+  "rop": "2.42176265973732e73",
+  "red": "2.42176265973732e73",
+  "delta": "1.00253996932959",
+  "beta": "748",
+  "d": "15828",
+  "tag": "usvp",
+  "problem": "LWEParameters(n=8192, q=1329227995784783648948129721038553089, Xs=D(\u03c3=0.82), Xe=D(\u03c3=3.19), m=+Infinity, tag='single_key_ternary')"
+ },
+ "estimator_commit": "53da5982597709ba0fdf94ea37a84d822310fd84"
+}
