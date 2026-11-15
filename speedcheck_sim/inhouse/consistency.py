@@ -2,10 +2,11 @@
 
 Per (site, speed class) the RSU standardises the consistency statistic d with the median and 1.4826 * MAD of d over
 its recent traffic (N_TRAFFIC passes; d is physical and independent of the VSS; the median/MAD resist a manipulating
-minority), instead of the 30 survey passes only. Head offset handling as the base consistency simulation (none in the free fit; constant offset
-within +-5 ppb absorbed by the standardisation).
+minority), instead of the 30 survey passes only. The free fit has no head-offset parameter; a constant offset within
++-5 ppb is absorbed by the standardisation.
 Per site (6 sites per cell): 30 survey passes, 150 honest traffic passes (running window), 100 further honest
-passes (evaluated) and 30 manipulated passes per beta (-5 %, -10 %). For every evaluated pass both standardisations are stored:
+passes (evaluated) and 30 manipulated passes per beta (-5 %, -10 %). For every evaluated pass both standardisations
+are stored:
   z_ref = (d - median_ref) / (1.15 * 1.4826 * MAD_ref)       (survey passes)
   z_trf = (d - median_trf) / (1.4826 * MAD_trf)              (traffic window)
 Resumable: one checkpoint per (cell, site) job (checkpoint.py).
@@ -28,7 +29,7 @@ from fdoa.geometry import FC, Site, make_trajectory
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "results")
-BETAS = (-0.05, -0.10)                   # -3 % and the ramp are covered by the base consistency simulation
+BETAS = (-0.05, -0.10)
 HEAD_PPB = 5.0
 N_REF, N_TRAFFIC, N_EVAL, N_SPOOF = 30, 150, 100, 30
 N_SITES = 6

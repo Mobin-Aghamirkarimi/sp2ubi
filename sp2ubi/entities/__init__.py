@@ -1,37 +1,42 @@
 """The four SP2UBI entities on the risk path: OBU, RSU, TSP and insurer. Each object holds only the keys that the key
 distribution of the scheme assigns to it.
 
-* OBU: holds the insurer-signed public key pk_Ins (`PublicKeyCert`: key, key tag, version, epoch range) and receives neither Enc(w) nor
-  the evaluation keys. It produces one encrypted record per aggregation interval (Params.interval_days; 1 = daily, 31 = monthly) with
-  x_0 = insured days covered, a random nonce (redrawn if already sealed in the epoch) and a dispute salt per record in sealed storage
-  (identical re-send), and two HomMAC tag blocks. Each record goes on its own over the vehicle's cellular (Uu) link, a fresh connection per
-  attempt, at an independent random time, and is re-sent until the TSP's receipt or the settlement deadline. The cellular link is an
+* OBU: holds the insurer-signed public key pk_Ins (`PublicKeyCert`: key, key tag, version, epoch range) and receives
+  neither Enc(w) nor the evaluation keys. It produces one encrypted record per aggregation interval
+  (Params.interval_days; 1 = daily, 31 = monthly) with x_0 = insured days covered, a random nonce (redrawn if already
+  sealed in the epoch) and a dispute salt per record in sealed storage (identical re-send), and two HomMAC tag
+  blocks. Each record goes on its own over the vehicle's cellular (Uu) link, a fresh connection per attempt, at an
+  independent random time, and is re-sent until the TSP's receipt or the settlement deadline. The cellular link is an
   untrusted pipe: the record is encrypted and group-signed, and the OBU verifies the receipt.
-* RSU: not on the risk path (RSUs do not relay risk records); holds no FHE key. Its role on the speed-verification path is
-  `speedcheck.SensingRSU`.
-* TSP: holds the public key, the public evaluation keys and Enc(w) (inside the insurer-signed bundle) and no secret FHE key and no policy.
-  It evaluates, fills every non-output slot, signs a receipt for every accepted record, shuffles and publishes its output to the insurer.
-  The insurer receives only the published, shuffled output.
-* Insurer: holds the risk-path secret key, w and one HomMAC key K per policy; decrypts the published outputs, checks HomMAC before the range
-  check and gives one identical outcome for every rejected record. It sends the TSP no verdict; the only outcome toward the TSP is one bit per
-  epoch (`Insurer.deviation_notice`).
+* RSU: not on the risk path (RSUs do not relay risk records); holds no FHE key. Its role on the speed-verification
+  path is `speedcheck.SensingRSU`.
+* TSP: holds the public key, the public evaluation keys and Enc(w) (inside the insurer-signed bundle), no secret FHE
+  key and no policy. It evaluates, fills every non-output slot, signs a receipt for every accepted record, shuffles
+  and publishes its output to the insurer. The insurer receives only the published, shuffled output.
+* Insurer: holds the risk-path secret key, w and one HomMAC key K per policy; decrypts the published outputs, checks
+  HomMAC before the range check and gives one identical outcome for every rejected record. It sends the TSP no
+  verdict; the only outcome toward the TSP is one bit per epoch (`Insurer.deviation_notice`).
 
-Settlement: the TSP gives no receipt for a record of an epoch whose batch it has published or that no key bundle it holds covers, so a
-receipted record that is not accepted is always a deviation of the TSP (`TSP.receive`). Records of an ended policy are discarded, not rejected
-(`Insurer.end_policy`). The dispute commitment cm_r commits to the record without its interval index and capped days (kept in sealed storage), so a
-dispute discloses an undated feature vector. Settlement and dispute run between the insurer and the OBU (`Insurer.settlement_message`,
-`OBU.settlement_upload`); the TSP's receipt signs the record digest, cm_r, cm_b and t (`receipt_message`), the OBU keeps the receipt with these
-values (`Receipted`) and the dispute opens cm_r against the receipted value (`Insurer.dispute_record`). In a conflict epoch (more distinct
-valid records than expected) the policy-epoch yields no score and the settlement message requests no evidence (`NO_EVIDENCE`). A record that
-decrypts to an ended policy is verified under that policy's key first: only a record that verifies is discarded, one that fails is rejected. Settlement messages and
-uploads are authenticated and encrypted end to end between the insurer and the OBU's TEE (channel not modelled), carry no padding and are not sent at fixed times.
+Settlement: the TSP gives no receipt for a record of an epoch whose batch it has published or that no key bundle it
+holds covers, so a receipted record that is not accepted is always a deviation of the TSP (`TSP.receive`). A record
+that decrypts to an ended policy is verified under that policy's key first: one that verifies is discarded, one that
+fails is rejected (`Insurer.end_policy`). The dispute commitment cm_r commits to the record without its interval index
+and capped days (kept in sealed storage), so a dispute discloses an undated feature vector. Settlement and dispute
+run between the insurer and the OBU (`Insurer.settlement_message`, `OBU.settlement_upload`); the TSP's receipt signs
+the record digest, cm_r, cm_b and t (`receipt_message`), the OBU keeps the receipt with these values (`Receipted`)
+and the dispute opens cm_r against the receipted value (`Insurer.dispute_record`). In a conflict epoch (more distinct
+valid records than expected) the policy-epoch yields no score and the settlement message requests no evidence
+(`NO_EVIDENCE`). Settlement messages and uploads are authenticated and encrypted end to end between the insurer and
+the OBU's TEE (channel not modelled), carry no padding and are not sent at fixed times.
 """
 import hashlib
+import json
 import secrets
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 import openfhe as o
+import py_arkworks_bls12381 as ark
 
 from .. import hommac
 from ..commitment import commit, encode_record, open_commitment
@@ -41,8 +46,6 @@ from ..groupsig_bbs04 import rand_scalar
 from ..opening_dkg import SessionRegistry
 from ..params import Params
 from ..proofs import proof_bytes, proof_from_bytes, schnorr_sign, schnorr_verify
-
-import py_arkworks_bls12381 as ark
 
 G1 = ark.G1Point
 REJECTED = "rejected"          # the single externally visible outcome for every rejected record
@@ -474,7 +477,8 @@ def max_committed_record(prm: Params) -> dict:
 def settlement_item_bytes_max(prm: Params) -> int:
     """Largest byte length of one item of the OBU's settlement upload (`encode_settlement_upload`): evidence = digest,
     cm_r, cm_b (32 B each), receipt (64 B), opening of cm_b = ID (8 B), t (4 B), u (8 B), salt' (32 B); dispute = length
-    (2 B) and JSON encoding of the committed record (at most `max_committed_record`), and its salt (32 B). Items are not padded; this is an upper bound for the size figures."""
+    (2 B) and JSON encoding of the committed record (at most `max_committed_record`), and its salt (32 B). Items are
+    not padded; this is an upper bound for the size figures."""
     return 3 * 32 + RECEIPT_BYTES + 8 + 4 + 8 + 32 + 2 + len(encode_record(max_committed_record(prm))) + 32
 
 
@@ -492,7 +496,6 @@ def encode_settlement_upload(upload: List[tuple]) -> bytes:
 
 
 def decode_settlement_upload(data: bytes) -> List[tuple]:
-    import json
     out, i = [], 0
     while i < len(data):
         b = data[i:]
@@ -531,7 +534,7 @@ class PolicyReport:
 @dataclass
 class BatchResult:
     reports: Dict[int, PolicyReport]
-    verdicts: List[str]                # per batch member: "accepted", REJECTED or DISCARDED; kept by the insurer, never sent to the TSP
+    verdicts: List[str]                # per batch member: "accepted", REJECTED or DISCARDED; never sent to the TSP
     rejected: int = 0
     discarded: int = 0                 # records of ended policies: no score, not a deviation
     diagnostics: List[str] = field(default_factory=list)   # internal only, never sent to the TSP
@@ -656,11 +659,12 @@ class Insurer:
     def deviation_notice(res: "BatchResult", receipted_missing: int = 0) -> bool:
         """The only outcome of the insurer's checks that reaches the TSP, once per epoch: True
         iff the epoch contained a detected deviation, i.e. a rejected record or a receipted record that is not accepted
-        (outside a conflict epoch) (`receipted_missing`, the sum of `receipted_missing_days` over the policies). Under the trust assumptions only
-        the TSP can cause either (OBUs are trusted, honest results always verify, the TSP receipts only records of an
-        epoch it can still publish (`TSP.receive`), records of ended policies are discarded, not rejected). It is sent
-        at a fixed time after the settlement of the epoch and names no record or receipt, also after a termination. It depends on no per-record verdict
-        beyond this disjunction, so over n epochs the TSP receives at most n bits."""
+        (outside a conflict epoch) (`receipted_missing`, the sum of `receipted_missing_days` over the policies). Under
+        the trust assumptions only the TSP can cause either (OBUs are trusted, honest results always verify, the TSP
+        receipts only records of an epoch it can still publish (`TSP.receive`), records of ended policies are
+        discarded, not rejected). It is sent at a fixed time after the settlement of the epoch and names no record or
+        receipt, also after a termination. It depends on no per-record verdict beyond this disjunction, so over n
+        epochs the TSP receives at most n bits."""
         return res.rejected > 0 or receipted_missing > 0
 
     @staticmethod
@@ -671,9 +675,9 @@ class Insurer:
     def receipted_missing_days(self, ident: int, rep: "PolicyReport", evidence, tsp_vk) -> int:
         """Number of missing days for which the OBU proves a TSP receipt, without opening
         any record. Each evidence item (digest, c, c', receipt, (ID, t, u, salt')) counts once per distinct u, and only
-        if the receipt verifies under the TSP key over (digest, c, c', t), c' opens to (ID, t, u, salt') with ID = this policy
-        and t = this epoch, and u is not an accepted nonce; the count (records x days per record: 1 in the daily
-        configuration, D in the monthly one) is capped at D - D_r."""
+        if the receipt verifies under the TSP key over (digest, c, c', t), c' opens to (ID, t, u, salt') with ID = this
+        policy and t = this epoch, and u is not an accepted nonce; the count (records x days per record: 1 in the
+        daily configuration, D in the monthly one) is capped at D - D_r."""
         D = self.D[ident]
         accepted = self.accepted_nonces(rep)
         seen = set()
@@ -744,14 +748,20 @@ class Insurer:
         opens to the same (ID, t, u), and that u was neither accepted in B nor already opened; it then records u as
         opened and returns the score of the disclosed features (None if any check fails). No message or ciphertext is
         needed: the TSP's receipt binds cm_r directly."""
-        u = record.get("u")
+        u, x = record.get("u"), record.get("x")
+        try:
+            bind_salt = bytes.fromhex(record.get("bind_salt", ""))
+        except (TypeError, ValueError):
+            return None
+        if type(u) is not int or not isinstance(x, list) or len(x) != self.prm.m \
+                or any(type(xi) is not int or xi < 0 for xi in x):
+            return None                                    # not the encoding of a record: nothing to score
         if record.get("id") != ident or ident not in self.K or record.get("epoch") != self.epoch \
                 or receipted.epoch != self.epoch or u in accepted_nonces or u in opened_nonces:
             return None
         if not verify_receipt_digest(tsp_vk, receipted.digest, receipted.commitment, receipted.binding, receipt,
                                      receipted.epoch) or not open_commitment(receipted.commitment, record, salt) or \
-                binding_commitment(ident, self.epoch, u, bytes.fromhex(record.get("bind_salt", ""))) != receipted.binding:
+                binding_commitment(ident, self.epoch, u, bind_salt) != receipted.binding:
             return None
         opened_nonces.add(u)
-        x = record["x"]
         return sum(wi * xi for wi, xi in zip(self.w, x)) % self.prm.p

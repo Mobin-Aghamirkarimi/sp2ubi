@@ -1,5 +1,5 @@
-"""Decision simulation, monitor variant: insurer decision rules in the final configuration (functions of
-decisions_levels.py are reused).
+"""Decision simulation, monitor variant: insurer decision rules with site qualification, burst thinning and the RSU
+monitor (functions of decisions_levels.py are reused).
 
 Configuration (fixed choices):
   * sites from the site-accuracy simulation under the surveyed K population (TR 38.901 UMi LOS N(9, 5^2) dB, floor
@@ -29,17 +29,9 @@ import numpy as np
 
 import decisions_base as DB
 import decisions_levels as E
+from decisions_base import DAYS, EPOCHS, cp_upper, seed
 from levels_qualification import requalify, scale_to_disclosed
 from residual_scale import population_scale
-from decisions_base import DAYS, EPOCHS, cp_upper, seed
-
-
-def atomic_json(obj, path):
-    tmp = path + ".tmp"
-    with open(tmp, "w") as f:
-        json.dump(obj, f, indent=1, default=float)
-        f.flush(); os.fsync(f.fileno())
-    os.replace(tmp, path)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "results")
@@ -48,7 +40,17 @@ BURST_S, ARC_M = 40.0, 110.0
 HONEST = dict(E.HONEST, LAM_CV=0.0)
 
 
+def atomic_json(obj, path):
+    """Write obj as JSON through a temporary file and a rename."""
+    tmp = path + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(obj, f, indent=1, default=float)
+        f.flush(); os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
 def keep_prob(v):
+    """Probability that the window of a crossing at speed v lies inside one burst."""
     return np.clip(1.0 - ARC_M / (np.asarray(v, float) * BURST_S), 0.0, 1.0)
 
 
@@ -75,15 +77,8 @@ def simulate(rng, A, sw, qual, n_veh, lam, vtype, honest=HONEST, attack=None, rn
     e = A["ev"][site, vi, rng.integers(0, A["n_eval"], P)]
     mult = np.ones(P) if cell_mult is None else cell_mult[site, vi]
     dev = (e - A["dt"][site, vi]) * honest["SIG_UNDER"] * mult
-    mon_raise = mon_stop = None
     if honest["SMULT"] > 0:
-        mm = np.exp(rng.normal(0, honest["SMULT"], (nS, EPOCHS)))
-        dev = dev * mm[site, ep]
-        if honest.get("MONITOR", False):
-            # RSU self-monitor: the running residual level tracks the noise multiplier with a
-            # measurement error (lognormal sd 0.1); > 1.25 raises the disclosed level one step, > 1.6 stops the cell
-            seen = mm * np.exp(rng.normal(0, 0.1, mm.shape))
-            mon_raise, mon_stop = (seen > 1.25)[site, ep], (seen > 1.6)[site, ep]
+        dev = dev * np.exp(rng.normal(0, honest["SMULT"], (nS, EPOCHS)))[site, ep]
     e = A["dt"][site, vi] + dev
     if honest["SBIAS"] > 0:
         st = rng.normal(0, honest["SBIAS"], (nS, EPOCHS)); walk = np.zeros_like(st)
@@ -104,12 +99,8 @@ def simulate(rng, A, sw, qual, n_veh, lam, vtype, honest=HONEST, attack=None, rn
              + np.where(rng.random(P) < honest["BURST_P"], rng.normal(honest["BURST_MU"], honest["BURST_SD"], P), 0.0))
     noise = e + rng.normal(0, honest["SMUDGE"], P) - A["dh"][site, vi]
     lvl_i = A["lvl"][site, vi]
-    if mon_raise is not None:
-        lvl_i = np.where(mon_raise, np.minimum(lvl_i + 1, len(A["levels"]) - 1), lvl_i)
     se_i = np.sqrt(A["levels"][lvl_i] ** 2 + honest["SIGMA0"] ** 2)
     sensed = qual[site, vi] & (rng.random(P) < keep_prob(v_arr))
-    if mon_stop is not None:
-        sensed &= ~mon_stop
     if stop_mask is not None:
         sensed &= ~stop_mask[site, vi]
     out = dict(M=M0, s=s, n_veh=n_veh, b_hon=b_vss + noise)
@@ -134,10 +125,9 @@ def simulate(rng, A, sw, qual, n_veh, lam, vtype, honest=HONEST, attack=None, rn
         out["b_att"] = out["b_att"][keep]
     if attack is not None and attack[0] == "framing":
         n_inj = attack[1]
-        ra = rng_att or np.random.default_rng(12345)
         k_inj = np.repeat(np.arange(n_veh * EPOCHS), n_inj)
-        # injected entry: a pass of the victim's OBU measured at another site, result -15 %, at a random level of the
-        # victim's own entries in that epoch (or of the population if none)
+        # injected entry: result -15 % of the victim's scale, at the sigma level of the victim's first site and a
+        # random speed class, with noise 0.6 x sigma_eff
         lv = A["lvl"][vs[k_inj // EPOCHS, 0], ra.integers(0, len(A["speeds"]), k_inj.size)]
         se_inj = np.sqrt(A["levels"][lv] ** 2 + honest["SIGMA0"] ** 2)
         b_inj = (1 + s[k_inj // EPOCHS]) * (1 + attack[2]) - 1 + ra.normal(0, 1, k_inj.size) * se_inj * 0.6
@@ -160,7 +150,8 @@ def _sim_view(sim, attacked):
 
 
 def decide_popcal(sim, b, qtab, n_levels, f=None):
-    """the decision simulation (level variant) rules with R2 standardised by the per-level population scale f (estimated on the honest population)."""
+    """Rules of the level variant with R2 standardised by the per-level population scale f (estimated on the honest
+    population)."""
     if f is None:
         f = population_scale(sim, b, n_levels)
     return E.decide(sim, b, qtab, r2_scale=f[sim["lvl"]]), f

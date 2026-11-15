@@ -14,7 +14,8 @@ text_branches_<tag>.json plus LaTeX macros \\spb{<key>} (speedpath-branches.tex)
   fnb|freq_types       the site types with Z >= 1 (footnote of the comparison table)
   fnb|freq_clause      ", and frequency-only manipulation at <types>" | ""  (whole clause)
   types|clause         the clause on the site types where frequency-only manipulation separates
-  K|anchor             inside | below | above   (the realised urban K against the range of the S20 road-crossing means; read from the printed design constant lit_k_crossing)
+  K|anchor             inside | below | above   (the realised urban K against the range of the road-crossing means in
+                        the supplement's table of design constants; read from the design constant lit_k_crossing)
   T2|bias|<cell>       reduced | not reduced (|calibrated| < |uncalibrated| or not; at the variant Table A prints:
                         the worst-sigma variant)
   T7                   adopted | not adopted;   dqual|<family>  yes | no;   ucont  yes | no;   incomplete|<cell> label
@@ -46,16 +47,14 @@ sys.path.insert(0, ER)
 from pipeline import stage3_criteria as K  # noqa: E402
 
 C = K.C
-
-
 MIN_MAJORITY = 20                                         # crossings blocked over most of their length
 FEAS_CELLS = ("P1-10", "P1-15", "P2-20", "P2-30", "P2-38")    # the U and H cells (P3 is not a site type)
 FEAS_SHARE, FEAS_UB95 = 0.3, 1e-3
 
 
 def k_anchor_range():
-    """The range the K-anchor sentence prints (design constant lit_k_crossing, S20 road-crossing means), so the bracket
-    rule and the printed text cannot differ."""
+    """The range the K-anchor sentence prints (design constant lit_k_crossing, road-crossing means of the supplement's
+    table of design constants), so the bracket rule and the printed text cannot differ."""
     dc = {c["key"]: c["value"] for c in json.load(open(os.path.join(ER, "config", "design_constants.json")))["constants"]}
     lo, hi = dc["lit_k_crossing"].replace("dB", "").replace("−", "-").split(" to ")
     return float(lo), float(hi)

@@ -1,9 +1,9 @@
 """Study 2 stage 3: the two pre-specified additions to the study-1 stage-3 path and the study-2 outcome rules.
-pipeline/stage3_criteria.py and pipeline/stage3_extra_checks.py are not changed: the study-2 mode calls their functions
-on records mapped here.
+The study-2 mode calls the functions of pipeline/stage3_criteria.py and pipeline/stage3_extra_checks.py on records
+mapped here.
   1. mode s2: use_statistic_s2 puts the study-2 configuration's statistic and inclusion into the fields
      every criterion reads (match, prof, finite, window_ok), as mode d does for the Huber fit (d); mse stays the plain-LS
-     residual (gate, monitor). An exclusion of the configuration (E-c, E-d / E-db no entry, L-B, L-B′) is a "no entry":
+     residual (gate, monitor). An exclusion of the configuration (E-c, E-d / E-db no entry, L-B, L-B') is a "no entry":
      window_ok = False with s2_excluded = True. An exclusion applies to survey
      and test passes alike (the RSU applies one entry rule to every crossing; a site whose included survey falls below
      MIN_REF then yields no entries, counted in the yield). Addition 1 also holds the N16 C2 band: c2_tost_s2
@@ -65,22 +65,24 @@ def _exclude(q):
 
 
 def stop_detected(r, cal):
-    """The E-d / E-db RSU-only low-speed-run (stop) detector (N12) under the pre-specified span and scale: stop_abs (Hz, the
-    smallest run maximum of |FDOA - δ̂| inside the inter-head span) < k_stop x the site's survey rms_ref_med (annotated
-    by annotate_rms_ref_med on the same records; reading T: the surrogate survey). A missing site scale -> no detection
-    (the site has no qualified survey and yields no entry anyway)."""
+    """The E-d / E-db RSU-only low-speed-run (stop) detector (N12) under the pre-specified span and scale: stop_abs (Hz,
+    the smallest run maximum of |FDOA - delta_hat| inside the inter-head span) < k_stop x the site's survey rms_ref_med
+    (annotated by annotate_rms_ref_med on the same records; reading T: the surrogate survey). A missing site scale -> no
+    detection (the site has no qualified survey and yields no entry anyway)."""
     rm = r.get("rms_ref_med", np.nan)
     return bool(np.isfinite(rm) and r.get("stop_abs", np.nan) < cal["k_stop"] * rm)
 
 
 def is_survey(r):
-    """A survey pass of the reading (role 'ref'; reading T: the surrogate), SUMO, beta = 0, included (stage3_criteria.included)."""
+    """A survey pass of the reading (role 'ref'; reading T: the surrogate), SUMO, beta = 0, included
+    (stage3_criteria.included)."""
     return r["role"] == "ref" and r.get("kin", "sumo") == "sumo" and r.get("beta", 0.0) == 0.0 and K.included(r)
 
 
 def annotate_rms_ref_med(recs):
-    """Add rms_ref_med (median sqrt(mse) of the site's included survey passes, same cell / variant / arm: the study-1 gate's
-    scale, stage3_criteria.site_table) to every record; the survey is role 'ref' of these records (reading T: the surrogate)."""
+    """Add rms_ref_med (median sqrt(mse) of the site's included survey passes, same cell / variant / arm: the study-1
+    gate's scale, stage3_criteria.site_table) to every record; the survey is role 'ref' of these records (reading T: the
+    surrogate)."""
     by = {}
     for r in recs:
         if is_survey(r):
@@ -95,8 +97,9 @@ def annotate_rms_ref_med(recs):
 
 
 def annotate_rho_dev(recs):
-    """Add rho_dev (N18, L-B′): min over the site's surveyed lanes of |ρ̂ - median survey ρ̂ of the lane|, the survey
-    = the reading's included survey passes (their lane known by design), leave-one-out for a survey pass itself; the test pass's SUMO lane is never used."""
+    """Add rho_dev (N18, L-B'): min over the site's surveyed lanes of |rho_hat - median survey rho_hat of the lane|, the
+    survey = the reading's included survey passes (their lane known by design), leave-one-out for a survey pass itself;
+    the test pass's SUMO lane is never used."""
     from pipeline.s2_fields import rho_lane_offset
     dev = rho_lane_offset(recs, is_survey, K.lane_width)
     return [dict(r, rho_dev=d) for r, d in zip(recs, dev)]
@@ -110,7 +113,7 @@ def check_n2(n2):
 
 def map_records(recs, cand, cal, reading="F", e_d_variant="no_entry", n2=None):
     """map_record over a record set, with the site annotations the configuration needs (rms_ref_med for E-d / E-db,
-    rho_dev for L-B′), computed on the unmapped records (one pass, no iteration)."""
+    rho_dev for L-B'), computed on the unmapped records (one pass, no iteration)."""
     if cand in ("E-d", "E-db"):
         recs = annotate_rms_ref_med(recs)
     if check_n2(n2) == "L-B′":
@@ -119,9 +122,9 @@ def map_records(recs, cand, cal, reading="F", e_d_variant="no_entry", n2=None):
 
 
 def map_record(r, cand, cal, reading="F", e_d_variant="no_entry", n2=None):
-    """One record under a configuration: cand in (None = plain LS, 'E-a', ..., 'E-e', 'E-db'); cal = the calibration dict
-    (a_max, k_stop, delta_blk_db, delta_rho); reading 'T' selects the reading-T E-e fields; n2: the N2 inclusion rule
-    (None, 'L-B' or 'L-B′'; N2 only). E-d has one variant, 'no entry'; any other is refused."""
+    """One record under a configuration: cand in (None = plain LS, 'E-a', ..., 'E-e', 'E-db'); cal = the calibration
+    dict (a_max, k_stop, delta_blk_db, delta_rho); reading 'T' selects the reading-T E-e fields; n2: the N2 inclusion
+    rule (None, 'L-B' or 'L-B''; N2 only). E-d has one variant, 'no entry'; any other is refused."""
     if e_d_variant not in S2.E_D_VARIANTS:
         raise ValueError(f"E-d variant {e_d_variant!r} is not pre-specified (pre-specified: {S2.E_D_VARIANTS})")
     check_n2(n2)
@@ -165,9 +168,9 @@ def map_record(r, cand, cal, reading="F", e_d_variant="no_entry", n2=None):
 
 
 def use_statistic_s2(recs, selected, cal, reading="F"):
-    """Mode s2: the selected configuration (constants evaluation_v6.selected: estimator = candidate or None, e_d_variant,
-    n2_rule = the adopted N2 rule 'L-B' / 'L-B′' or None) applied to every record; the N2 rule only on the N-type
-    records (cell P3)."""
+    """Mode s2: the selected configuration (constants evaluation_v6.selected: estimator = candidate or None,
+    e_d_variant, n2_rule = the adopted N2 rule 'L-B' / 'L-B'' or None) applied to every record; the N2 rule only on the
+    N-type records (cell P3)."""
     cand = selected.get("estimator")
     n2 = check_n2(selected.get("n2_rule"))
     if cand in ("E-d", "E-db"):
@@ -199,8 +202,8 @@ def c2_s2(recs, cells):
 
 
 def c2_boot_means(recs, cell, v0, mapping, prb):
-    """The C2 site-bootstrap means of c2_cell (stage3_criteria.py), the same draws (K.draws key ("C2", cell, v0, mapping,
-    prb)) and the same pooling; None with fewer than 2 sites (as c2_cell)."""
+    """The C2 site-bootstrap means of c2_cell (stage3_criteria.py), the same draws (K.draws key ("C2", cell, v0,
+    mapping, prb)) and the same pooling; None with fewer than 2 sites (as c2_cell)."""
     T, _ = K.site_table(recs, cell, v0, "gen_on", mapping, prb)
     sites = sorted(T)
     if len(sites) < 2:
@@ -210,15 +213,16 @@ def c2_boot_means(recs, cell, v0, mapping, prb):
 
 
 def p_tost_band(mb, band):
-    """The two one-sided bootstrap p of c2_cell (stage3_criteria.py) at a given band: max(P(b >= band), P(b <= -band))."""
+    """The two one-sided bootstrap p of c2_cell (stage3_criteria.py) at a given band: max(P(b >= band), P(b <=
+    -band))."""
     return max(K.pval(mb, lambda b: b >= band), K.pval(mb, lambda b: b <= -band))
 
 
 def c2_tost_s2(recs, cells, band=S2.N16_L1_BIAS_BAND):
     """N16, the L1 bias test: per (cell, mapping, PRB) the C2 TOST on the same site-bootstrap draws with the separate
     band of mode s2 (3 %), Holm over the m = 3 family (N4) per (mapping, PRB) (a missing cell enters with p = 1, as
-    c2_all), alpha = 0.05. stage3_criteria.D_MAX (0.5 %) is neither read nor changed. Rows carry the study-1 C2 fields of
-    c2_s2 (bias, bias_ci, the 0.5 % p_tost and its Holm value, excess test) beside p_tost_s2 / p_tost_s2_holm /
+    c2_all), alpha = 0.025 (conventions.alpha). stage3_criteria.D_MAX (0.5 %) is not read. Rows carry the study-1 C2 fields
+    of c2_s2 (bias, bias_ci, the 0.5 % p_tost and its Holm value, excess test) beside p_tost_s2 / p_tost_s2_holm /
     tost_s2_pass."""
     rows, summ = c2_s2(recs, cells)
     fam = [tuple(c) for c in S2.N4_HOLM_FAMILY]
@@ -277,7 +281,7 @@ def gate_G(h2_ran, coverage_rating, sigma_governing, s_all_cfg, s_all_ls, t_all_
 # ---------------------------------------------------------------------------------------------- ladder (N1, N2)
 def l1_bias_ok(c2_rows):
     """N16, the L1 bias criterion of one U2 cell: in every variant (every (mapping, PRB) row of C2,
-    gen_on) the Holm-adjusted s2 TOST passes (p_tost_s2_holm <= 0.05, band 3 %, m = 3) and C2 (ii) detects no excess.
+    gen_on) the Holm-adjusted s2 TOST passes (p_tost_s2_holm <= 0.025, band 3 %, m = 3) and C2 (ii) detects no excess.
     c2_rows: the cell's rows of c2_tost_s2. None if C2 has no row (not computable). bias_ci is printed, not gating."""
     if not c2_rows:
         return None
@@ -291,14 +295,14 @@ def l1_holds(k, tost_pass, n_over_9pct):
 
 
 def l2_holds(k, n, sigma_governing):
-    """L2 precision: the study-1 POINT rating k / n >= 0.3 (partly covered or covered; CP reported) and governing sigma <= 6 %
-    (the S-place factor of N5 already applied)."""
+    """L2 precision: the study-1 POINT rating k / n >= 0.3 (partly covered or covered; CP reported) and governing sigma
+    <= 6 % (the S-place factor of N5 already applied)."""
     return bool(n > 0 and k / n >= K.SCOPE["partly_covered"] and np.isfinite(sigma_governing) and sigma_governing <= K.SIG_Q)
 
 
 def cell_rung(k, n, tost_pass, n_over_9pct, sigma_governing):
-    """L0 / L1 / L2 of one U2 cell (each rung needs every lower one). k = 0 -> L0 'no site qualified' (C2 and R8 (ii) are
-    not evaluated then); tost_pass None (C2 not computable, < 2 sites) -> L1 fails with that reason."""
+    """L0 / L1 / L2 of one U2 cell (each rung needs every lower one). k = 0 -> L0 'no site qualified' (C2 and R8 (ii)
+    are not evaluated then); tost_pass None (C2 not computable, < 2 sites) -> L1 fails with that reason."""
     if k < S2.N1_K_MIN_QUALIFIED:
         return dict(rung="L0", no_site_qualified=True, reason="k = 0", cp95=K.clopper_pearson(k, n))
     if tost_pass is None:
@@ -312,7 +316,8 @@ def cell_rung(k, n, tost_pass, n_over_9pct, sigma_governing):
 
 
 def l3_holds(bstratum_urban_covered, adapter_covered_cells, rungs):
-    """L3 (per stratum): Bstratum|urban covered by the adapter rule and every cell the adapter counts as covered reaches L2."""
+    """L3 (per stratum): Bstratum|urban covered by the adapter rule and every cell the adapter counts as covered reaches
+    L2."""
     return bool(bstratum_urban_covered and adapter_covered_cells
                 and all(rungs.get(c) == "L2" for c in adapter_covered_cells))
 
@@ -322,7 +327,8 @@ def select_outcome(gate, rungs, l3, k_zero=None):
     """The complete outcome map. gate: 'holds' | 'fails' | 'not run'; rungs: {'P1-10': 'L0'|'L1'|'L2', 'P1-15': ...};
     l3: bool (stratum). Returns dict(template, named_cells, per_cell). G fails -> the G text whatever the rungs.
     Otherwise the template of the highest rung reached by any U2 cell (L3 for the stratum); the abstract / conclusion
-    clause names only the cells that reach that rung; every other cell is printed in Section VI-D / Table A2 with its own rung."""
+    clause names only the cells that reach that rung; every other cell is printed in Section VI-D / Table A2 with its
+    own rung."""
     if gate not in ("holds", "fails", "not run"):
         raise ValueError(gate)
     for c in ("P1-10", "P1-15"):
@@ -346,9 +352,9 @@ def select_outcome(gate, rungs, l3, k_zero=None):
 
 
 def all_outcomes():
-    """Every combination of the outcome map: {G holds / fails / not run} x {P1-10, P1-15 rung} x {L3 yes / no}, plus the k = 0
-    variant of L0. L3 = yes with no cell at L2 cannot occur (l3_holds) and is listed as impossible, except under G fails,
-    whose text does not depend on the rungs."""
+    """Every combination of the outcome map: {G holds / fails / not run} x {P1-10, P1-15 rung} x {L3 yes / no}, plus the
+    k = 0 variant of L0. L3 = yes with no cell at L2 cannot occur (l3_holds) and is listed as impossible, except under G
+    fails, whose text does not depend on the rungs."""
     out = []
     for g in ("holds", "fails", "not run"):
         for r10 in LADDER:

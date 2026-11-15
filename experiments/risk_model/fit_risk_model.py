@@ -12,7 +12,8 @@ encrypted part stays linear). The negative log-likelihood is convex in b (for fi
 every prediction is non-negative by construction.
 
 Outputs (results/): data dictionary, CV metrics, coefficients with standard errors, calibration deciles, fixed-point
-quantization analysis and the integer model used by the reference implementation (models/).
+quantization analysis and the integer model (integer_model.json; models/so2021_additive_poisson.json holds the same
+weights with a record of their origin).
 Usage (from the repository root, environment requirements/riskmodel.lock):  python experiments/risk_model/fit_risk_model.py
 """
 import json

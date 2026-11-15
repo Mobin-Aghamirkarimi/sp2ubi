@@ -7,8 +7,7 @@ Huber weights r_i enter both statistics b_hat of the speed check and the free fi
     profile  b = sum r_i v_fit_i v_sen_i / sum r_i v_fit_i^2 - 1
     matched  b = sum r_i g_i^2 v_sen_i / (lambda sum r_i g_i (f_FDOA,i - delta)) - 1
 The weights use only the FDOA data, never the VSS speed, so b stays linear in v_sen.
-The quality gate and the monitor keep the residual RMS of the plain LS fit (returned by the LS statistics).
-Pure functions; the in-house site-accuracy code is not modified."""
+The quality gate and the monitor keep the residual RMS of the plain LS fit (returned by the LS statistics)."""
 import os
 import sys
 

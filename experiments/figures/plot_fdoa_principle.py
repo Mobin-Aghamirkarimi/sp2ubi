@@ -59,7 +59,7 @@ def main():
     rng = np.random.default_rng(20261005)
     site = Site(D=100.0)
     cfg = ChannelConfig(K_db=10.0)
-    traj = make_trajectory(rng, site, 20.0, x_start=-0.3 * site.D, x_end=1.3 * site.D)
+    traj = make_trajectory(rng, site, 20.0)
     t_b, y, _ = simulate_pass(rng, site, traj, cfg)
     fd = fdoa_from_samples(y, cfg.packet_s)
     p, t_mid, _, ok = fit_pass_offset(t_b, fd, site)       # p = (x_mid, v_mid, acc, rho, delta)
@@ -94,7 +94,7 @@ def main():
     ax.text(x_b[k] + 2, y_b[k] - 2.2, "beacon", fontsize=6.5, color=ORANGE, va="top")
     ax.text(118, -3.6, "vehicle", fontsize=6.5, color=BLUE, ha="center")
     ax.set_xlim(-38, 138); ax.set_ylim(-16, 16)
-    ax.set_aspect("auto"); ax.set_xticks([]); ax.set_yticks([])
+    ax.set_xticks([]); ax.set_yticks([])
     for s in ax.spines.values():
         s.set_visible(False)
     ax.set_title("(a) site (top view)", loc="left", color=INK)
@@ -116,7 +116,7 @@ def main():
     ax.plot(x_b, v_fit, color=ORANGE, lw=1.4, zorder=4, label="roadside speed (fit)")
     ax.scatter(x_b, vsen_honest, s=6, color=BLUE, lw=0, zorder=3, label=f"VSS, honest ($\\hat b$ = {fmt(100*b_h)} %)")
     ax.scatter(x_b, vsen_scaled, s=6, color=AQUA, lw=0, zorder=3, marker="s",
-               label=f"VSS scaled by −10 % ($\\hat b$ = {fmt(100*b_s)} %)")
+               label=f"VSS scaled by \u221210 % ($\\hat b$ = {fmt(100*b_s)} %)")
     ax.set_xlabel(r"vehicle position $\xi$ (m)"); ax.set_ylabel("speed (m/s)")
     lo = min(vsen_scaled.min(), v_fit.min()); hi = max(vsen_honest.max(), v_fit.max())
     ax.set_ylim(lo - 3.0, hi + 0.6)

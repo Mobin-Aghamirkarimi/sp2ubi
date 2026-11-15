@@ -5,6 +5,7 @@ call order."""
 import hashlib
 import json
 import os
+import platform
 import subprocess
 import sys
 
@@ -110,7 +111,6 @@ def provenance(tag, stage=None, **knobs):
 
 
 def _machine():
-    import platform
     try:
         mem = int(open("/proc/meminfo").read().split("MemTotal:")[1].split()[0]) // 1024 ** 2
     except Exception:                                   # noqa: BLE001
@@ -137,7 +137,8 @@ def check_tag(tag, stage=None, **knobs):
 
 def same_provenance(a, b):
     """Resume check: the parts of the provenance that must not change between a stored output and the current run: the
-    code, the constants, the knobs, the patched QuaDRiGa tree and the installed tool versions. The machine may differ."""
+    code, the constants, the knobs, the patched QuaDRiGa tree and the installed tool versions. The machine may
+    differ."""
     if a.get("stage") and a.get("stage") == b.get("stage"):   # staged record: sources of stages <= stage only
         k = int(a["stage"])
         keys = ("constants_sha256", "knobs", "quadriga_tree_sha256", "versions")

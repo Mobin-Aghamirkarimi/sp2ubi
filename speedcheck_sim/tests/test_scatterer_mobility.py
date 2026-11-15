@@ -1,10 +1,12 @@
+"""Scatterer-mobility Doppler term (scatterer_mobility.py): bounds, moments and exact distribution."""
 import os
 import sys
 
 import numpy as np
 import pytest
 
-sys.path[:0] = [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885"), os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885"), "..")]
+ER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885")
+sys.path[:0] = [ER, os.path.join(ER, "..")]
 import scatterer_mobility as sm  # noqa: E402
 
 LAM = 299_792_458.0 / 5.9e9

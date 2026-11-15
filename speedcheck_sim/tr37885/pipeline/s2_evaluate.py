@@ -1,6 +1,5 @@
 """Study 2: stage-2 re-runs from stage-1 records with the study-2 fields of pipeline/s2_fields.py beside the study-1
-fields. pipeline/stage2_evaluate.py is not changed: its evaluate_site runs on a work copy of the site whose stage-1 meta
-lists the
+fields. evaluate_site of pipeline/stage2_evaluate.py runs on a work copy of the site whose stage-1 meta lists the
 wanted passes only (the npz is linked, its SHA-256 checked as usual); two of its module functions are wrapped for the
 duration of the call, each returning exactly what the original returns: fdoa_from_samples (to see the received samples
 of the record) and one_stat (to hand the record's beacons to S2Fields.core). The study-2 fields are then added to the
@@ -14,8 +13,8 @@ finished records (S2Fields.attach), so every study-1 field is the study-1 code's
               test jr < 30).
   Dev-3 (D3U) is not run here: its stage 2 is the study-1 stage 2 (no study-2 fields), run per part by run_study2.sh.
 After each site the study-1 field check compares the study-1 fields of the new records with those of the existing
-records of the same passes (--check-against <eval dir of the archive>); a mismatch stops the run. Only counts and field
-names are printed, never a value. Output: <run dir>/eval_<tag>/site_<k>.json.
+records of the same passes (--check-against <existing eval dir>); a mismatch stops the run.
+Output: <run dir>/eval_<tag>/site_<k>.json.
 Usage: python pipeline/s2_evaluate.py --family P0U --tag dev_s2_cal --run-dir <stage-1 record dir>
            --check-against <run dir>/eval_dev_p0 [--sites 0 6] [--workers 2]"""
 import argparse

@@ -1,16 +1,15 @@
-"""Matching simulation: insurer + RSU matching under the candidate configurations, used to fix the number of disclosed sigma levels and on the
-z resolution.
+"""Matching simulation: what the insurer and colluding RSUs can link, for 4 or 8 disclosed sigma levels and for each
+resolution of z.
 
-City: N_VEH policies, 2-10 sites each drawn with the K-population site weights of the decision simulation (level variant) (the site-accuracy simulation sites, qualification
-sigma_hat <= SIGMA_MAX per (site, speed class); unqualified cells produce no entry), Poisson(lambda) passes per epoch,
-urban / suburban / highway speed profiles. Per pass the RSU discloses the sigma level (4 or 8 levels spanned
-over the qualified cells) and z_q; z is drawn from the honest per-pass z of the matching the base consistency simulation cell (same speed, K,
-facade; drift arm 0), i.e. the empirical distribution including its tails.
+City: N_VEH policies, 2-10 sites each, drawn with the K-population site weights of decisions_levels.py (sites of the
+site-accuracy simulation; qualification sigma_hat <= SIGMA_MAX per (site, speed class); unqualified cells produce no
+entry), Poisson(lambda) passes per epoch, urban / suburban / highway speed profiles. Per pass the RSU discloses the
+sigma level (4 or 8 levels spanned over the qualified cells) and z_q; z is drawn from the honest per-pass z of the
+consistency-simulation cell with the same speed, K and facade, i.e. the empirical distribution including its tails.
 Colluding RSUs group k records of one vehicle (with non-overlapping bursts: the crossings of one burst, k set by site
-density along a corridor). Reported: median candidate policies and P(unique) for k in {1, 2, 3, 5, 8}; target for
-the choice: median >= 100 and P(unique) <= 0.05 at k = 5, lambda = 5.
+density along a corridor). Reported: median candidate policies and P(unique) for k in {1, 2, 3, 5, 8}.
 Resumable: results saved after every configuration to inhouse/results/matching<tag>.partial.json.
-Usage: python inhouse/matching.py [--vehicles 20000]
+Usage: python inhouse/matching.py --out-tag _trf [--vehicles 20000]   (writes inhouse/results/matching_trf.json)
 """
 import argparse
 import json
@@ -20,17 +19,17 @@ import numpy as np
 
 import decisions_levels as E
 from levels_qualification import requalify
-from matching_base import linkage
+from matching_base import linkage, tuple_ids
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "results")
 SIGMA_MAX = 0.06
 Z_OPTIONS = {"z q1.0": 1.0, "z q3.0": 3.0, "level only": None}
-CLIP = 3.0
 
 
-def load_consistency_z(path, kind="d0.0"):
-    """Honest per-pass z per cell: the base consistency simulation (kind 'd0.0') or the consistency simulation (kind 'trf': traffic standardisation)."""
+def load_consistency_z(path, kind="trf"):
+    """Honest per-pass z per cell of the consistency simulation; kind 'trf': traffic standardisation, 'ref': survey
+    passes."""
     meta = json.load(open(path.replace("_z_", "_").replace(".npz", ".json")))
     arr = np.load(path)
     zmap = {}
@@ -43,9 +42,9 @@ def load_consistency_z(path, kind="d0.0"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--vehicles", type=int, default=20_000)
-    ap.add_argument("--e3", default=os.path.join(HERE, "results", "consistency_base_z_full.npz"))
+    ap.add_argument("--e3", default=os.path.join(HERE, "results", "consistency_z_full.npz"))
     ap.add_argument("--seed", type=int, default=17)
-    ap.add_argument("--kind", default="d0.0", help="d0.0 (base consistency z) or trf (traffic standardisation)")
+    ap.add_argument("--kind", default="trf", help="trf (traffic standardisation) or ref (survey passes)")
     ap.add_argument("--out-tag", default="")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
@@ -82,11 +81,7 @@ def main():
             for zname, q in Z_OPTIONS.items():
                 if f"L{n_levels}|{zname}|lam{lam}" in rep:
                     continue
-                if q is None:
-                    tid = lvl.copy()
-                else:
-                    zq = np.round(np.clip(z, -CLIP, CLIP) / q).astype(int); zq -= zq.min()
-                    tid = lvl * (zq.max() + 1) + zq
+                tid = tuple_ids(lvl, z, q)
                 r = linkage(pol, tid, a.vehicles, np.random.default_rng(a.seed + 1), n_targets=2000)
                 r.update(passes=int(len(pol)), n_levels=n_levels, lam=lam, z=zname)
                 tag = f"L{n_levels}|{zname}|lam{lam}"

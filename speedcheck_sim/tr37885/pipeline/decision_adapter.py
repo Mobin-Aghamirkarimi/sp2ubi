@@ -1,5 +1,5 @@
 """Decision adapter (constants `adapter_e2`, `window_rule`, `c2_consequence`, `c5_consequence`): runs the in-house
-decision simulation (monitor variant), the consistency analysis and the matching simulation unchanged on the
+decision simulation (monitor variant), the consistency analysis and the matching simulation on the
 TR 37.885 generator records by wrapping them. Only their inputs are replaced:
   * site tables in the structure of `inhouse/decisions_levels.py.load_sites` from the stage-2 records of the governing
     SNR mapping and PRB of the stratum (a primary run refuses any other value). Inclusion as in stage3_criteria.py:
@@ -7,8 +7,8 @@ TR 37.885 generator records by wrapping them. Only their inputs are replaced:
     the residual gate give no entry, qualification is the decision simulation's own requalify; stop_between is never
     an exclusion. Select statistic per site and speed (smaller variance over the references), every site the
     placeholder K = 9 dB (equal weights);
-  * consequences decided before the data: C2 (ii) between-site excess τ̂ per cell (governing file) -> each site gets a
-    seeded offset N(0, τ̂²) on its evaluated residuals and sqrt(sd_ref² + τ̂²) as reference sd; C5 failing classes are
+  * consequences decided before the data: C2 (ii) between-site excess tau_hat per cell (governing file) -> each site gets a
+    seeded offset N(0, tau_hat^2) on its evaluated residuals and sqrt(sd_ref^2 + tau_hat^2) as reference sd; C5 failing classes are
     removed from the stratum's speed list and from the speed-profile table given to the decision and matching
     simulations (renormalised; the removed mass per vehicle profile is reported as uncovered traffic share);
   * strata: urban = P1 (U), highway = P2 (H); a stratum without any qualified (site, class) is reported "not covered";
@@ -17,10 +17,11 @@ TR 37.885 generator records by wrapping them. Only their inputs are replaced:
   * fixed row extraction: urban vehicle-profile rows from the urban table, highway rows from the highway table,
     suburban rows from both with the worse reported per metric (EXTRACTION); other rows are not reported;
   * the consistency simulation: P5 per-site z files in the format of inhouse/consistency.py (survey 30, traffic 150,
-    evaluated 100; β arms = the first 30 evaluated passes, jr < 30, asserted), only the selected sites of
+    evaluated 100; beta arms = the first 30 evaluated passes, jr < 30, asserted), only the selected sites of
     selection.json (required), analysed by inhouse/consistency_analysis.py with the level map from the common grid and
     equal weights;
-  * the matching simulation: the same site tables; z from the stratum's own P5 cell for every speed of the stratum (never across strata);
+  * the matching simulation: the same site tables; z from the stratum's own P5 cell for every speed of the stratum
+    (never across strata);
   * outputs only under results/adapter/, each with the SHA-256 of the stage-2 files used (input hash).
 The level grid is the fixed in-house design constant (evaluation_v4.level_grid; the data-derived grid runs only as the
 sensitivity `--grid data`); the top-level clipped share is reported. P5 is not run, so `e3` is not run on generator data
@@ -68,6 +69,8 @@ MIN_EVAL_FLOOR = C["conventions"].get("min_eval_e2_floor")
 
 class ShortStratum(RuntimeError):
     """n_eval below the floor conventions.min_eval_e2_floor: the stratum is reported "not covered"."""
+
+
 class NoClass(RuntimeError):
     """Every speed class of the stratum removed by C5: the stratum is reported "not covered (every class failed C5)"."""
 
@@ -123,8 +126,8 @@ def included(r):
 
 
 def site_table(recs, cell, mapping, prb, arm="gen_on", tau=0.0, drop_speeds=(), rng=None):
-    """Same structure as inhouse/decisions_levels.py.load_sites (ev, dh, dt, sraw, swithin, nu, levels, lvl, sg, K, keys, speeds,
-    nS, n_eval) plus `truncation` (passes beyond n_eval per row) and `uncovered` (C5 dropped classes)."""
+    """Same structure as load_sites of inhouse/decisions_levels.py (ev, dh, dt, sraw, swithin, nu, levels, lvl, sg, K,
+    keys, speeds, nS, n_eval) plus `truncation` (passes beyond n_eval per row) and `uncovered` (C5 dropped classes)."""
     sel = [r for r in recs if r["cell"] == cell and r["arm"] == arm and r["mapping"] == mapping and r["prb"] == prb
            and r["kin"] == "sumo" and r.get("beta", 0.0) == 0.0 and included(r)]
     speeds_full = tuple(sorted({r["v0"] for r in sel}))
@@ -179,8 +182,9 @@ def site_table(recs, cell, mapping, prb, arm="gen_on", tau=0.0, drop_speeds=(), 
 def profiles_without(speeds_full, drop):
     """C5 consequence: the decision simulation's `profile` would give the mass of a removed class to the
     nearest remaining one, i.e. still verify that traffic with a neighbouring class's errors. The adapter therefore
-    hands the decision simulation/the matching simulation a speed-profile TABLE (an input, not code) from which every profile speed whose nearest simulated class
-    (on the full class list) failed C5 is removed and the rest renormalised. Returns (profiles, uncovered share per
+    hands the decision simulation and the matching simulation a speed-profile table (an input, not code) from which
+    every profile speed whose nearest simulated class (on the full class list) failed C5 is removed and the rest
+    renormalised. Returns (profiles, uncovered share per
     vehicle profile); a profile whose whole mass is removed is left out and reported as uncovered 1.0."""
     full = np.array(speeds_full, float)
     prof, unc = {}, {}
@@ -195,10 +199,10 @@ def profiles_without(speeds_full, drop):
 
 
 def lambda_eff(tables, lams=(5, 15, 40)):
-    """Per stratum and vehicle profile, q = the share of the profile's
-    crossings that fall on qualified (site, speed class) cells (each profile speed takes its nearest simulated class; the
-    sites of a class count equally), and lambda_eff = lambda x q. The window, gate and erasure losses act inside the decision simulation
-    through the gated inputs and are not applied again."""
+    """Per stratum and vehicle profile, q = the share of the profile's crossings that fall on qualified (site, speed
+    class) cells (each profile speed takes its nearest simulated class; the sites of a class count equally), and
+    lambda_eff = lambda x q. The window, gate and erasure losses act inside the decision simulation through the gated
+    inputs and are not applied again."""
     out = {}
     for name, A in tables.items():
         speeds = np.array(A["speeds"], float)
@@ -218,7 +222,8 @@ def lambda_eff(tables, lams=(5, 15, 40)):
 
 
 def common_levels(tables, sigma_max, n_levels):
-    """One log-spaced grid over the qualified (site, speed) cells of all tables (P1 + P2), as requalify does per table."""
+    """One log-spaced grid over the qualified (site, speed) cells of all tables (P1 + P2), as requalify does per
+    table."""
     s = np.concatenate([(SIGMA_INFL * T["sraw"])[T["sraw"] <= sigma_max] for T in tables] + [np.zeros(0)])
     if not s.size:                                      # no qualified cell (no stratum covered, or a forced dev stratum):
         return FIXED_LEVELS.copy()                      # the data grid is undefined; the fixed grid stands in (sensitivity)
@@ -250,11 +255,11 @@ def governing(a):
 
 
 def dev_switches(a):
-    """Development-only switches of the plumbing test: --dev-tau0
-    sets the C2 (ii) excess tau to 0; --dev-force-cover also
-    forces a stratum that would still be "not covered" (no qualified (site, class), or every class failed C5) to be
-    covered: every (site, class) qualified and no C5 drop. Both are refused unless the tag starts with dev_, so a primary
-    or sens_ run can never take them; their outputs are plumbing evidence only (exit codes, file names, branch ids)."""
+    """Development-only switches of the plumbing test: --dev-tau0 sets the C2 (ii) excess tau to 0; --dev-force-cover
+    also forces a stratum that would still be "not covered" (no qualified (site, class), or every class failed C5) to be
+    covered: every (site, class) qualified and no C5 drop. Both are refused unless the tag starts with dev_, so a
+    primary or sens_ run can never take them; their outputs are plumbing evidence only (exit codes, file names, branch
+    ids)."""
     tau0, force = bool(getattr(a, "dev_tau0", False)), bool(getattr(a, "dev_force_cover", False))
     if (tau0 or force) and not a.tag.startswith("dev_"):
         raise ValueError(f"--dev-tau0 / --dev-force-cover are development switches: refused for tag {a.tag!r}")
@@ -383,13 +388,12 @@ def run_e2(a, tables, levels, hashes):
 
 
 def e3_arrays(recs, v0, mapping, prb, arm="gen_on"):
-    """Per P5 site: z of the evaluated and beta passes under the survey and the traffic standardisation. every pass keeps its slot in track order: a pass that
-    is not included (window rule, non-finite fit) or is discarded by the residual gate (constants window_rule.
-    e2_e3_e5_inputs: gated inputs) carries NaN, which the consistency simulation maps to z_q = 0 as for a failed fit; the
-    fixed per-site blocks of consistency_analysis / consistency_report (100 evaluated, 30 per beta) therefore stay
-    aligned. References
-    are never gated (they define the standardisation); traffic passes are gated like evaluated passes. Asserts 100 / 30;
-    reports the excluded and gated counts per site."""
+    """Per P5 site: z of the evaluated and beta passes under the survey and the traffic standardisation. Every pass
+    keeps its slot in track order: a pass that is not included (window rule, non-finite fit) or is discarded by the
+    residual gate (constants window_rule. e2_e3_e5_inputs: gated inputs) carries NaN, which the consistency simulation
+    maps to z_q = 0 as for a failed fit; the fixed per-site blocks of consistency_analysis / consistency_report (100
+    evaluated, 30 per beta) therefore stay aligned. References are never gated (they define the standardisation);
+    traffic passes are gated like evaluated passes. Asserts 100 / 30; reports the excluded and gated counts per site."""
     ne, nsp = 100, 30
     sel = [r for r in recs if r["cell"] == "P5" and r["v0"] == v0 and r["arm"] == arm and r["mapping"] == mapping
            and r["prb"] == prb]

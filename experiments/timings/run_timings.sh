@@ -28,7 +28,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --out) OUT="$(mkdir -p "$2" && cd "$2" && pwd)"; shift 2 ;;
     --smoke) SMOKE=1; shift ;;
-    -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
     *) SEL+=("$1"); shift ;;
   esac
 done

@@ -1,7 +1,7 @@
 """Stage 2 (numpy only, no new channel draws): turns the stage-1 channel records of one site into per-pass statistics
 of the in-house estimator for every arm, with common random numbers across arms:
   arms     gen_off, gen_on (term on: headline; C2-C7), inhouse (paired in-house:
-           unchanged fdoa.channel.simulate_pass with the realised K per head, the same trajectory, beacon schedule,
+           fdoa.channel.simulate_pass with the realised K per head, the same trajectory, beacon schedule,
            geometry, SNR array, offsets, noise and impairments)
   mapping  e1 (40 dB at 100 m, free-space slope) and lb (TR 37.885 link budget from the generator's gain; the paired
            in-house arm gets the same per-beacon SNR array)
@@ -9,9 +9,9 @@ of the in-house estimator for every arm, with common random numbers across arms:
 Nominal impairments (constants `impairments`), no erasures (sensitivities: --erasure, --impairments).
 Every record carries both the plain LS statistics (prof, match, mse) and the Huber statistics (d) (prof_d, match_d;
 huber_fit.py), so the adoption decision and the ablation use the same records; mse stays the LS residual (gate,
-monitor). β arms (k3 C4-light; the pilot on all its U/H cells): every path's
-Doppler scaled by 1 + β on the same channel draws, arms gen_on and in-house, with the consistency statistic d (LS free
-fit) and d_d (Huber free fit) on the β passes and on their honest (β = 0) counterparts.
+monitor). beta arms (constants evaluation_v4.k3_c4_light; the pilot on all its U/H cells): every path's Doppler scaled
+by 1 + beta on the same channel draws, arms gen_on and in-house, with the consistency statistic d (LS free fit) and d_d
+(Huber free fit) on the beta passes and on their honest (beta = 0) counterparts.
 P5 (families 5U, 5H): arms gen_on and inhouse; every record also carries the consistency statistic d (free fit);
 the first 30 evaluated passes are also evaluated under beta = -5 % and -10 % (every path's Doppler scaled, the same
 channel draws, offsets, noise and impairments: interface.interp_q(time_scale) / simulate_pass(doppler_scale)).
@@ -23,7 +23,7 @@ whose window [-0.05 L, 1.05 L] takes more than 40 s yields no entry), stop_betwe
 and for the first 10 test passes per cell the per-beacon FDOA / FOA errors and SNR (constants stage2_per_beacon).
 C5 quadratic tracks reuse the seeds of their SUMO pair (erasures, schedule, noise, impairments). Provenance is written
 into every output and checked on resume; the stage-1 SHA-256 is verified before use.
-Usage: python pipeline/stage2_evaluate.py --family U [--sites 0 20] [--tag nominal] [--workers 4]"""
+Usage: python pipeline/stage2_evaluate.py --family U --tag primary --sites 0 10 [--workers 4]"""
 import argparse
 import copy
 import json
@@ -43,12 +43,11 @@ import huber_fit as rbf  # noqa: E402
 import site_accuracy as E1  # noqa: E402
 from fdoa.channel import ChannelConfig  # noqa: E402
 from fdoa.estimator import fdoa_from_samples, fit_pass_free, foa  # noqa: E402
-from fdoa.geometry import LAMBDA  # noqa: E402
+from fdoa.geometry import FC, LAMBDA, Site, Trajectory  # noqa: E402
 from pipeline.provenance import check_tag, diff_provenance, provenance, same_provenance, same_stage_sources, sha256_file  # noqa: E402
-from fdoa.geometry import FC, Site, Trajectory  # noqa: E402
 from pipeline.stage1_channels import C, FAMILIES, is_nlosv, seed_base, track_rngs  # noqa: E402
 
-E1.OFFSET_FIT = True                                   # the site-accuracy simulation statistics (offset fit), as the paper's figures
+E1.OFFSET_FIT = True                                   # offset fit, as in the site-accuracy simulation
 HEAD_Z = C["geometry"]["head_height_m"]
 SURVEY_Z = C["geometry"]["vehicle_antenna_m"]["type2_car_roof"]
 HEAD_PPB = 5.0                                         # per-site head-to-head reference offset, uniform +-5 ppb
@@ -61,7 +60,7 @@ EV4 = C["evaluation_v4"]
 
 
 def beta_plan(fam, cell, v0, role, jr):
-    """The β values of a track: P0 families on every test pass of their U/H cells
+    """The beta values of a track: P0 families on every test pass of their U/H cells
     (evaluation_v4.p0.beta_cells); primary on the first 30 test passes of the k3 cells (P1-15, P2-30)."""
     key = f"{cell}-{v0:g}"
     if role != "test":
@@ -107,8 +106,8 @@ def one_stat(t_b, fd, vx, x, rho_true, site):
 
 def evaluate_site(fam, site, run_dir, tag, imp_level="nominal", erasure=None, arms=("gen_off", "gen_on", "inhouse"),
                   mappings=("e1", "lb"), prbs=None, lb_gain_shift_db=0.0, stage1_tag=None, decode=False):
-    """decode (the SNR-offset tags only): a beacon enters the fit only if its
-    raw-sample SNR at both heads is >= the decoding threshold of its PRB allocation (constants evaluation_v5.decoding)."""
+    """decode (the SNR-offset tags only): a beacon enters the fit only if its raw-sample SNR at both heads is >= the
+    decoding threshold of its PRB allocation (constants evaluation_v5.decoding)."""
     out_dir = os.path.join(run_dir, f"eval_{tag}")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, f"site_{site:03d}.json")
@@ -125,7 +124,7 @@ def evaluate_site(fam, site, run_dir, tag, imp_level="nominal", erasure=None, ar
         raise RuntimeError(f"{npz}: SHA-256 differs from its stage-1 record")
     s1tag = stage1_tag or tag                          # P5 qualification evaluates under qual_<tag>_...
     if not s1tag.startswith("dev_"):                   # primary / fixed sensitivity: only fixed stage-1 records
-        p1 = S1.get("provenance", {})                  # (dev_fullsize runs are never evaluated)
+        p1 = S1.get("provenance", {})
         if p1.get("tag") not in ("primary", s1tag) or not same_stage_sources(p1, prov, 1):
             raise RuntimeError(f"{npz}: stage-1 tag {p1.get('tag')!r} is not a primary record with this code's stage-1 "
                                "sources")
@@ -176,7 +175,7 @@ def evaluate_site(fam, site, run_dir, tag, imp_level="nominal", erasure=None, ar
         bplan = beta_plan(fam, m["cell"], m["v0"], m["role"], m.get("jr", m["j"])) if not p5 else []
         betas = [0.0] + (list(P5_BETAS) if p5 and m["role"] == "eval" and m["jr"] < P5_N_BETA_FIRST else bplan)
         track_arms = ("gen_on", "inhouse") if p5 else arms
-        with_d = p5 or bool(bplan)                         # consistency statistic on β tracks and their honest pass
+        with_d = p5 or bool(bplan)                         # consistency statistic on beta tracks and their honest pass
         for beta in betas:
             for prb in prbs:
                 i = prb_all.index(prb)
@@ -207,7 +206,7 @@ def evaluate_site(fam, site, run_dir, tag, imp_level="nominal", erasure=None, ar
                         snr = itf.snr_link_budget_db(gain_ab * 10 ** (lb_gain_shift_db / 10))
                     for arm in track_arms:
                         if beta != 0.0 and arm not in ("gen_on", "inhouse"):
-                            continue                       # β arms: governing generator arm and in-house only
+                            continue                       # beta arms: governing generator arm and in-house only
                         if arm == "inhouse":
                             sig, gain = sig_in, None
                         else:
@@ -220,7 +219,7 @@ def evaluate_site(fam, site, run_dir, tag, imp_level="nominal", erasure=None, ar
                         fd = fdoa_from_samples(yb, 1e-3)
                         kp = keep & (np.min(snr, axis=0) >= decode_threshold_db(prb)) if decode else keep
                         st = one_stat(t_b[kp], fd[kp], vx[kp], x[kp], rho_true[kp], survey)
-                        if with_d and arm in ("gen_on", "inhouse"):   # the consistency simulation consistency statistic
+                        if with_d and arm in ("gen_on", "inhouse"):   # consistency statistic
                             pf, _, _, okf = fit_pass_free(t_b[kp], fd[kp], survey)
                             st["d"] = float((pf[-1] - pf[1]) / pf[1]) if okf else float("nan")
                             try:
@@ -254,9 +253,9 @@ def evaluate_site(fam, site, run_dir, tag, imp_level="nominal", erasure=None, ar
 def decode_threshold_db(prb):
     """Raw-sample SNR (10 MHz noise bandwidth, NF 9 dB) at which a beacon of `prb` PRBs carries the power of the V2X
     reference sensitivity per PRB: TS 36.101 V14.5.0 Table 7.3.1G-1, band 47, 10 MHz (50 RB): -90.4 dBm per port with
-    the two-port receiver of clause 7.2, plus 10 log10(2) dB for the one-element head, i.e. 7.6 dB over -95.0 dBm noise for
-    50 RB, scaled by 10 log10(prb / 50) (constants evaluation_v5.decoding). A
-    minimum-performance requirement, used as the decodability line of the SNR rows."""
+    the two-port receiver of clause 7.2, plus 10 log10(2) dB for the one-element head, i.e. 7.6 dB over -95.0 dBm noise
+    for 50 RB, scaled by 10 log10(prb / 50) (constants evaluation_v5.decoding). A minimum-performance requirement, used
+    as the decodability line of the SNR rows."""
     d = C["evaluation_v5"]["decoding"]
     return d["snr_50rb_db"] + 10 * np.log10(prb / d["refsens_rb"])
 
@@ -302,7 +301,7 @@ def main():
     if a.erasure:
         f = a.erasure.split(":")
         er = ("iid", float(f[1])) if f[0] == "iid" else ("ge", float(f[1]), float(f[2]))
-    dec = a.tag in SV["snr_tags"] or (a.tag.startswith("dev_") and ("_snr" in a.tag))       # : SNR tags only
+    dec = a.tag in SV["snr_tags"] or (a.tag.startswith("dev_") and ("_snr" in a.tag))       # SNR-offset tags only
     extra = (("gen_on",), ("lb",), None, a.lb_gain_shift_db, None, dec) if a.lb_gain_shift_db else ()   # LB only
     jobs = [(a.family, s, run_dir, a.tag, a.impairments, er) + extra for s in range(*a.sites)
             if os.path.exists(os.path.join(run_dir, f"site_{s:03d}.npz"))]

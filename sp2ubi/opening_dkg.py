@@ -10,8 +10,8 @@ give u = h/xi1 directly, so the key is built from a base point P instead:
 
 so (h, u, v, xi1, xi2) has the BBS04 key relation and the distribution of an honestly generated key, while each party
 holds only (a_k, b_k). Opening stays the parallel 2-of-2 opening of speedcheck.py: party k returns a_k*T1 and b_k*T2
-with DLEQ proofs against its share commitments (a_k*u, b_k*v) = (H_k, b_k*v), and the two commitments add up to h
-(proofs.verify_opening_setup).
+with DLEQ proofs against its share commitments (a_k*u, b_k*v) = (H_k, V_k), and the two commitments add up to h
+(proofs.verify_opening_setup). The appendix of the paper writes V_k, U_k, D_k, E_k for A_k, B_k, H_k, V_k here.
 
 Messages (each party runs the same code; both must finish before the group key is used):
   1. commit    c_k = SHA-256(session | name_k | nonce_k | A_k | B_k)

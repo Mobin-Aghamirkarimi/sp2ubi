@@ -72,8 +72,8 @@ def role(name, C=None):
 
 
 def check_supported(C=None):
-    """The held-out code implements the configurations whose stage 2 is the study-1 stage 2: no estimator candidate and no
-    N2 rule (the decision 'L-T alone'). Any other selected configuration needs the study-2 stage-2 fields and, for an
+    """The held-out code implements the configurations whose stage 2 is the study-1 stage 2: no estimator candidate and
+    no N2 rule (the decision 'L-T alone'). Any other selected configuration needs the study-2 stage-2 fields and, for an
     estimator, H2 and gate G inputs: refused here, so a held-out run never starts on code that does not implement the
     selected configuration."""
     ev6 = (C or constants()).get("evaluation_v6") or {}
@@ -216,7 +216,7 @@ def stage1(family, site, out):
     os.makedirs(out, exist_ok=True)
     path, t = G.site_record(family, site, G.C["run"]["Q"], out, TAG, G.C["run"]["n_scale"])
     G.write_manifest(out)
-    print(path, "skipped (exists, same provenance)" if t is None else "done", flush=True)   # no value printed
+    print(path, "skipped (exists, same provenance)" if t is None else "done", flush=True)
     return path
 
 

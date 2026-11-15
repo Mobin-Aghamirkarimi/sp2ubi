@@ -7,14 +7,14 @@ tag (no test or traffic pass is ever read). Fixes, before the development stage:
                    survey passes (no stops) the false-detection share rises with k_stop, so k_stop = the largest value with
                    <= 1 % false detections = the floor(0.01 n)-th smallest critical value (counted from 0) over the n
                    (pass, variant) records of the pool; a pass with no admissible run (+inf) never fires. Because the threshold is set by the residual level of
-                   free-road passes at their own speed, it is a level of |FDOA - δ̂|: k_stop is reported with the implied
-                   speed level v = k_stop x rms_ref_med x λ / |g| at |g| = 1 and 2 (a steady crawl below it is flagged
+                   free-road passes at their own speed, it is a level of |FDOA - delta_hat|: k_stop is reported with the implied
+                   speed level v = k_stop x rms_ref_med x lambda / |g| at |g| = 1 and 2 (a steady crawl below it is flagged
                    too; stated in the supplement).
-  Δ_blk     (N13)  the L-B flag constant: flag iff blk_drop_max_db > Δ_blk; the smallest Δ with <= 1 % flagged P0N survey
+  Delta_blk     (N13)  the L-B flag constant: flag iff blk_drop_max_db > Delta_blk; the smallest Delta with <= 1 % flagged P0N survey
                    passes (= the sorted drops at index n - 1 - floor(0.01 n)).
-  Δ_rho     (N18)  the L-B′ flag constant: flag iff min over the site's surveyed lanes of |ρ̂ - ρ̂_survey,lane| > Δ_rho
-                   (leave-one-out lane medians for the survey pass itself); the smallest Δ with <= 1 %
-                   flagged P0N survey passes (same index rule as Δ_blk).
+  Delta_rho     (N18)  the L-B' flag constant: flag iff min over the site's surveyed lanes of |rho_hat - rho_hat_survey,lane| > Delta_rho
+                   (leave-one-out lane medians for the survey pass itself); the smallest Delta with <= 1 %
+                   flagged P0N survey passes (same index rule as Delta_blk).
 Pool (one value per constant, as pre-specified): the gen_on arm, beta = 0, SUMO kinematics, all six (SNR
 mapping, PRB) variants pooled, included passes only (window rule); shares per (pass, variant)
 record. The per-variant values and the achieved shares of the in-house arm at the calibrated values are reported beside
@@ -98,7 +98,7 @@ def false_detect_share(crit, k):
 
 
 def delta_blk(drops, max_share=S2.N13_FALSE_FLAG_MAX):
-    """Smallest Δ with share(drop > Δ) <= 1 % (N13; with max_share = N18 also Δ_rho)."""
+    """Smallest Delta with share(drop > Delta) <= 1 % (N13; with max_share = N18 also Delta_rho)."""
     d = np.sort(np.asarray(drops, float))
     d = d[np.isfinite(d)]
     if not d.size:
@@ -108,7 +108,7 @@ def delta_blk(drops, max_share=S2.N13_FALSE_FLAG_MAX):
 
 
 def delta_rho(devs):
-    """N18: smallest Δ_rho with share(rho_dev > Δ_rho) <= 1 %."""
+    """N18: smallest Delta_rho with share(rho_dev > Delta_rho) <= 1 %."""
     return delta_blk(devs, S2.N18_FALSE_FLAG_MAX)
 
 
@@ -149,7 +149,7 @@ def rho_devs(pb):
 
 
 def implied_speed(pk, k):
-    """N12: the speed level the threshold corresponds to: v = k x rms_ref_med x λ / |g| (|f| = v |g| / λ)
+    """N12: the speed level the threshold corresponds to: v = k x rms_ref_med x lambda / |g| (|f| = v |g| / lambda)
     at |g| = 1 and 2, summarised over the pool's site scales per (family, speed class): median, min, max (m/s), and as a
     share of the speed class v0. Reported only."""
     out = {}
@@ -229,7 +229,7 @@ def main(argv=None):
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     json.dump(out, open(a.out + ".tmp", "w"), indent=1)
     os.replace(a.out + ".tmp", a.out)
-    print("written", a.out)                             # the values are not printed
+    print("written", a.out)
     return out
 
 

@@ -1,11 +1,9 @@
-"""The speed-check simulation fixed sensitivity S-place (constants
-sensitivities.S_place): does TR 37.885's sampling of QuaDRiGa at the beacons only (production) change the
-C1 / headline accuracy statistic against QuaDRiGa's own uniform sampling (beacon + uniform snapshots at lambda / 2.4)?
+"""Snapshot-placement sensitivity S-place (constants sensitivities.S_place): does sampling QuaDRiGa at the beacons
+only (production) change the C1 / headline accuracy statistic against QuaDRiGa's own uniform sampling (beacon + uniform snapshots at lambda / 2.4)?
 
 Design (fixed before any S-place data):
   * cells P1 (urban LOS, 15 m/s) and P2 (highway LOS, 38 m/s: fewest beacons per segment), 5 sites x 20 test passes
-    (S-place light)
-    each (SUMO with background traffic, lateral offset as production), own seeds (never the production seeds);
+    each (S-place light; SUMO with background traffic, lateral offset as production; own seeds (never the production seeds);
   * three QuaDRiGa calls per site with the same seed: B beacon-only (production), A beacon + uniform lambda / 2.4, N
     beacon-only + one dummy pass (environment-change null); term off, PRB 10, both SNR mappings, nominal impairments,
     common random numbers (identical offsets, noise and impairments in the three calls);
@@ -13,13 +11,13 @@ Design (fixed before any S-place data):
     whichever has the smaller variance over the site's B passes, the same choice for A and N), over included passes
     (window rule, finite); rho = sigma_w(A) / sigma_w(B), rho_N = sigma_w(N) / sigma_w(B), site-bootstrap 95 % CIs;
   * rule (constants sensitivities.S_place.rule_v4): rho_hat > 1.10 in either mapping -> correction by the larger
-    such rho_hat, whatever the CI (point estimate; the CI is reported); the original rule also required CI lower limit > 1.
-    A correction means: every generator sigma
-    of the stratum in headline_final and in C1 (sigma_gen, R and its CI) is multiplied by rho_hat, the C1 verdicts are
-    re-evaluated and the worse governs, and the paper states that TR 37.885 depends on QuaDRiGa's snapshot placement. Urban rho
-    applies to P1 (incl. P1d09) and P3, highway rho to P2, P4 takes the larger.
+    such rho_hat, whatever the CI (point estimate; the CI is reported); the original rule also required CI lower limit
+    > 1. A correction means: every generator sigma of the stratum in headline_final and in C1 (sigma_gen, R and its CI)
+    is multiplied by rho_hat, the C1 verdicts are re-evaluated and the worse governs, and the paper states that the
+    result depends on QuaDRiGa's snapshot placement. Urban rho applies to P1 (incl. P1d09) and P3, highway rho to P2,
+    P4 takes the larger.
 Outputs: runs/s_place_<tag>/<cell>_site<k>.json (resumable per site), results/s_place_<tag>.json.
-Usage: python pipeline/snapshot_placement.py --tag sens_place [--sites 0 10] [--cells P1 P2]"""
+Usage: python pipeline/snapshot_placement.py --tag sens_place [--sites 0 5] [--cells P1 P2]"""
 import argparse
 import copy
 import json

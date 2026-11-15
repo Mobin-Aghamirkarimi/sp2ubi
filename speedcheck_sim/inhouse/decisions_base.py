@@ -4,10 +4,11 @@
     log-spaced levels; only the level index (2 bits) is disclosed with each pass (no site fingerprint);
   * Student-t tail mode uses the per-site within-site scale (no artificial site homogeneity);
   * R2 null quantiles tabulated with >= 1e7 Gaussian draws per M (cached in results/r2_null_quantiles.json);
-  * site-bias drift: per-site random walk per epoch with annual sd DRIFT, reset by recalibration every RECAL epochs;
+  * site-bias drift: per (vehicle, site) random walk per epoch with annual sd DRIFT, reset by recalibration every
+    RECAL epochs;
   * consequence ladder: a single R2 flag has no consequence; R2 in >= 2 of 3 consecutive epochs raises a flag
-    ("punitive"); R1 notice only after 3 consecutive R1 epochs, rule edge
-    S_RULE = -4 % (honest band edge -3 % less radius and shock allowance);
+    ("punitive"); R1 notice only after 3 consecutive R1 epochs, rule edge S_RULE = -4 % (honest band edge -3 % less
+    radius and shock allowance);
   * worst-site confinement test, one-at-a-time sensitivity of every honest constant (x0.5 / x2), minimal-profitable-
     attack curves (day-level fraction f).
 Usage: python inhouse/decisions_base.py [--vehicles 20000] [--smoke]
@@ -77,13 +78,10 @@ def r2_threshold(M, qtab):
     return np.where(M > Ms[-1], qs[-1] + (M - Ms[-1]) * slope, np.interp(M, Ms, qs))
 
 
-# ------------------------------------------------------------------------------------------- sites from the site-accuracy simulation
-def load_sites(extra_tags=()):
-    """Site table from the site-accuracy simulation plus optional extra cells (e.g. extra_tags=("extra",) reads
-    site_accuracy_passes_extra.json)."""
+# ---------------------------------------------------------------------- sites from the site-accuracy simulation
+def load_sites():
+    """Site table from the first grid of the site-accuracy simulation (site_accuracy_passes_full.json)."""
     data = json.load(open(os.path.join(HERE, "results", "site_accuracy_passes_full.json")))
-    for tag in extra_tags:
-        data += json.load(open(os.path.join(HERE, "results", f"site_accuracy_passes_{tag}.json")))
     rows = []
     for item in data:
         c = item["cell"]
@@ -136,7 +134,7 @@ def simulate(rng, A, n_veh, lam, vtype, mode, attack=None, honest=HONEST):
     n_sites = rng.integers(2, min(10, nS) + 1, n_veh)
     vs = np.argsort(rng.random((n_veh, nS)), axis=1)[:, :min(10, nS)]
     s = rng.uniform(honest["S_LO"], honest["S_HI"], n_veh)
-    rng.random((n_veh, min(10, nS)))                          # one draw per vehicle and site; keeps the random stream
+    rng.random((n_veh, min(10, nS)))                          # unused draw; keeps the random stream
     M = rng.poisson(lam, (n_veh, EPOCHS))
     key = np.repeat(np.arange(n_veh * EPOCHS), M.ravel())
     veh = key // EPOCHS; ep = key % EPOCHS
@@ -216,6 +214,7 @@ def honest_summary(d, n_veh):
 
 
 def seed(*parts):
+    """Generator seeded from the CRC-32 of the joined parts."""
     return np.random.default_rng(zlib.crc32("|".join(map(str, parts)).encode()))
 
 
@@ -225,14 +224,13 @@ def main():
     ap.add_argument("--qdraws", type=int, default=10_000_000)
     ap.add_argument("--workers", type=int, default=os.cpu_count())
     ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--extra", nargs="*", default=[], help="extra cell tags of the site-accuracy simulation, e.g. extra")
     ap.add_argument("--out-tag", default="")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     nv = 500 if a.smoke else a.vehicles
     t0 = time.time()
     qtab = r2_quantiles(200_000 if a.smoke else a.qdraws, a.workers)
-    A = load_sites(tuple(a.extra))
+    A = load_sites()
     rep = dict(params=dict(HONEST=HONEST, C_WIN=C_WIN, SIGMA_INFL=SIGMA_INFL, N_LEVELS=N_LEVELS, levels=A["levels"].tolist(),
                            S_RULE=S_RULE, ALPHA_R2=ALPHA_R2, qdraws=a.qdraws), honest={}, worst={}, drift={}, sens={}, power={})
     log = lambda *x: print(*x, flush=True)

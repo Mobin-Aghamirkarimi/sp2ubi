@@ -1,4 +1,4 @@
-"""Consistency analysis: per-SITE consistency rule with survey-only vs traffic standardisation, exact rates.
+"""Consistency analysis: per-site consistency rule with survey-only vs traffic standardisation, exact rates.
 
 Unit = one site (a vehicle whose M passes all come from that site: the worst case for a frequent user). z_q =
 round(clip(z, -3, 3) / q); the insurer's threshold t_M is the largest integer with P_pop(sum of M <= t_M) <= ALPHA under
@@ -17,8 +17,10 @@ import os
 
 import numpy as np
 
+import decisions_levels as E
 from consistency_analysis_base import ALPHA, ladder_year, pmf, sum_cdf
 from decisions_levels import PROFILES, k_weights
+from levels_qualification import requalify
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CLIP = 3.0
@@ -27,9 +29,7 @@ SHIFTS = (0.0, -0.1, -0.2, -0.3, -0.4)
 
 
 def level_map():
-    """(v, K, facade) -> sorted list of disclosed levels of the in-house site-accuracy sites of that type (iso scattering)."""
-    import decisions_levels as E
-    from levels_qualification import requalify
+    """(v, K, facade) -> sorted list of disclosed levels of the site-accuracy sites of that type (iso scattering)."""
     A, qual = requalify(E.load_sites(["extra"]), 0.06, 8)
     out = {}
     for i, k in enumerate(A["keys"]):

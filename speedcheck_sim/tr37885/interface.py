@@ -1,7 +1,7 @@
-"""The speed-check simulation interface: turns generator output into the per-beacon, per-head narrowband baseband that the
-site-accuracy pipeline consumes (fdoa_from_samples -> fit_pass_offset -> statistics), and wraps the in-house channel
-(unchanged) so that both arms get identical post-processing with common random
-numbers: transmitter offset per beacon (common to both heads), head-to-head offset, thermal noise, receiver impairments (separate module below).
+"""Interface of the speed-check simulation: turns generator output into the per-beacon, per-head narrowband baseband
+that the site-accuracy pipeline consumes (fdoa_from_samples -> fit_pass_offset -> statistics), and wraps the in-house
+channel so that both arms get identical post-processing with common random numbers: transmitter offset per beacon
+(common to both heads), head-to-head offset, thermal noise, receiver impairments (section below).
 Conventions: coefficients carry the carrier phase exp(-j 2 pi d / lambda); the LoS Doppler is positive when the path
 shortens (as in fdoa.channel); packet-centred time tau in [-0.5, 0.5) ms; M samples per beacon."""
 import dataclasses
@@ -39,7 +39,7 @@ def band_weights(delay_rel, prb):
     return w.astype(complex)
 
 
-def band_avg_q(coeff, delay, Q, prb, packet_s=1e-3):
+def band_avg_q(coeff, delay, Q, prb):
     """coeff, delay: [paths, n_beacon * Q] at the Q snapshot instants per beacon (beacon-major, centred in the
     packet). Returns h [n_beacon, Q]: band average over the occupied subcarriers of the sum over paths, delays relative
     to path 0 (the LoS, i.e. timing synchronised to the first arrival). This is the stored canonical channel."""
@@ -53,8 +53,8 @@ def band_avg_q(coeff, delay, Q, prb, packet_s=1e-3):
 
 def interp_q(h, M=128, packet_s=1e-3, time_scale=1.0):
     """Complex cubic interpolation of h [n_beacon, Q] (Q centred snapshots per beacon) to M samples per beacon.
-    time_scale = 1 + beta evaluates h((1 + beta) tau): with each path's phase linear in tau inside the 1 ms beacon this is
-    the channel with every path's Doppler (LoS, clusters, scatterer-mobility term) scaled by (1 + beta) and geometry
+    time_scale = 1 + beta evaluates h((1 + beta) tau): with each path's phase linear in tau inside the 1 ms beacon this
+    is the channel with every path's Doppler (LoS, clusters, scatterer-mobility term) scaled by (1 + beta) and geometry
     and delays unchanged (frequency-only manipulation; doppler_scale in fdoa.channel)."""
     Q = h.shape[1]
     tq = (np.arange(Q) + 0.5) / Q * packet_s - packet_s / 2
@@ -64,11 +64,11 @@ def interp_q(h, M=128, packet_s=1e-3, time_scale=1.0):
 
 def narrowband_from_paths(coeff, delay, Q, prb, M=128, packet_s=1e-3):
     """band_avg_q followed by interp_q: [n_beacon, M]."""
-    return interp_q(band_avg_q(coeff, delay, Q, prb, packet_s), M, packet_s)
+    return interp_q(band_avg_q(coeff, delay, Q, prb), M, packet_s)
 
 
 def los_paths(site_heads, traj, t_snap):
-    """Analytic LoS path per head at the snapshot instants (C8 null test): coeff exp(-j 2 pi d / lambda), delay d / c.
+    """Analytic LoS path per head at the snapshot instants (null test): coeff exp(-j 2 pi d / lambda), delay d / c.
     site_heads: [2, 3] in the in-house frame (vehicle antenna at z = 0)."""
     x, y, _, _ = traj.at(t_snap)
     pos = np.stack([x, y, np.zeros_like(x)], axis=-1)
@@ -80,7 +80,7 @@ def los_paths(site_heads, traj, t_snap):
 
 
 def inhouse_clean(rng_schedule, site, traj, cfg: ChannelConfig, **kw):
-    """In-house channel (unchanged simulate_pass) without transmitter offset, head offset and noise; the schedule rng
+    """In-house channel (simulate_pass) without transmitter offset, head offset and noise; the schedule rng
     must be a fresh copy of the one used for the generator arm so that both arms get the same beacon times."""
     clean = dataclasses.replace(cfg, cfo_random_hz=0.0, head_offset_hz=(0.0, 0.0), head_drift_hz_s=(0.0, 0.0),
                                 snr_ref_db=400.0)
@@ -98,27 +98,28 @@ def beacon_gain(ls, Q):
 
 
 def snr_e1_db(r, snr_ref_db=40.0):
-    """the site-accuracy simulation mapping: raw-sample SNR (dB) at fs_raw, 40 dB at 100 m, free-space slope (fdoa.channel)."""
+    """SNR mapping of the in-house site-accuracy simulation: raw-sample SNR (dB) at fs_raw, 40 dB at 100 m, free-space
+    slope (fdoa.channel)."""
     return snr_ref_db - 20 * np.log10(np.maximum(np.asarray(r, float), 1.0) / 100.0)
 
 
 def snr_link_budget_db(gain, tx_dbm=LINK_BUDGET["tx_dbm"], nf_db=LINK_BUDGET["ue_nf_db"],
                        fs_raw=LINK_BUDGET["noise_bandwidth_hz"]):
-    """TR 37.885 link budget: raw-sample SNR (dB) at fs_raw = P_rx / (k T NF fs_raw), P_rx = P_tx * gain (the generator's
-    own large-scale gain incl. both antenna patterns). Equal-energy reading: the beacon energy P_rx * T is collected over
-    the M samples whatever the PRB allocation, which is how the in-house site-accuracy mapping is defined (noise at fs_raw, gain fs_raw T / M
-    from the decimation)."""
+    """TR 37.885 link budget: raw-sample SNR (dB) at fs_raw = P_rx / (k T NF fs_raw), P_rx = P_tx * gain (the
+    generator's own large-scale gain incl. both antenna patterns). Equal-energy reading: the beacon energy P_rx * T is
+    collected over the M samples whatever the PRB allocation, which is how the in-house site-accuracy mapping is defined
+    (noise at fs_raw, gain fs_raw T / M from the decimation)."""
     usable = 10 * np.log10(LINK_BUDGET.get("usable_energy_fraction", 1.0))       # 12/14 symbols
     return tx_dbm + usable + 10 * np.log10(np.asarray(gain, float)) - (-174.0 + nf_db + 10 * np.log10(fs_raw))
 
 
 def finish(rng, sig, snr_db, gain=None, cfo_random_hz=300.0, head_offset_hz=(0.0, 0.0), head_drift_hz_s=(0.0, 0.0),
            t_b=None, fs_raw=10e6, packet_s=1e-3):
-    """Common post-processing of both C1 arms. sig: [2, n_b, M] clean baseband; snr_db: [2, n_b] raw-sample SNR per
+    """Common post-processing of both arms. sig: [2, n_b, M] clean baseband; snr_db: [2, n_b] raw-sample SNR per
     beacon (snr_e1_db or snr_link_budget_db; both arms of a pair get the same array); gain: [2, n_b] large-scale gain
-    of a generator arm, divided out per beacon so that the channel has unit expected power as in the site-accuracy simulation (None for the
-    in-house arm, whose channel already has unit expected power). Draw order is fixed: transmitter offsets, then noise
-    of head A, then head B."""
+    of a generator arm, divided out per beacon so that the channel has unit expected power as in the site-accuracy
+    simulation (None for the in-house arm, whose channel already has unit expected power). Draw order is fixed:
+    transmitter offsets, then noise of head A, then head B."""
     _, n_b, M = sig.shape
     tau = tau_grid(M, packet_s)
     eps_tx = rng.uniform(-cfo_random_hz, cfo_random_hz, n_b)
@@ -187,8 +188,8 @@ def sway_doppler(t_b, u_x, amp_m=0.005, freq_hz=1.0, phase=0.0):
 
 
 def apply_impairments(rng, y, t_b, u_x, imp, M=128, packet_s=1e-3):
-    """Apply the receiver impairments to y [2, n_b, M] (after channel, offsets and noise): pole sway (per head), LO phase
-    noise (independent per head), IQ imbalance (fixed random image phase per head), ADC with AGC. imp: dict from
+    """Apply the receiver impairments to y [2, n_b, M] (after channel, offsets and noise): pole sway (per head), LO
+    phase noise (independent per head), IQ imbalance (fixed random image phase per head), ADC with AGC. imp: dict from
     the constants file 'impairments' (nominal) or a sensitivity variant; None -> no impairments."""
     if imp is None:
         return y

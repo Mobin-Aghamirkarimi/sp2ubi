@@ -1,0 +1,10 @@
+U2 h_pp_now_c20: survey crossings per lane (all sites, both speeds) {1: 197, 0: 403}
+  v10 lane 0: n =  2010 (crossing x variant), mean -0.71 % [-1.25, -0.09], sd 4.21 %
+  v10 lane 1: n =  1084 (crossing x variant), mean +1.85 % [+1.23, +2.49], sd 4.86 %
+  v15 lane 0: n =  2238 (crossing x variant), mean -0.87 % [-1.32, -0.51], sd 3.80 %
+  v15 lane 1: n =   987 (crossing x variant), mean +1.70 % [+0.71, +3.00], sd 4.17 %
+U h_pp_now_c20: survey crossings per lane (all sites, both speeds) {0: 600}
+  v10 lane 0: n =  2240 (crossing x variant), mean +0.25 % [-0.31, +0.86], sd 4.39 %
+  v10 lane 1: n =  1188 (crossing x variant), mean +2.24 % [+1.28, +3.25], sd 4.80 %
+  v15 lane 0: n =  2501 (crossing x variant), mean +0.60 % [+0.09, +1.15], sd 3.57 %
+  v15 lane 1: n =  1088 (crossing x variant), mean +3.71 % [+2.29, +5.10], sd 5.13 %

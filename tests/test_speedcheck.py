@@ -105,6 +105,9 @@ def test_threshold_elgamal_needs_both_shares(world):
     assert ins.sv.combine(ct, tsp.sv.partial(ct)) == 4242
     assert ins.sv._bsgs._dlog(ct.C2 - ins.sv.partial(ct)) != 4242         # one share alone does not decrypt
     assert Ciphertext.from_bytes(ct.to_bytes()) == ct
+    for malformed in (ct.to_bytes()[:-1], ct.to_bytes() + b"\0", bytes(96)):
+        with pytest.raises(ValueError):
+            Ciphertext.from_bytes(malformed)
 
 
 def test_dkg_rejects_changed_or_unproven_share(world):
@@ -432,6 +435,7 @@ def test_c_guard(world):
     W_ok = round((1 << S_BITS) / C_MAX) + 1
     assert rsu.evaluate_weighted(ok, rec.cert, [1] * len(ok), W_ok, ct_s) is not None
     assert rsu.evaluate_weighted(ok, rec.cert, [1] * len(ok), W_ok, None) is None   # no trailer term, no entry
+    assert rsu.evaluate_weighted(ok, rec.cert, [1] * len(ok), 1, ct_s, site_bias=-0.6) is None   # W' rounds to 0
 
 
 def _envelope_c_max(site_bias=0.0):
@@ -465,11 +469,11 @@ def _envelope_c_max(site_bias=0.0):
 
 def test_worst_case_c_over_acceptance_envelope():
     sigma = SMUDGE_FRAC * (1 << S_BITS)
-    assert sigma / C_MAX >= 16                                          # the guard: the paper's claim rests on it
+    assert sigma / C_MAX >= 16                                          # Supplement S11.2: 0.001 * 2^34 / 2^20 = 16.384
     assert _envelope_c_max(0.0) == 88_102                               # slow_sweep value (2.546 m/s)
     for bias in (0.0, -0.03, -0.06, 0.06):
         c_max = _envelope_c_max(bias)
-        assert c_max <= C_MAX and sigma / c_max > 180                   # the paper's "more than 180 times"
+        assert c_max <= C_MAX and sigma / c_max >= 183                  # Supplement S11.2: "at least 183 times"
 
 
 def test_surveyed_direction_only(world):
@@ -485,7 +489,7 @@ def test_surveyed_direction_only(world):
 
 def test_rsu_rerandomises_enc_b(world):
     """Enc(B) is a public linear combination of broadcast ciphertexts; the RSU's output is not that combination
-    (re-randomisation is load-bearing against a recorder colluding with an RSU that knows c and w_i)."""
+    (without re-randomisation a recorder colluding with an RSU that knows c and w_i could recompute it)."""
     w = world
     recs, vmap, _ = _drive(w, n=40, smudge="real")
     rec = recs[0]
@@ -501,6 +505,8 @@ def test_rsu_rerandomises_enc_b(world):
     det = Ciphertext(acc.C1, acc.C2 - w["pk"].G * _scalar(c * W))
     e = rsu.evaluate(ok, rec.cert, weights, ct_s)
     assert e.B.to_bytes() != det.to_bytes()
+    ins, tsp = w["ins"].sv, w["tsp"].sv
+    assert ins.combine(det, tsp.partial(det)) == ins.combine(e.B, tsp.partial(e.B)) is not None    # same plaintext
 
 
 # ------------------------------------------------------------------------------------------------ invalid messages ignored

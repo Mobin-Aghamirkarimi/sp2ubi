@@ -1,16 +1,15 @@
 """Bootstrap coverage check of C1 (constants criteria.C1.coverage_check).
-In-house against in-house with independent seeds, so the true R is 1 and the true Δ is 0; nothing from a generator.
-  * fresh sites for every replicate: `replicates` x `sites` sites (in-house site-accuracy kinematics at 15 m/s, pole offset U(6, 12) m, site K ~ N(9, 5^2) dB floored at 5 dB as
-    the site population of the in-house site-accuracy simulation), per site two independent sets of 30 reference + 60 test passes through the stage-2 in-house
-    chain;
-  * each replicate runs criteria.c1_cell on its own 20 sites with B = `boot` bootstrap resamples and its own
+In-house against in-house with independent seeds, so the true R is 1 and the true Delta is 0; nothing from a generator.
+  * fresh sites for every replicate: `replicates` x `sites` sites (kinematics of the in-house site-accuracy simulation
+    at 15 m/s, pole offset U(6, 12) m, site K ~ N(9, 5^2) dB floored at 5 dB as its site population), per site two
+    independent sets of 30 reference + 60 test passes through the stage-2 in-house chain;
+  * each replicate runs stage3_criteria.c1_cell on its own 10 sites with B = `boot` bootstrap resamples and its own
     bootstrap key: coverage = share of replicates whose 95 % CI of R contains 1 (target 0.95), Clopper-Pearson 95 %;
   * false-"confirmed" rate: the same replicates with the first set's residuals scaled by 1.25 around their site
-    reference mean (true R = 1.25): share of replicates with R <= 1.25, |Δ| <= 0.5 % and p <= 0.025 (single cell).
-10 sites per replicate; also
+    reference mean (true R = 1.25): share of replicates with R <= 1.25, |Delta| <= 0.5 % and p <= 0.025 (single cell);
   * the coverage of the 95 % site-bootstrap CI of the absolute sigma (qualified + gated, first copy, true R = 1) of the
     pooled sigma of all replicates' sites (the population value of this in-house design); if < 0.93 the stage-3 sigma CIs
-    are widened by c(n) (criteria reads widen_sigma_ci);
+    are widened by c(n) (stage3_criteria.py reads widen_sigma_ci);
   * the size of the one-sided optimism check at the margin: the share of single-cell 'not contradicted' verdicts
     (R_hat <= 1.5 and p <= 0.025), over the replicates in which the check runs (>= min_sites sites with test passes),
     when the first copy's reference and test residuals are scaled by 1.5 around their site reference mean, so that site
@@ -27,9 +26,9 @@ either population's sigma-CI coverage is < 0.93 (stage3_criteria.py reads widen_
 replicates in which a sigma CI exists (>= min_sites qualified sites contributing passes), and 'not estimable' (no
 widening from that population) with fewer than min_runnable_replicates such replicates.
 Runs before the primary stage 3; the per-site cache is stage 2, the result stage 3.
-The statistic is the Huber fit (d) if constants evaluation_v4.lever_d.adopted (stage3_criteria.use_statistic). Every per-site cache
-file carries its provenance and is reused only with the same provenance; the whole check is skipped if its result file
-exists with the same provenance.
+The statistic is the Huber fit (d) if constants evaluation_v4.lever_d.adopted (stage3_criteria.use_statistic). Every
+per-site cache file carries its provenance and is reused only with the same provenance; the whole check is skipped if
+its result file exists with the same provenance.
 Writes results/coverage_check_<tag>.json. Usage: python pipeline/coverage_check.py --tag sens_coverage"""
 import argparse
 import json
@@ -37,6 +36,7 @@ import os
 import sys
 
 import numpy as np
+from scipy import stats as st
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ER = os.path.dirname(HERE)
@@ -138,7 +138,6 @@ def main():
         return
     n_sites = CC["sites"] if not a.tag.startswith("dev_") else min(CC["sites"], a.sites_per_rep)
     K.B = CC["boot"]
-    from scipy import stats as st
     cp = lambda k, n: [float(st.beta.ppf(0.025, k, n - k + 1)) if k else 0.0, float(st.beta.ppf(0.975, k + 1, n - k)) if k < n else 1.0]
     margin = K.OC["margin"]
     res = {}

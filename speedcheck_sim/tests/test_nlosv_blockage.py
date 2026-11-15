@@ -1,9 +1,11 @@
+"""NLOSv blockage (nlosv_blockage.py): blocker drop, segment geometry, TR 37.885 loss cases and head assembly."""
 import os
 import sys
 
 import numpy as np
 
-sys.path[:0] = [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885"), os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885"), "..")]
+ER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885")
+sys.path[:0] = [ER, os.path.join(ER, "..")]
 import nlosv_blockage as pb  # noqa: E402
 
 
@@ -42,12 +44,12 @@ def test_loss_cases_and_events():
     st = np.array([-1, 0, 0, 0, -1, 2, 2])
     loss = pb.blockage_loss_db(rng, st, np.full(7, 50.0), 1.6, 5.0, np.array([3.0, 3.0, 3.0]))
     assert loss[0] == 0 and loss[4] == 0
-    assert len(set(loss[1:4])) == 1 and len(set(loss[5:7])) == 1   # one draw per event (mean constant below 548 m)
+    assert len(set(loss[1:4])) == 1 and len(set(loss[5:7])) == 1   # one draw per event (mean constant below 541 m)
     rng = np.random.default_rng(2)
     z = np.array([pb.blockage_loss_db(rng, np.array([0]), np.array([50.0]), 1.6, 5.0, np.array([3.0]))[0]
                   for _ in range(20000)])
-    # max{0, N(5, 4)}: mean = 5 Phi(5/4) + 4 phi(5/4) = 5.2795
-    assert abs(z.mean() - 5.2795) < 0.1
+    # max{0, N(5, 4)}: mean = 5 Phi(5/4) + 4 phi(5/4) = 5.2023
+    assert abs(z.mean() - 5.2023) < 0.1
 
 
 def test_assemble_switch():

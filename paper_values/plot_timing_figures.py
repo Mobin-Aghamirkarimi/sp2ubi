@@ -46,11 +46,13 @@ def stat(key):
 
 
 def num(key):
+    """Value of a numeric timing key."""
     _, item, path, _ = DV.TIMING_KEYS[key]
     return float(DV.node(DATA, item, path))
 
 
 def label_ms(v):
+    """Printed value in ms with a typographic minus."""
     return DV.printed(v, "ms").replace("-", "−")
 
 
@@ -104,6 +106,7 @@ def fig_ops(out):
     plt.close(fig)
 
 
+# B1 to B3 of the paper are B2 to B4 of the timing code (README)
 CONFIGS = ["SP2UBI: BFV, insurer's key,\nencrypted weights", "B1: BFV, same key,\nclear weights",
            "B2: CKKS,\nencrypted weights", "B3: Paillier-3072,\nclear weights"]
 SUBPLOTS = [("OBU encryption", ["risk_path_budget|obu_bfv_encrypt", None, "baselines|B3|obu_encrypt",

@@ -153,7 +153,7 @@ def main():
     em = json.loads(o.SerializeEvalMultKeyString(o.JSON, tag))
     results["relinearisation_key_error"] = ks_error(em, s2, s_ev, moduli, ntts)
 
-    # rotation keys: old = s(X^k)
+    # rotation keys: old = s, new = s(X^(k^-1 mod 2N))
     ea = json.loads(o.SerializeEvalAutomorphismKeyString(o.JSON, tag))
     entries = find(ea, "data")[0]
     rot = {}

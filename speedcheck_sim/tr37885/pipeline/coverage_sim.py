@@ -1,12 +1,12 @@
-"""K7 site simulation: the in-house per-site passes of the coverage check, cached
-per site by pipeline/coverage_check.py. This is the stage-2 part of K7 (in-house chain + estimator; both statistics are
-stored), listed in pipeline/provenance.STAGE_SOURCES[2], so a change here invalidates the cache through its stage-2 hash;
-the stage-3 part (scaling, bootstrap, size, calibration) stays in coverage_check.py.
-  * one_pass: one pass of site s, copy c, track k (in-house site-accuracy kinematics at 15 m/s, pole offset U(6, 12) m, the site K, the in-house site-accuracy simulation
-    SNR mapping, nominal impairments, the site-accuracy simulation statistics, window rule);
+"""Site simulation of the coverage check (K7): the in-house per-site passes, cached per site by
+pipeline/coverage_check.py. This is the stage-2 part of the check (in-house chain + estimator; both statistics are
+stored), listed in pipeline/provenance.STAGE_SOURCES[2], so a change here invalidates the cache through its stage-2
+hash; the stage-3 part (scaling, bootstrap, size, calibration) is in coverage_check.py.
+  * one_pass: one pass of site s, copy c, track k (kinematics of the in-house site-accuracy simulation at 15 m/s, pole
+    offset U(6, 12) m, the site K, the SNR mapping and statistics of that simulation, nominal impairments, window rule);
   * pool: the sites of one replicate, reused from the cache only with the same (stage-2) provenance;
-  * POPS: the two site-K populations (a: the site-accuracy simulation, N(9, 5^2) floored at 5 dB; b: urban LOS realised in-band K, N(4.5, 1.5^2)
-    floored at 1 dB; disjoint seeds)."""
+  * POPS: the two site-K populations (a: the site-accuracy simulation, N(9, 5^2) floored at 5 dB; b: urban LOS realised
+    in-band K, N(4.5, 1.5^2) floored at 1 dB; disjoint seeds)."""
 import copy
 import json
 import os
@@ -74,5 +74,3 @@ def pool(site_ids, n_ref, n_test, out_dir, prov, pop="a"):
         os.replace(path + ".tmp", path)
         sites.append(d)
     return sites
-
-

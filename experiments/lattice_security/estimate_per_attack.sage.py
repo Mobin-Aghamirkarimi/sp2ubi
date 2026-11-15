@@ -23,7 +23,9 @@ def Q(ms):
 cases = {"single_key_ternary": (cfg["single_key"], ND.Uniform(-1, 1))}
 c, Xs = cases[case]
 params = LWE.Parameters(n=c["N"], q=Q(c["moduli"]), Xs=Xs, Xe=ND.DiscreteGaussian(3.19), m=oo, tag=case)
-fn = {"usvp": LWE.primal_usvp, "bdd": LWE.primal_bdd, "bdd_hybrid": LWE.primal_hybrid,
+# primal_hybrid defaults to mitm=True, babai=True; LWE.estimate runs bdd_hybrid with both switched off
+fn = {"usvp": LWE.primal_usvp, "bdd": LWE.primal_bdd,
+      "bdd_hybrid": lambda p: LWE.primal_hybrid(p, mitm=False, babai=False),
       "bdd_mitm_hybrid": lambda p: LWE.primal_hybrid(p, mitm=True, babai=True), "dual": LWE.dual,
       "dual_hybrid": LWE.dual_hybrid, "bkw": LWE.coded_bkw, "arora-gb": LWE.arora_gb}[attack]
 try:

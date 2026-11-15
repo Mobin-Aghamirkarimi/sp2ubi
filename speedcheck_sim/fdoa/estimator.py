@@ -3,11 +3,12 @@
 Pass model (both heads on the roadside line, perpendicular distance rho to the vehicle antenna, unknown):
     x(tau) = x_mid + v_mid tau + acc tau^2/2,   v(tau) = v_mid + acc tau
     FDOA(tau) = (a / v_mid) * v(tau) / lambda * [ (0 - x)/r_A - (D - x)/r_B ],   r = sqrt((x_head - x)^2 + rho^2)
-Tied (honest physics): a = v_mid, parameters (x_mid, v_mid, acc, rho).
+Tied (physical model): a = v_mid, parameters (x_mid, v_mid, acc, rho).
 Free (consistency test): a separate Doppler-amplitude speed, parameters (x_mid, v_mid, acc, rho, a);
 v_mid is then the kinematic (transit time-scale) speed and a - v_mid tests frequency-only manipulation.
-A cubic term (jerk) is available but off by default: it is almost unidentifiable from one pass and, in the full
-Monte Carlo, inflates the per-pass error from ~1 % to ~3.5 %.
+A cubic term (jerk) is available but off by default: it is almost unidentifiable from one pass.
+
+Not used by the simulations of the paper: the jerk term, fit_pass_free_offset and fisher_sigma_vmid.
 """
 import numpy as np
 from scipy.optimize import least_squares
@@ -65,8 +66,8 @@ def fit_pass_free(t_b, fdoa, site: Site):
 
 
 def fit_pass_offset(t_b, fdoa, site: Site):
-    """Tied fit with a constant FDOA offset delta (head-to-head reference offset) as a nuisance parameter
-    (F1). Two starts (delta = 0 and delta = mean residual of the no-offset fit); the lower cost wins.
+    """Tied fit with a constant FDOA offset delta (head-to-head reference offset) as a nuisance parameter.
+    Two starts for delta (0 and the mean residual, model minus data, of the no-offset fit); the lower cost wins.
     Returns (params incl. delta as last element, t_mid, residuals, success)."""
     p, t_mid, r, ok = fit_pass(t_b, fdoa, site)
     tau = t_b - t_mid

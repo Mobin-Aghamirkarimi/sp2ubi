@@ -15,12 +15,14 @@ import random
 
 import pytest
 
-from sp2ubi.entities import (DISCARDED, OBU, REJECTED, TSP, EpochMessage, Insurer, Receipted,
-                              decode_settlement_upload, encode_settlement_upload, settlement_item_bytes_max,
-                              verify_receipt)
+from sp2ubi.commitment import commit
+from sp2ubi.entities import (DISCARDED, OBU, REJECTED, TSP, EpochMessage, Insurer, Receipted, binding_commitment,
+                              decode_settlement_upload, encode_settlement_upload, receipt_message,
+                              settlement_item_bytes_max, verify_receipt)
 from sp2ubi.fhe import SLOT_ID, SLOT_X, RiskContext
 from sp2ubi.groupsig_bbs04 import BBS04, Issuer as GroupIssuer
 from sp2ubi.params import DEFAULT, Params
+from sp2ubi.proofs import proof_bytes, schnorr_sign
 from sp2ubi.risk_model import load_model
 
 P = DEFAULT.p
@@ -172,6 +174,30 @@ def test_dispute_opens_only_a_receipted_record_neither_accepted_nor_opened(world
     assert not other_obu.acknowledge(0, m2, receipt, tsp.vk)        # a receipt of another record is not accepted
 
 
+def test_dispute_refuses_a_malformed_opening(world):
+    """A receipted commitment that opens to something other than a record gives no score and no exception."""
+    ins, tsp = world["ins"], new_tsp(world)
+    ins.epoch = 1
+    ident, K = ins.enroll(31)
+    good = {"id": ident, "epoch": 1, "x": [31, 1, 2, 3, 4, 5], "u": 7, "bind_salt": "00" * 32}
+    malformed = [dict(good, bind_salt="not hex"), dict(good, bind_salt=5), dict(good, u=[7]), dict(good, u="7"),
+                 dict(good, x=[31, 1, 2]), dict(good, x=[31, 1, 2, 3, 4, -5]), dict(good, x=[31, 1, 2, 3, 4, 5.0]),
+                 dict(good, x="311234"), {k: v for k, v in good.items() if k != "x"}]
+    for record in [good] + malformed:
+        cm_r, salt = commit(record)
+        try:
+            cm_b = binding_commitment(ident, 1, record["u"], bytes.fromhex(record["bind_salt"]))
+        except (TypeError, ValueError):
+            cm_b = bytes(32)
+        rcp = Receipted(bytes(32), cm_r, cm_b, 1)
+        receipt = proof_bytes(schnorr_sign(tsp._sk, tsp.vk, receipt_message(rcp.digest, cm_r, cm_b, 1)))
+        score = ins.dispute_record(ident, rcp, receipt, tsp.vk, record, salt, set(), set())
+        if record is good:
+            assert score == sum(wi * xi for wi, xi in zip(world["w"], good["x"])) % P
+        else:
+            assert score is None
+
+
 def test_records_of_an_ended_policy_are_discarded_not_a_deviation(world):
     """An OBU of an ended policy that keeps uploading (e.g. lost with its keys) does not set the deviation bit;
     a TSP that moves a live record into an ended identity is still detected through the live policy's receipt."""
@@ -234,6 +260,10 @@ def _settled_run(world, ident, K, seed, handling, days):
     wire = encode_settlement_upload(upload)
     assert len(wire) <= len(upload) * settlement_item_bytes_max(world["params"])
     assert decode_settlement_upload(wire) == upload
+    if wire:
+        for cut in (wire[:-1], wire[:100]):
+            with pytest.raises(ValueError):
+                decode_settlement_upload(cut)
     n_rc, disputed = ins.settle(ident, rep, decode_settlement_upload(wire), tsp.vk)
     scores = tuple(sorted(list(rep.scores) + list(disputed)))
     notice = Insurer.deviation_notice(res, receipted_missing=n_rc)

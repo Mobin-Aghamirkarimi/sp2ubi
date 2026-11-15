@@ -6,7 +6,7 @@ import dataclasses
 import pytest
 
 from sp2ubi.groupsig_bbs04 import BBS04, G1, Issuer, Signature, combine_opening, rand_scalar
-from sp2ubi.opening_dkg import (OpeningKeyParty, Reveal, SessionRegistry, SetupAborted, TracingKey, base_point,
+from sp2ubi.opening_dkg import (OpeningKeyParty, Reveal, SessionRegistry, SetupAborted, base_point,
                                 run_two_party)
 from sp2ubi.proofs import prove_dleq, prove_dlog, verify_dleq, verify_opening_setup
 
@@ -235,20 +235,17 @@ def test_failed_check_aborts_before_any_key_is_output(path):
     the run of a party started through its registry is then over: an honest continuation also raises, and the party no
     longer holds its secret shares."""
     ins, tsp, _ = registered(SESSION + b"-" + path.__name__.encode())
-    made, out = [], None
+    made = []
     with pytest.raises(SetupAborted):
-        out = path(ins, tsp, made)
-    assert out is None
+        path(ins, tsp, made)
     aborted = [p for p in [ins, tsp] + made if p.aborted]
     assert len(aborted) == 1                                 # the party whose check failed, and only that one
     for party in aborted:
         assert party._a is None and party._b is None and not party._done
         for call in (lambda: party.receive_commitment(b"\1" * 32), party.reveal, party.h_share,
                      lambda: party.finish(G1(), G1(), None, None)):
-            result = None
             with pytest.raises(SetupAborted, match="aborted"):
-                result = call()
-            assert not isinstance(result, (TracingKey, tuple))
+                call()
 
 
 def test_honest_continuation_after_an_abort_outputs_no_key():
@@ -391,10 +388,9 @@ def test_signed_deviation_aborts_and_identifies_the_signer_with_the_transcript()
     honest = tsp.party.h_share
     tsp.party.h_share = lambda: (lambda H, V, ph, pv: (H, V + G1(), ph, pv))(*honest())
     m = tsp.h_share()
-    out = None
     with pytest.raises(SetupAborted, match="share value proof"):
-        out = ins.finish(m)
-    assert out is None and ins.blame == b"tsp"
+        ins.finish(m)
+    assert ins.blame == b"tsp"
     ev = ins.evidence
     assert [(st, n) for st, n, _ in ev] == [(st, n) for st in (b"commit", b"reveal", b"h") for n in (b"insurer", b"tsp")]
     assert ev[-1][2] is m
@@ -440,7 +436,8 @@ def test_replayed_or_out_of_order_message_aborts_and_identifies_nobody():
     assert ins.blame == b"" and ins.evidence is None and ins.party.aborted and ins.party._a is None
     # a reveal before the commitments: no blame
     ins2, tsp2, _ = auth_pair(s + b"-2", keys=keys)
-    c_i2, c_t2 = ins2.commitment(), tsp2.commitment()
+    c_i2 = ins2.commitment()
+    tsp2.commitment()                                        # signed and recorded, never delivered to the insurer
     tsp2.receive_commitment(c_i2)
     r_t2 = tsp2.reveal()
     with pytest.raises(OutOfOrder):
@@ -565,7 +562,6 @@ def test_signed_deviation_at_each_step_is_blamed_locally_and_by_a_third_party(de
     s = SESSION + b"-auth-step-" + deviation.__name__.encode()
     ins, tsp, (ki, kt) = auth_pair(s, registries=regs)
     deviation(tsp)
-    out = None
     with pytest.raises(SetupAborted) as exc:
         ci, ct = ins.commitment(), tsp.commitment()
         ins.receive_commitment(ct)
@@ -573,8 +569,8 @@ def test_signed_deviation_at_each_step_is_blamed_locally_and_by_a_third_party(de
         ins.receive_reveal(tsp.reveal())
         tsp.receive_reveal(ins.reveal())
         ins.h_share()
-        out = ins.finish(tsp.h_share())
-    assert out is None and type(exc.value) is SetupAborted
+        ins.finish(tsp.h_share())
+    assert type(exc.value) is SetupAborted
     assert ins.blame == b"tsp" and ins.evidence[-1][:2] == (step, b"tsp")
     assert verify_blame(s, ins.evidence, {b"insurer": ki[1], b"tsp": kt[1]}) == b"tsp"
     assert ins.party.aborted and ins.party._a is None
@@ -593,10 +589,9 @@ def test_degenerate_key_aborts_and_identifies_nobody_locally_or_by_a_third_party
     ci, ct = ins.commitment(), tsp.commitment()
     ins.receive_commitment(ct)
     tsp.receive_commitment(ci)
-    out = None
     with pytest.raises(Degenerate):
-        out = ins.receive_reveal(tsp.reveal())
-    assert out is None and ins.party.u is None
+        ins.receive_reveal(tsp.reveal())
+    assert ins.party.u is None
     assert ins.blame == b"" and ins.evidence is None
     assert verify_blame(s, ins.transcript(), {b"insurer": ki[1], b"tsp": kt[1]}) == b""
     assert ins.party.aborted and ins.party._a is None and ins.party._b is None

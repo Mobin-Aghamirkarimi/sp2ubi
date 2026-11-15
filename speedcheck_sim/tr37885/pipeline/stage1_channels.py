@@ -1,6 +1,6 @@
-"""The speed-check simulation TR 37.885 runner, stage 1 (channel records). One QuaDRiGa call per site with every track of every cell that shares the
-site (so a site is never split). Per track it stores
-the compact channel record that every later stage uses (no new channel draws after this stage):
+"""Stage 1 of the TR 37.885 pipeline (channel records). One QuaDRiGa call per site with every track of every cell that
+shares the site (so a site is never split). Per track it stores the compact channel record that every later stage uses
+(no new channel draws after this stage):
   hq      [n_prb, 2 (term off, on), n_tx, n_b, Q] complex64  band average over the occupied subcarriers at the Q
                                                               snapshots of each beacon (interface.band_avg_q)
   gain    [n_tx, n_b]  large-scale gain (sum of ray powers, beacon mean)       los_pow [n_tx, n_b] |LoS path|^2
@@ -15,19 +15,19 @@ Families (sites shared across speeds; constants `grid`; `evaluation_v4`; reduced
   N  P3 urban: head A LOS/NLOSv switch, 15 m/s (test vehicle in lane 1, blockers in lane 0)
   P0U / P0H / P0N  the P0 development pilot (constants evaluation_v4.p0): P1 10 + 15, P2 20 + 30, P3 15,
            30 reference + 30 test passes, with the disjoint development seed set evaluation_v4.p0.seeds
-  Not run: R (P4 38.901 UMi LOS GR), U9 (P1 at degree of
-  saturation 0.9), 5U / 5H (P5), the P6 type-3 tracks and the C5 quadratic-control tracks (run.c5_quadratic_control
-  families =).
+  Not run: R (P4 38.901 UMi LOS GR), U9 (P1 at degree of saturation 0.9), 5U / 5H (P5), the P6 type-3 tracks and the
+  C5 quadratic-control tracks (constants run.c5_quadratic_control.families is empty).
 D-qual: a family listed in constants evaluation_v4.p2_dqual runs its primary sites 5-9 with the reference
 passes only (plan fixed before the run). The track list of a site is part of the pre-specified design (environment
 dependence): it is fixed by the constants, never by a command-line option.
 Output: runs/g1_<family>/site_<k>.npz (regenerable from the seeds), site_<k>.json (meta, provenance) and
 manifest.json (SHA-256 of every file).
-Usage: python pipeline/stage1_channels.py --family U --sites 0 20 --tag primary [--workers 4]
+Usage: python pipeline/stage1_channels.py --family U --sites 0 10 --tag primary [--workers N]
        (development: --tag dev_<x>)"""
 import argparse
 import json
 import os
+import resource
 import shutil
 import sys
 import time
@@ -80,8 +80,7 @@ FAMILIES = {
     "5H": dict(idx=6, cfg="3GPP_37.885_Highway_LOS", scenario="highway", v_scatt=VS["highway"],
                tracks=[("P5", 30.0, P5_ROLES, VEH_Z)], until_qualified=6, stratum="highway"),
 }
-# Study 2 (L-T survey; development and held-out families). Added families only: no study-1 family, seed or track
-# list changes. U2 / N2: survey (reference) passes in traffic, REF_TEST_S2; H2: the study-1 free-road survey, REF_TEST, P2-20
+# Study 2 (L-T survey; development and held-out families). U2 / N2: survey (reference) passes in traffic, REF_TEST_S2; H2: the study-1 free-road survey, REF_TEST, P2-20
 # only. New indices, seedset "s2" (seed_base: evaluation_v6.seeds).
 # D3U (Dev-3): a copy of every FAMILIES["U"] field (same index, seeds and tracks), plus the C5 quadratic tracks appended
 # after the loop over all tracks (c5_after_loop).
@@ -103,11 +102,10 @@ def _s2_options():
     return dict(S2.OPTIONS, **((C.get("evaluation_v6") or {}).get("options") or {}))
 
 
-
-
 def site_junction_offset(fam, sd):
     """N15, study 2 (seedset s2, option junction = "site"): one junction offset per site, U(50, 150) m from the
-    dedicated stream default_rng(sd["site"] + [77]), shared by both roles and both speed classes; None otherwise. Only urban (junction) scenarios use it (H2: none)."""
+    dedicated stream default_rng(sd["site"] + [77]), shared by both roles and both speed classes; None otherwise. Only
+    urban (junction) scenarios use it (H2: none)."""
     from pipeline import s2_constants as S2
     F = FAMILIES[fam]
     if F.get("seedset") != S2_SEEDSET or F["scenario"] != "urban" or _s2_options()["junction"] != "site":
@@ -116,10 +114,9 @@ def site_junction_offset(fam, sd):
 
 
 class SharedJunctionRng:
-    """Proxy of a track's SUMO generator for one site_passes call (study 2, N15): the junction draw of the call
-    (sumo_kinematics.py:155, its first draw, rng.uniform(50.0, 150.0)) is consumed as usual and replaced by the site's offset;
-    every other call goes to the generator, so sumo_kinematics.py (a study-1 stage-1 source) stays unchanged and the
-    draw is consumed, not skipped."""
+    """Proxy of a track's SUMO generator for one site_passes call (study 2, N15): the junction draw of the call (the
+    first draw of sumo_kinematics.site_passes, rng.uniform(50.0, 150.0)) is consumed and replaced by the site's offset;
+    every other call goes to the generator."""
 
     def __init__(self, rng, u):
         self._r, self._u, self._used = rng, float(u), False
@@ -128,7 +125,7 @@ class SharedJunctionRng:
         v = self._r.uniform(*a, **k)
         if not self._used:
             if tuple(a) != (50.0, 150.0) or k:
-                raise RuntimeError("SharedJunctionRng: the first draw is not the junction draw of sumo_kin.site_passes")
+                raise RuntimeError("SharedJunctionRng: the first draw is not the junction draw of sumo_kinematics.site_passes")
             self._used = True
             return self._u
         return v
@@ -139,8 +136,7 @@ class SharedJunctionRng:
 
 def seed_base(fam):
     """The family's seed set: production (constants seeds) or the disjoint P0 development set (evaluation_v4.p0.seeds);
-    study 2 (seedset "s2"): the study-1 production seeds with the five bases of replaced by
-    evaluation_v6.seeds."""
+    study 2 (seedset "s2"): the study-1 production seeds with the five seed bases replaced by evaluation_v6.seeds."""
     if FAMILIES[fam].get("seedset") == S2_SEEDSET:
         return s2_seed_base()
     return P0["seeds"] if FAMILIES[fam].get("seedset") == "p0" else C["seeds"]
@@ -166,8 +162,8 @@ def c5_families():
 
 
 def workers_stage1(fam):
-    """Stage-1 workers of a family: constants run.workers_stage1 (every study-1 family, unchanged); the Dev-3 family D3U
-    reads evaluation_v6.dev3.workers_stage1 (N14; run.* is not changed, so the study-1 constants stay unchanged)."""
+    """Stage-1 workers of a family: constants run.workers_stage1 (every study-1 family); the Dev-3 family D3U reads
+    evaluation_v6.dev3.workers_stage1 (N14)."""
     if fam in C["run"]["workers_stage1"]:
         return C["run"]["workers_stage1"][fam]
     from pipeline import s2_constants as S2
@@ -196,7 +192,8 @@ def seeds(fam, site):
 
 
 def track_rngs(fam, site, k):
-    """Per-track generators: channel-side draws (nu, blockers) and the beacon schedule (shared with the in-house arm)."""
+    """Per-track generators: channel-side draws (nu, blockers) and the beacon schedule (shared with the in-house
+    arm)."""
     f, sb = FAMILIES[fam]["idx"], seed_base(fam)
     return (np.random.default_rng([sb["G1_pass_base"], f, site, k, 0]),
             np.random.default_rng([sb["G1_pass_base"], f, site, k, 1]))
@@ -274,8 +271,7 @@ def build_site(fam, site, Q, n_scale=1.0):
 
 
 def _c5_block(fam, site, Q, geo, F, n_tx, sd, c5, passes, meta, k, ti, cell, v0, z, trajs, role_of, role_idx, k_of):
-    """The C5 quadratic-control tracks of one track ti (unchanged; moved into a function so that Dev-3 can
-    run it after the loop over all tracks). Returns the next track index k."""
+    """The C5 quadratic-control tracks of one track ti. Returns the next track index k."""
     rq = np.random.default_rng(sd["sumo"] + [ti, 99])
     for j, T in enumerate(trajs):
         if role_of[j] not in c5["roles"]:
@@ -292,11 +288,9 @@ def _c5_block(fam, site, Q, geo, F, n_tx, sd, c5, passes, meta, k, ti, cell, v0,
 
 
 def ckpt_dir(out_dir, site):
-    """Per-builder checkpoint folder of a site's Octave call: inside the family folder, not in the TMPDIR that the run
-    script empties at each start; quadriga/site.m discards it when its meta (input, code, Octave)
-    differs. Deleted here once the site record is written, not by quadriga/site.m after its save: the work folder with out.mat
-    is emptied at a restart, so the checkpoints must outlive it. Its files are not named site_* (never in the manifest
-    or a push)."""
+    """Per-builder checkpoint folder of a site's Octave call, inside the family folder; quadriga/site.m discards it
+    when its meta (input, code, Octave) differs. Deleted here once the site record is written. Its files are not named
+    site_*, so they never enter the manifest."""
     return os.path.join(os.path.abspath(out_dir), "ckpt", f"site_{site:03d}")
 
 
@@ -375,11 +369,12 @@ def site_record(fam, site, Q, out_dir, tag, n_scale=1.0):
                                pre + "blk_speed": st["speed"], pre + "blk_clipped": st["clipped"]})
     np.savez_compressed(path + ".tmp.npz", **arrays)
     os.replace(path + ".tmp.npz", path)
-    kx = os.path.join(out_dir, f"site_{site:03d}.kx.json")   # the K-report fields only: stage 3
-    json.dump({k: np.asarray(v).tolist() for k, v in arrays.items() if k.split("_", 1)[-1] in KX_FIELDS},   # runs from
-              open(kx + ".tmp", "w"))                                                                       # the merged
-    os.replace(kx + ".tmp", kx)                                                                             # small files
-    import resource                                     # kernel high-water marks:
+    # the K-report fields only, as a small file that stage 3 can read without the npz
+    kx = os.path.join(out_dir, f"site_{site:03d}.kx.json")
+    json.dump({k: np.asarray(v).tolist() for k, v in arrays.items() if k.split("_", 1)[-1] in KX_FIELDS},
+              open(kx + ".tmp", "w"))
+    os.replace(kx + ".tmp", kx)
+    # kernel high-water marks
     peak = dict(octave_kb=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,   # max over this worker's Octave calls
                 python_kb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     jpath = os.path.join(out_dir, f"site_{site:03d}.json")
@@ -411,7 +406,7 @@ def _job(args):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--family", required=True, choices=sorted(FAMILIES))
-    ap.add_argument("--sites", type=int, nargs=2, default=[0, 20])
+    ap.add_argument("--sites", type=int, nargs=2, default=[0, 20], help="primary: within constants primary_sites")
     ap.add_argument("--tag", required=True, help="'primary' or dev_<x> / sens_<x>")
     ap.add_argument("--workers", type=int, default=None,
                     help="default and primary: constants run.workers_stage1[family] (from the measured peak memory)")
@@ -471,12 +466,12 @@ def governing_for(stratum, tag):
 def select_until_qualified(a, out, F):
     """P5 site selection (constants run.p5): layouts in seed order from index 0 until `need` qualify;
     batches of `workers` sites run in parallel; the selection is the first `need` qualified sites in seed order
-    (independent of the batch size) and the number drawn is the index of the last selected site + 1, or every layout drawn when fewer than `need`
-    qualify (a C3 figure).
+    (independent of the batch size) and the number drawn is the index of the last selected site + 1, or every layout
+    drawn when fewer than `need` qualify.
     At most max_drawn layouts: if fewer than `need` qualify, P5 for this site type is "not applicable"."""
     p5 = C["run"]["p5"]
     need, cap = p5["need"], p5["max_drawn"]
-    if not a.tag == "primary":                          # development: stay inside --sites
+    if a.tag != "primary":                              # development: stay inside --sites
         cap = min(cap, a.sites[1] - a.sites[0])
     if a.tag == "primary":
         if a.sites[0] != p5["start_index"] or a.governing is not None:

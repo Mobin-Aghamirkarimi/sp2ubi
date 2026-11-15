@@ -3,15 +3,16 @@ the R2 null-quantile table, the rules and their constants are those of decisions
 
   * site population: each site's Rice factor K is drawn from the 3GPP TR 38.901 UMi LOS distribution N(9, 5^2) dB;
     the site survey excludes sites with K < 5 dB; a drawn K is mapped down to the next simulated grid value, which is
-    conservative for accuracy; scattering and specular facade 50/50;
-  * speed classes from the site-accuracy simulation data; the highway profile uses it;
+    conservative for accuracy (K below the lowest grid value is mapped to that value); scattering and specular
+    facade 50/50;
+  * speed classes from the site-accuracy data (10 to 38 m/s); the highway profile includes the 38 m/s class;
   * out-of-window results (|b| > B_WINDOW, the insurer's decryption returns None) enter as b = -B_WINDOW in the
     epoch mean and as a saturated residual (C_WIN^2) in R2;
   * margin analysis: actual noise larger than the disclosed sigma level, site-common bias drift, site-epoch noise
     non-stationarity, static vehicle x site offset, and a combined case;
   * threat classes evaluated for power: persistent scaling, day-level scaling and a speed cap (VSS reports
     min(v, 35 m/s), i.e. only the 38 m/s class is affected).
-Usage: python inhouse/decisions_levels.py --tag extra [--extra ...] [--vehicles 20000] [--smoke]
+Usage: python inhouse/decisions_levels.py [--tag extra] [--vehicles 20000] [--smoke]
 """
 import argparse
 import json
@@ -34,7 +35,7 @@ PROFILES = {"urban": {10: 0.6, 15: 0.3, 20: 0.1}, "suburban": {10: 0.1, 15: 0.3,
 HONEST = dict(DB.HONEST, SIG_UNDER=1.0, SBIAS=0.0, SMULT=0.0, VOFF=0.0)
 
 
-# ------------------------------------------------------------------------------------------- sites from the site-accuracy simulation
+# ---------------------------------------------------------------------- sites from the site-accuracy simulation
 def k_weights(k_grid, mapping="floor"):
     """Probability of each simulated K value for a surveyed site (K ~ N(9, 5^2) dB, K >= 5 dB)."""
     g = np.array(sorted(k_grid))
@@ -48,6 +49,7 @@ def k_weights(k_grid, mapping="floor"):
 
 
 def load_sites(tags):
+    """Site table from the site-accuracy pass files of the given tags."""
     data = []
     for tag in tags:
         data += json.load(open(os.path.join(HERE, "results", f"site_accuracy_passes_{tag}.json")))
@@ -78,7 +80,7 @@ def load_sites(tags):
         A["ev"][i, j] = r["ev"][:n_eval]; A["dh"][i, j] = r["ref"].mean(); A["dt"][i, j] = r["all"].mean()
         A["sraw"][i, j] = r["ref"].std(ddof=1); A["swithin"][i, j] = r["all"].std(ddof=1)
         cell_resid.setdefault((r["cc"], r["v"]), []).append(r["ref"] - r["ref"].mean())
-    assert np.isfinite(A["dh"]).all(), "every (site, speed) needs E1 passes"
+    assert np.isfinite(A["dh"]).all(), "every (site, speed) needs site-accuracy passes"
     nu_cell = {k: max(stats.t.fit(np.concatenate(v), floc=0.0)[0], 2.5) for k, v in cell_resid.items()}
     for r in rows:
         A["nu"][kidx[(r["cc"], r["site"])], speeds.index(r["v"])] = nu_cell[(r["cc"], r["v"])]
@@ -285,7 +287,7 @@ def main():
                 rep["worst"][f"{vt}|worst{nworst}|{lam}"] = h
                 log(f"worst{nworst:2d} {vt:8s} lam={lam:2d}: R2/ep {h['r2_epoch']:.1e} punitive/yr {h['punitive_per_year']:.1e} "
                     f"(UB {h['punitive_ub95']:.1e}) notice/yr {h['notice_per_year']:.1e}")
-    # 3. margin analysis (honest population; where does the false-punitive target 1e-3 per year break?)
+    # 3. margin analysis (honest population against the false-punitive target of 1e-3 per year)
     margins = ([("SIG_UNDER", x) for x in (1.2, 1.5, 2.0)] + [("SBIAS", x) for x in (0.003, 0.006, 0.010)]
                + [("SMULT", x) for x in (0.2, 0.35, 0.5)] + [("VOFF", x) for x in (0.002, 0.004, 0.006)]
                + [("DRIFT", x) for x in (0.006, 0.010)] + [("COMBINED", None)])

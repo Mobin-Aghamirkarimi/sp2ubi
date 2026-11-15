@@ -4,7 +4,7 @@ max{2 m, Exp(mean = speed * 2 s)}; all vehicles in a lane at the same speed); a 
 blocker box intersects the 3D segment vehicle antenna -> head A; the state is set per beacon; the blockage loss is the
 clause 6.2.1 additional loss max{0 dB, N(mean, sd) in dB}, case by antenna and blocker heights, one draw per blockage
 event (a run of consecutive blocked beacons by the same blocker) with the distance-dependent mean per beacon.
-Implementation readings (constants `nlosv_blockage.py`): type mix of urban option B
+Implementation readings (constants `p3_blockage`): type mix of urban option B
 (20/60/20 %), blocker-lane speed per pass uniform over the urban option B lane speeds {60, 50, 25, 15} km/h, blocker
 lane centre 3.5 m (TR Annex A urban lane width) from the vehicle's lane centre towards the heads, same direction."""
 from dataclasses import dataclass

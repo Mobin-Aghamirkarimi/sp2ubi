@@ -12,7 +12,7 @@ stage3_extra_checks.py and s2_criteria.py:
     sigma > 9 %, read per variant, the worst (largest) count governs; R8 (iii) printed in every outcome);
   * the rung per U2 cell (s2_criteria.cell_rung), gate G (H2 not run -> 'not run'), L3 (below), the outcome
     (s2_criteria.select_outcome);
-  * N2 (P3-15) with the same quantities, outside the ladder (T3-N on the study-2 records);
+  * N2 (P3-15) with the same quantities, outside the ladder;
   * K5 erasures (U2): worst gated sigma per cell under each erasure tag, reported only.
 Every site bootstrap uses the study-2 'bootstrap' seed (s2_heldout.s2_bootstrap).
 L3: L3 holds iff the decision adapter's urban stratum status (tables_<tag>.json stratum_status.urban) is 'covered' or
@@ -23,8 +23,8 @@ An adapter status outside the adapter's own list (adapter STATUS) means L3 fails
 template is the highest rung reached, and stage 3 does not stop for it (a rule chosen after held-out values are
 visible would be post hoc; this one can only under-claim).
 Also, as stage3_criteria.main / stage3_extra_checks.add_v5 compute them for study 1: the study-1 K7 calibration (the
-study-1 result coverage_check_sens_coverage.json, pinned by SHA-256: c_K7 and the sigma-CI widening; K7 is not re-run,
-the statistic is unchanged), the optimism check with the study-2 Holm family (m = 3, N4; s2_criteria.optimism_s2), its
+study-1 result coverage_check_sens_coverage.json, pinned by SHA-256: c_K7 and the sigma-CI widening; K7 is not re-run),
+the optimism check with the study-2 Holm family (m = 3, N4; s2_criteria.optimism_s2), its
 S-place-corrected re-evaluation (the worse verdict governs), the bridge, the model-diversity C1 quantities
 (descriptive), per-beacon N, realised K and the K report, realised speed, the P3 blocked shares, C4-light, and the
 study-1 keys of stage3_extra_checks.add_v5 (R8 (i)-(iii), threshold sensitivities without the SNR offset rows, the V2V
@@ -32,9 +32,8 @@ reading, qualification vs K, R8 (iv), per-beacon at the governing variant); Tabl
 these quantities, keys re-prefixed A2|...
 The study-1 S-place result is pinned by SHA-256; a study-2 S-place result that is missing (role S2 failed or stopped)
 is stated as unquantified and the N5 factor is the study-1 factor.
-No held-out number is printed: the outputs are files; the console gets paths and counts only.
 Usage: python pipeline/s2_stage3.py --study1-s-place <s_place_sens_place.json>
-           --study1-k7 <coverage_check_sens_coverage.json> [--study2-s-place-missing] [--runs DIR] [--out DIR]"""
+           --study1-k7 <coverage_check_sens_coverage.json> [--runs DIR] [--out DIR]"""
 import argparse
 import contextlib
 import glob
@@ -70,8 +69,8 @@ def family_dir(runs, fam):
 
 
 def load_family(runs, fam, tag, sites, check_prov=True):
-    """The stage-2 records of one held-out family and tag on its pre-specified sites; every site file must exist and carry
-    this tree's stage-1/2 sources."""
+    """The stage-2 records of one held-out family and tag on its pre-specified sites; every site file must exist and
+    carry this tree's stage-1/2 sources."""
     from pipeline.provenance import stage_hashes
     cur = stage_hashes() if check_prov else None
     recs, files = [], {}
@@ -117,8 +116,9 @@ def statistic(recs, selected, cal):
 
 # ---------------------------------------------------------------------------------------------- quantities
 def scope_s2(recs, cell, v0, sites):
-    """stage3_criteria.scope's rule on the pre-specified held-out sites: per variant k = qualified sites (gen_on, included survey
-    passes, stage3_criteria.ref_qualification), the worst (smallest) k governs, n = the pre-specified sites."""
+    """stage3_criteria.scope's rule on the pre-specified held-out sites: per variant k = qualified sites (gen_on,
+    included survey passes, stage3_criteria.ref_qualification), the worst (smallest) k governs, n = the pre-specified
+    sites."""
     n = sites[1] - sites[0]
     rows = []
     for mp, prb in K.COMBOS:
@@ -131,7 +131,8 @@ def scope_s2(recs, cell, v0, sites):
 
 
 def ls_rows(recs_ls, cells):
-    """sens_ls rows as stage3_criteria.sens_ls_rows: the LB variants under the gain shift, cells of constants sens_ls.cells."""
+    """sens_ls rows as stage3_criteria.sens_ls_rows: the LB variants under the gain shift, cells of constants
+    sens_ls.cells."""
     SL = K.C["sensitivities"]["sens_ls"]
     out = {}
     for cell, v0 in cells:
@@ -243,8 +244,8 @@ def load_k7(path, sha=STUDY1_K7_SHA256):
 
 @contextlib.contextmanager
 def k7_state(state):
-    """stage3_criteria.K7_STATE set to the study-1 K7 state for the duration of stage 3 (sigma-CI widening, optimism cap);
-    restored afterwards, also on an exception."""
+    """stage3_criteria.K7_STATE set to the study-1 K7 state for the duration of stage 3 (sigma-CI widening, optimism
+    cap); restored afterwards, also on an exception."""
     old = dict(K.K7_STATE)
     K.K7_STATE.update(state)
     try:
@@ -257,8 +258,8 @@ def k7_state(state):
 @contextlib.contextmanager
 def runs_pointer(runs):
     """criteria.RUNS pointed at a folder whose g1_U / g1_N are the held-out family folders (as the adapter's pointer
-    folder): the fixed K-report and in-band-K readers (stage3_criteria.k_report, stage3_extra_checks.site_inband_k) read the stage-1
-    records of U2 / N2 under the family names they know; restored afterwards."""
+    folder): the fixed K-report and in-band-K readers (stage3_criteria.k_report, stage3_extra_checks.site_inband_k) read
+    the stage-1 records of U2 / N2 under the family names they know; restored afterwards."""
     import tempfile
     ptr = tempfile.mkdtemp(prefix="s2ptr_")
     for fam, p in PTR.items():
@@ -274,7 +275,7 @@ def runs_pointer(runs):
 
 @contextlib.contextmanager
 def no_snr_offset_rows():
-    """lists sens_ls and K5 only: stage3_extra_checks.add_v5 runs without the SNR offset rows."""
+    """stage3_extra_checks.add_v5 without the SNR offset rows (study 2 runs sens_ls and K5 only)."""
     old = XC.snr_offset_rows
     XC.snr_offset_rows = lambda tag, families, governing: None
     try:
@@ -290,7 +291,7 @@ def evaluated_types(cells):
 
 
 def table_a2(out):
-    """Table A2 ("Table A2 (U2, N2, H2 rows as Table A)"): the fixed reports/make_reports.table_a
+    """Table A2 (U2, N2, H2 rows as Table A): the fixed reports/make_reports.table_a
     and its text keys on the stage-3 s2 output; every key re-prefixed A2|... (A|<cell>|... -> A2|<cell>|...)."""
     from reports import make_reports as MR
     nums = {}
@@ -303,8 +304,8 @@ def table_a2(out):
 def compute(recs, cells_by_fam, sites_by_fam, spf_urban, recs_ls=None, recs_k5=None, c_k7=1.0, tag=HO.TAG,
             families=("U", "N")):
     """Everything of the study-2 stage 3 that does not need the adapter. recs: mode-s2 records of U2 and N2 (families
-    'U', 'N'); c_k7: the study-1 K7 factor (the K7 state is set by the caller); returns the output dict with
-    per-cell scope, sigma, C2 / L1, R8, the rung of each U2 cell, and the study-1 stage-3 quantities (module docstring)."""
+    'U', 'N'); c_k7: the study-1 K7 factor (the K7 state is set by the caller); returns the output dict with per-cell
+    scope, sigma, C2 / L1, R8, the rung of each U2 cell, and the study-1 stage-3 quantities (module docstring)."""
     cells = [c for f in ("U2", "N2") for c in cells_by_fam.get(f, [])]
     spf = {"urban": spf_urban, "highway": 1.0}
     with CS.holm_family_s2():
@@ -312,7 +313,7 @@ def compute(recs, cells_by_fam, sites_by_fam, spf_urban, recs_ls=None, recs_k5=N
         c2_rows, c2_sum = CS.c2_tost_s2(recs, cells)
         qv = XC.qual_validity(recs, cells, gov)
         # the optimism check with the study-2 Holm family, and its S-place-corrected re-evaluation, as
-        # as stage3_criteria.main: the worse verdict governs
+        # stage3_criteria.main: the worse verdict governs
         opt = [x for x in (K.optimism_cell(recs, c, v, mp, prb, c_k7) for c, v in cells for mp, prb in K.COMBOS) if x]
         gov_opt = CS.optimism_s2(opt)
         opt_place, gov_opt_place = None, None
@@ -413,8 +414,8 @@ def adapter_status(runs, results, tag, env_extra=None):
 
 
 def write_governing(out, results, tag):
-    """The governing file the decision adapter reads (stage3_criteria.main's format): governing variants, no C5 class failed
-    (C5 is not run on held-out data), the C2 (ii) tau per cell, the s2 scope."""
+    """The governing file the decision adapter reads (stage3_criteria.main's format): governing variants, no C5 class
+    failed (C5 is not run on held-out data), the C2 (ii) tau per cell, the s2 scope."""
     g = dict(out["governing"], c5_failing=[], c2_tau={k: v["tau_max"] for k, v in out["c2_summary"].items()},
              scope={k: v["scope"] for k, v in out["cells"].items()})
     p = os.path.join(results, f"governing_{tag}.json")

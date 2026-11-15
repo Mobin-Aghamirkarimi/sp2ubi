@@ -1,7 +1,6 @@
 """LaTeX number macros for the speed path: every speed-path number in the manuscript and the supplement is written
-as \\spn{<key>} and filled from
-results/reports/<tag>/numbers_<tag>.json. Formatting is fixed by the key's last field (below), so a number is
-never rounded by hand. An undefined key prints a bold ??key?? and a LaTeX warning.
+as \\spn{<key>} and filled from results/reports/<tag>/numbers_<tag>.json. Formatting is fixed by the key's last field
+(below), so a number is never rounded by hand. An undefined key prints a bold ??key?? and a LaTeX warning.
 With --placeholder, every key of the numbers file gets the text [key] (for drafting before the data exist).
 Usage: python reports/number_macros.py --tag primary [--out FILE] [--placeholder]"""
 import argparse
@@ -29,10 +28,9 @@ SCI = ("punitive_per_year", "punitive_ub95", "notice_per_year", "p_holm",
 PCT_PREFIX = ()
 SCI_PREFIX = ("B|honest|r3_inhouse|",)       # R3 honest per-vehicle-year rate (a rate, not a share)
 DB_PREFIX = ("K|",)                          # realised Ricean K in dB (K-anchor sentence), never x 100
-DEC3 = ("p_unique", "share")                 # matching-simulation P(unique) (reference 0.014 / 0.163, matching numbers of Table 11) and
+DEC3 = ("p_unique", "share")                 # matching-simulation P(unique) (reference 0.014 / 0.163, matching numbers of the paper's coalition table) and
                                              # B|zq_minus1|share against alpha_pow_1_5 = 0.11 (T5-m5): three decimals
 COUNT_LIKE = ("median_candidates",)          # matching-simulation median number of candidates (reference 192 / 6): no decimals
-
 
 # ratios, means and dB values that print with two decimals by design; any other number key that matches no class is
 # "unclassified" (still printed with two decimals and listed by main in the macro file)

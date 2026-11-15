@@ -10,8 +10,8 @@ gate), so an exclusion's effect enters S_all, q99_all, T_all and the yield; the 
 under both are printed, never gating. Worst variants of candidate and LS
 are taken separately, per-variant ratios reported. The governing quantity of D0-R3 is the worse of gen_on and in-house
 per (dataset, reading, cell), candidate and LS taken separately.
-  excess bias  mean uncalibrated b̂ of the gated test passes - mean b̂ of the free-road reference passes (role "ref" as
-               recorded) at the same sites = the pooled mean of the reading-F calibrated residual e of the gated test
+  excess bias  mean uncalibrated b_hat of the gated test passes - mean b_hat of the free-road reference passes (role
+               "ref" as recorded) at the same sites = the pooled mean of the reading-F calibrated residual e of the gated test
                passes; per urban cell, arm, worst variant (largest |.|); never computed with the surrogate survey
   S_all, q99_all, T_all  as in study 1 (all included and gated test passes, not conditioned on qualification), own set
   yield        included and gated test passes / all test passes of the cell (each configuration on its own set)
@@ -67,9 +67,9 @@ def _sat(e):
 
 
 def variant_rows(R_ls, R_c, cell, v0, arm, R_ls_F=None, R_c_F=None):
-    """Per variant: S_all / q99_all / T_all of each configuration on its own included and gated test passes from the same
-    input records, the paired values over the passes included under both (printed only), excess bias
-    (reading F tables; R_*_F given when R_* is a reading-T set), calibrated bias, yields, non-finite shares."""
+    """Per variant: S_all / q99_all / T_all of each configuration on its own included and gated test passes from the
+    same input records, the paired values over the passes included under both (printed only), excess bias (reading F
+    tables; R_*_F given when R_* is a reading-T set), calibrated bias, yields, non-finite shares."""
     rows = []
     for mp, prb in K.COMBOS:
         T_ls, c_ls = tables(R_ls, cell, v0, arm, mp, prb)
@@ -121,8 +121,9 @@ GOV_MIN = ("yield",)                                       # worse = smaller
 
 
 def governing(per_arm):
-    """The study-1 governing quantity: per quantity the worse of the arms' worst-variant values, candidate and LS each taken separately. per_arm: {arm: summary}. Returns a summary of the same form with the
-    governing arm of each value."""
+    """The study-1 governing quantity: per quantity the worse of the arms' worst-variant values, candidate and LS each
+    taken separately. per_arm: {arm: summary}. Returns a summary of the same form with the governing arm of each
+    value."""
     out = {}
     for side in ("_c", "_ls"):
         for f in GOV_MAX + GOV_ABS + GOV_MIN:
@@ -153,7 +154,8 @@ def bias_ok(eb_c, eb_ls, fall=S2.N8_BIAS_FALL, band=S2.N8_BIAS_BAND):
 
 def urban_clauses(sm):
     """D0-R3 urban clauses on one (dataset, reading, cell) governing summary (N8, N9): |excess bias| falls >= 50 % or is
-    <= 0.5 %; S_all falls >= 20 %; q99_all rises <= 5 % (relative); yield falls <= 30 % (relative); non-finite <= 5 %."""
+    <= 0.5 %; S_all falls >= 20 %; q99_all rises <= 5 % (relative); yield falls <= 30 % (relative); non-finite <= 5
+    %."""
     v = lambda k: sm[k]["value"]
     y_ok = bool(np.isfinite(v("yield_c")) and np.isfinite(v("yield_ls")) and
                 v("yield_c") >= (1 - S2.N8_YIELD_LOSS_MAX) * v("yield_ls"))
@@ -222,8 +224,8 @@ def governing_entries(entries):
 
 def eligible(entries):
     """D0-R3 (N8, N9): on the governing quantity (worse of gen_on and in-house per cell, candidate and LS taken
-    separately), Dev-2 readings F and T, both urban cells: the urban clauses; Dev-1 (reading F): the non-regression guard
-    only; P0H: the study-1 R3 highway clause per arm (unchanged; each arm against its own LS)."""
+    separately), Dev-2 readings F and T, both urban cells: the urban clauses; Dev-1 (reading F): the non-regression
+    guard only; P0H: the study-1 R3 highway clause per arm (each arm against its own LS)."""
     verdict, why = True, []
     gov = governing_entries({k: v for k, v in entries.items() if k[0] != "Dev-1/P0H"})
     for k, g in gov.items():
@@ -264,9 +266,9 @@ def choose(results):
 
 # ---------------------------------------------------------------------------------------------- D0-R1, D0-R2
 def paired_kin_diff(recs, cell, v0, arm, mp, prb):
-    """D0.2: per site, the paired differences SUMO - quadratic of b̂ (select statistic, same free-road calibration; the
-    calibration cancels) of the test passes included and gated under both (the excess bias it is
-    compared with is gated), paired by the SUMO pass index j (pair_k)."""
+    """D0.2: per site, the paired differences SUMO - quadratic of b_hat (select statistic, same free-road calibration;
+    the calibration cancels) of the test passes included and gated under both (the excess bias it is compared with is
+    gated), paired by the SUMO pass index j (pair_k)."""
     T_s, _ = tables(recs, cell, v0, arm, mp, prb, "sumo")
     T_q, _ = tables(recs, cell, v0, arm, mp, prb, "quadratic")
     out = {}
@@ -289,9 +291,9 @@ def site_bootstrap_mean(by_site, key_):
 
 
 def d0_r1(dev3, arm="gen_on"):
-    """D0-R1 (N6): 'kinematic cause supported' if, in >= 1 urban cell, the mean paired difference (D0.2) is >= 1/2 of the
-    excess bias (same sign) with a site-bootstrap 95 % CI excluding 0; evaluated at the cell's worst variant (largest
-    |excess bias| of the Dev-3 SUMO test passes, reading F). Reported either way."""
+    """D0-R1 (N6): 'kinematic cause supported' if, in >= 1 urban cell, the mean paired difference (D0.2) is >= 1/2 of
+    the excess bias (same sign) with a site-bootstrap 95 % CI excluding 0; evaluated at the cell's worst variant
+    (largest |excess bias| of the Dev-3 SUMO test passes, reading F). Reported either way."""
     cells = {}
     for c in URBAN:
         rows = []
@@ -342,10 +344,10 @@ def d0_r2(r1, dev1, dev2, arm="gen_on"):
     return dict(cells=res, holds=bool(any(v["holds"] for v in res.values())))
 
 
-# ---------------------------------------------------------------------------------------------- D0-R4 (L-B, L-B′)
+# ---------------------------------------------------------------------------------------------- D0-R4 (L-B, L-B')
 def bias_reduction(pairs):
-    """D0-R4 |excess bias| reduction: 1 - mean|eb_rule| / mean|eb_LS| over the (|eb_rule|, |eb_LS|) pairs where both
-    are finite (a ratio of sums, so one entry with |eb_LS| near 0 cannot dominate); nan if no pair or the LS sum is 0."""
+    """D0-R4 |excess bias| reduction: 1 - mean|eb_rule| / mean|eb_LS| over the (|eb_rule|, |eb_LS|) pairs where both are
+    finite (a ratio of sums, so one entry with |eb_LS| near 0 cannot dominate); nan if no pair or the LS sum is 0."""
     fin = [(c, l) for c, l in pairs if np.isfinite(c) and np.isfinite(l)]
     if not fin:
         return np.nan
@@ -354,7 +356,7 @@ def bias_reduction(pairs):
 
 
 def d0_r4_rule(dev1, dev2, cal, n2, arm_list=ARMS):
-    """D0-R4 (N10) for one N2 rule (n2 = 'L-B' or 'L-B′'): adoptable if on Dev-1 P0N (reading F) and Dev-2 P3-15
+    """D0-R4 (N10) for one N2 rule (n2 = 'L-B' or 'L-B''): adoptable if on Dev-1 P0N (reading F) and Dev-2 P3-15
     (readings F and T) |excess bias| falls >= 50 % or is <= 0.5 % at yield loss <= 30 %; in reading T additionally the
     calibrated bias falls >= 50 % or lies within 0.5 %. Per arm (the pre-specified text; each configuration on its own
     set). Also the rule's |excess bias| reduction = 1 - mean|eb_c| / mean|eb_ls| over these entries (a ratio of
@@ -385,7 +387,7 @@ def d0_r4_rule(dev1, dev2, cal, n2, arm_list=ARMS):
 
 
 def d0_r4(dev1, dev2, cal, arm_list=ARMS):
-    """D0-R4: L-B and L-B′ judged by the same conditions; if both qualify, the larger |excess bias| reduction is
+    """D0-R4: L-B and L-B' judged by the same conditions; if both qualify, the larger |excess bias| reduction is
     adopted, ties (within 2 % relative) to L-B; neither -> no N2 rule."""
     res = [d0_r4_rule(dev1, dev2, cal, n2, arm_list) for n2 in S2.LB_RULES]
     q = [r for r in res if r["qualifies"] and np.isfinite(r["bias_reduction"])]
@@ -495,7 +497,7 @@ def _residuals(sel, stat):
 
 
 def d0_3(recs):
-    """D0.3: share of the |g| change covered by the ±4 s window (E-a), and next to it the E-f core share of beacons
+    """D0.3: share of the |g| change covered by the +-4 s window (E-a), and next to it the E-f core share of beacons
     (c_n / n_beacons) with the bias and sigma of c_prof / c_match against those of w_prof / w_match, per speed class
     (test passes; gen_on; free-road survey calibration)."""
     out = {}
@@ -517,8 +519,8 @@ def d0_3(recs):
 
 def d0_4(recs, cal):
     """D0.4: the RSU-only low-speed-run (stop) detector of E-d / E-db against stop_between (sensitivity, specificity),
-    test passes, gen_on, per variant, under the pre-specified span and site scale; with k_stop the implied speed level
-    v = k_stop x rms_ref_med x λ / |g| at |g| = 1 and 2 (median over the sites) and the flagged share of the non-stop
+    test passes, gen_on, per variant, under the pre-specified span and site scale; with k_stop the implied speed level v
+    = k_stop x rms_ref_med x lambda / |g| at |g| = 1 and 2 (median over the sites) and the flagged share of the non-stop
     passes by minimum speed in the window (the 'steady slow crawl gets no entry' class)."""
     from fdoa.geometry import LAMBDA
     out = {}
@@ -545,7 +547,7 @@ def d0_4(recs, cal):
 
 def d0_5(u_recs, cells=URBAN):
     """D0.5: the surrogate traffic survey (Dev-2 only) against the free-road survey: R8 (ii), R8 (iii) Spearman and the
-    per-site β̂_s, readings T and F."""
+    per-site beta_hat_s, readings T and F."""
     from pipeline import stage3_extra_checks as V
     F, T = CS.reading_F(u_recs, dev2=True), CS.reading_T(u_recs)
     beta = {}
@@ -558,10 +560,10 @@ def d0_5(u_recs, cells=URBAN):
 
 
 def d0_6(recs):
-    """D0.6 (descriptive): the per-head power drop on P3 (L-B; also its 5-beacon running median) for the
-    survey passes and the blocked / unblocked test passes, and ρ̂ (rho_fit) of the P3-15 passes against the site survey's
-    ρ̂ per lane (rho_dev, the L-B′ quantity; and per TRUE lane the median rho_fit - survey ρ̂ of that lane, which D0.6 may
-    use), gen_on, per variant."""
+    """D0.6 (descriptive): the per-head power drop on P3 (L-B; also its 5-beacon running median) for the survey passes
+    and the blocked / unblocked test passes, and rho_hat (rho_fit) of the P3-15 passes against the site survey's rho_hat
+    per lane (rho_dev, the L-B' quantity; and per TRUE lane the median rho_fit - survey rho_hat of that lane, which D0.6
+    may use), gen_on, per variant."""
     out = {}
     for mp, prb in K.COMBOS:
         sel = [r for r in recs if r["cell"] == "P3" and r["arm"] == "gen_on" and r["mapping"] == mp and r["prb"] == prb]

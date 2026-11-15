@@ -43,7 +43,7 @@ EV4 = C["evaluation_v4"]
 P0 = EV4["p0"]
 TAG = P0["tag"]
 COMBOS = K.COMBOS
-RUNS = os.path.join(ER, "runs")                        # module-level for the synthetic plumbing test only
+RUNS = os.path.join(ER, "runs")
 OUT = os.path.join(ER, "..", "results", "p0_decision.json")
 
 
@@ -79,7 +79,8 @@ def separation(recs, cell, v0, arm, mapping, prb, T):
 
 def all_gated_paired(T_ls, T_d):
     """The residuals of all included and gated test passes of all sites (qualified or not), for LS and (d) on the same
-    passes: the passes present in both site tables (matched by site and pass index j), gated by the plain-LS RMS gate."""
+    passes: the passes present in both site tables (matched by site and pass index j), gated by the plain-LS RMS
+    gate."""
     e_ls, e_d = [], []
     for s in sorted(set(T_ls) & set(T_d)):
         a, b = T_ls[s], T_d[s]
@@ -92,7 +93,7 @@ def all_gated_paired(T_ls, T_d):
 
 
 def cell_metrics_pair(recs, fam, cell, v0, arm):
-    """Per statistic (LS, d): Q, S, T, q99, Z on qualified sites (as before) and S_all, T_all, q99_all on all included
+    """Per statistic (LS, d): Q, S, T, q99, Z on qualified sites and S_all, T_all, q99_all on all included
     and gated test passes, paired between the statistics; worst variant per metric."""
     n_sites = EV4["p0"]["families"][fam]["sites"]
     R = {st: as_stat(recs, st) for st in ("ls", "d")}

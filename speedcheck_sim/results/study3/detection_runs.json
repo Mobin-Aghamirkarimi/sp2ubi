@@ -1,0 +1,132 @@
+{
+ "description": "Detection rules with the urban estimator on the ten newly simulated urban LOS sites of study 3: run-level fields of the five decision-level runs, copied unchanged from their stored outputs. qualified_combinations counts the combinations of site and speed class (ten sites, 10 and 15 m/s) that meet the stricter site condition of the detection rules; n_eval_urban is the number of gated test crossings per site and speed class; q_*_profile is the share of a profile's crossings at qualified combinations; highway_rows_equal_published states that every highway-profile row of the run equals that of the published study-1 run in every metric the published file holds.",
+ "runs": {
+  "ctl": {
+   "channel_model": "TR 37.885",
+   "combinations": 20,
+   "estimator": "base",
+   "excess_between_site_sd": {
+    "P1-10": 0.17589055480647914,
+    "P1-15": 0.11238344808005321
+   },
+   "highway_rows_equal_published": true,
+   "input_sha256_urban": null,
+   "n_eval_urban": null,
+   "q_suburban_profile": null,
+   "q_urban_profile": null,
+   "qualified_combinations": 0,
+   "qualified_share_per_class": null,
+   "status_highway": "covered_short",
+   "status_urban": "not_covered_unqualified",
+   "survey": "free road"
+  },
+  "infree": {
+   "channel_model": "our channel model",
+   "combinations": 20,
+   "estimator": "urban",
+   "excess_between_site_sd": {
+    "P1-10": 0.0,
+    "P1-15": 0.004099477618617586
+   },
+   "highway_rows_equal_published": true,
+   "input_sha256_urban": "6b6e27e0a10e25bc5d12c1efda6112e2f9b4976de9172f1f5c78fb092b52ec46",
+   "n_eval_urban": {
+    "min_eval_e2": 50,
+    "n_eval": 57,
+    "rows": 20,
+    "rows_below_min_eval": 0
+   },
+   "q_suburban_profile": 0.44000000000000006,
+   "q_urban_profile": 0.64,
+   "qualified_combinations": 12,
+   "qualified_share_per_class": {
+    "10": 0.8,
+    "15": 0.4
+   },
+   "status_highway": "covered_short",
+   "status_urban": "covered",
+   "survey": "free road"
+  },
+  "intraf": {
+   "channel_model": "our channel model",
+   "combinations": 20,
+   "estimator": "urban",
+   "excess_between_site_sd": {
+    "P1-10": 0.0,
+    "P1-15": 0.0075265253327767906
+   },
+   "highway_rows_equal_published": true,
+   "input_sha256_urban": "27d0a007108b6adb0a1b59737d7658af06fbf433fb37bbb99713c7b4e6c71a5a",
+   "n_eval_urban": {
+    "min_eval_e2": 50,
+    "n_eval": 45,
+    "rows": 20,
+    "rows_below_min_eval": 1
+   },
+   "q_suburban_profile": 0.31,
+   "q_urban_profile": 0.36,
+   "qualified_combinations": 7,
+   "qualified_share_per_class": {
+    "10": 0.4,
+    "15": 0.3
+   },
+   "status_highway": "covered_short",
+   "status_urban": "covered_short",
+   "survey": "traffic"
+  },
+  "trfree": {
+   "channel_model": "TR 37.885",
+   "combinations": 20,
+   "estimator": "urban",
+   "excess_between_site_sd": {
+    "P1-10": 0.006174630329942542,
+    "P1-15": 0.007226739962684839
+   },
+   "highway_rows_equal_published": true,
+   "input_sha256_urban": "ed346f5f891c05ffc7d57c82eb4b587389e67cdc561c92a172780625629b4cba",
+   "n_eval_urban": {
+    "min_eval_e2": 50,
+    "n_eval": 59,
+    "rows": 20,
+    "rows_below_min_eval": 0
+   },
+   "q_suburban_profile": 0.98,
+   "q_urban_profile": 0.88,
+   "qualified_combinations": 18,
+   "qualified_share_per_class": {
+    "10": 0.8,
+    "15": 1.0
+   },
+   "status_highway": "covered_short",
+   "status_urban": "covered",
+   "survey": "free road"
+  },
+  "trtraf": {
+   "channel_model": "TR 37.885",
+   "combinations": 20,
+   "estimator": "urban",
+   "excess_between_site_sd": {
+    "P1-10": 0.004969881226595327,
+    "P1-15": 0.008913002062167372
+   },
+   "highway_rows_equal_published": true,
+   "input_sha256_urban": "9622d2c716eb1cc0270442dd4ad5bd137b0aa186edf7b4b138ec97612a23585f",
+   "n_eval_urban": {
+    "min_eval_e2": 50,
+    "n_eval": 59,
+    "rows": 20,
+    "rows_below_min_eval": 0
+   },
+   "q_suburban_profile": 0.59,
+   "q_urban_profile": 0.54,
+   "qualified_combinations": 11,
+   "qualified_share_per_class": {
+    "10": 0.5,
+    "15": 0.6
+   },
+   "status_highway": "covered_short",
+   "status_urban": "covered",
+   "survey": "traffic"
+  }
+ }
+}

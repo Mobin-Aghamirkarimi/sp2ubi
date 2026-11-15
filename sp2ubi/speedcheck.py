@@ -24,8 +24,8 @@ Entities are those of the paper (OBU, RSU, TSP, insurer); no additional party.
                      an entry lost from storage before its release therefore fails the count check),
                      group-signed, at a time uniform in [FORWARD_WINDOW_S, FORWARD_WINDOW_S + COUNT_REPORT_SPREAD_S)
                      after the epoch end, independent of its entries.
-  TSP                verifies RSU signatures, stores the epoch's entries, shuffles (re-randomise + permute), publishes
-                     the shuffle output and answers partial decryptions/openings only for exact members of it (membership check).
+  TSP                verifies RSU signatures, stores the epoch's entries, shuffles (re-randomise + permute), sends
+                     the shuffle output to the insurer and answers partial decryptions/openings only for exact members of it (membership check).
   Insurer + TSP      2-of-2 shares of the speed-verification key (two-party DKG with proofs of knowledge) and of the
                      opening key (generated jointly without a dealer, opening_dkg.py; share commitments checked
                      against the group key); every partial carries a DLEQ proof, so a wrong partial is detected.
@@ -233,7 +233,7 @@ class Entry:
 @dataclass(frozen=True)
 class CountReport:
     """Report of one RSU for one billing epoch: Enc(number of entries of that epoch it formed and stored; an entry lost
-    from storage before its release therefore makes the count exceed the published entries), epoch label and group
+    from storage before its release therefore makes the count exceed the released entries), epoch label and group
     signature. Every RSU sends one report per epoch (also for zero entries), so the number of reports equals the
     published RSU-group size; only the homomorphic total over all reports is ever decrypted, so per-RSU counts (and
     undisclosed-site activity) stay hidden."""
@@ -350,7 +350,9 @@ class SensingRSU:
         """General linear statistic b_hat = sum w_i v_sen,i / (W (1 + site_bias)) - 1 with plaintext integer weights;
         site_bias is the calibrated relative site bias (applied by the RSU, the only party that knows the site).
         smudge_ct is Enc(e_s) from accept(); the RSU draws no smudging term itself. Returns the unsigned entry; it is
-        signed only at release (store / release)."""
+        signed only at release (store / release). The base estimator and the urban estimator (speedcheck_sim/fdoa/)
+        differ only in how the RSU computes the plaintext weights; a beacon outside the stretch that the urban
+        estimator uses gets the weight 0."""
         if smudge_ct is None or not beacons or len(beacons) != len(weights) or len(beacons) > K_MAX or W <= 0:
             return None
         if any(w < 0 or w > W_MAX_WEIGHT for w in weights):
@@ -358,6 +360,8 @@ class SensingRSU:
         if not 0 <= level < N_LEVELS or abs(z_units) > round(Z_CLIP / Z_STEP):
             return None                                  # nothing finer than the disclosed resolution leaves the RSU
         Wc = round(W * (1.0 + site_bias))
+        if Wc <= 0:
+            return None
         c = round((1 << S_BITS) / Wc)
         if c > C_MAX:
             return None                                  # guard: B mod c stays uniform for every entry emitted
@@ -371,7 +375,7 @@ class SensingRSU:
         T1, T2, T3 = _rerand_tracing(self.gs, s.T1, s.T2, s.T3)
         # Re-randomisation is required: acc is a public linear combination of broadcast ciphertexts (the
         # beacons and the trailer term); without it a recorder colluding with an RSU that knows (c, w_i) could
-        # recompute Enc(B) and find it among the TSP's published inputs. release() re-randomises again.
+        # recompute Enc(B) and find it among the TSP's input entries. release() re-randomises again.
         return Entry(T1, T2, T3, self.pk.rerandomize(acc), self.pk.encrypt(level), self.pk.encrypt(z_units),
                      epoch=self.epoch)
 
@@ -442,8 +446,7 @@ def aggregate_counts(rsu_gs: BBS04, reports: Sequence[CountReport], epoch: int, 
 
 # ---------------------------------------------------------------------------------------------------- TSP / insurer
 class TSPShuffle:
-    """End-of-epoch shuffle at the TSP: re-randomise every component and apply a secret permutation. Verifiability
-    (Bayer-Groth over the product of BBS linear encryption and ElGamal) is cited, not implemented."""
+    """End-of-epoch shuffle at the TSP: re-randomise every component and apply a secret permutation."""
 
     def __init__(self, gs: BBS04, pk_sv: PublicKey):
         self.gs, self.pk = gs, pk_sv
@@ -489,8 +492,8 @@ class KeyHolder:
 
 
 class TSPKeyHolder(KeyHolder):
-    """TSP side with a membership check: partials only for exact members of its own published shuffle output, and a
-    partial decryption of the epoch's count total only for the total it published. Without the check the two shares would
+    """TSP side with a membership check: partials only for exact members of its own shuffle output, and a
+    partial decryption of the epoch's count total only for the total it registered. Without the check the two shares would
     also open raw beacons, raw certificates or trailer terms (Enc(e_s)) that an RSU could hand to the insurer."""
 
     def __init__(self, sv_share: ThresholdKey, open_share: OpenerShare):
@@ -498,7 +501,7 @@ class TSPKeyHolder(KeyHolder):
         self._allowed, self._totals = set(), set()
 
     def publish(self, shuffled: Sequence[Entry]) -> bytes:
-        """Register the epoch's shuffle output; returns its digest (published with the shuffle proof)."""
+        """Register the epoch's shuffle output; returns its digest."""
         ids = [entry_id(e) for e in shuffled]
         self._allowed |= set(ids)
         return hashlib.sha256(b"SP2UBI-epoch|" + b"".join(ids)).digest()
@@ -508,12 +511,12 @@ class TSPKeyHolder(KeyHolder):
 
     def partials(self, e: Entry) -> Partials:
         if entry_id(e) not in self._allowed:
-            raise PermissionError("entry is not a member of the published shuffle output")
+            raise PermissionError("entry is not a member of the shuffle output")
         return super().partials(e)
 
     def partial_total(self, total: Ciphertext):
         if total.to_bytes() not in self._totals:
-            raise PermissionError("not the published count total")
+            raise PermissionError("not the registered count total")
         return self.sv.partial_with_proof(total, b"count-total")
 
 

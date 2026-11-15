@@ -1,3 +1,5 @@
+import pytest
+
 from sp2ubi.groupsig_bbs04 import BBS04, SIGNATURE_BYTES, Issuer, Signature, member_key_valid
 
 
@@ -26,7 +28,7 @@ def test_wrong_message_or_modified_signature_rejected():
     _, _, members, gs = _setup()
     sig = gs.sign(members[1], b"m")
     assert not gs.verify(b"m'", sig)
-    for pos in (0, 50, 100, 150, 200, 300, 335):          # flip one byte in every component
+    for pos in range(0, SIGNATURE_BYTES, 16):             # flip one byte in every point and every scalar
         bad = bytearray(sig)
         bad[pos] ^= 1
         assert not gs.verify(b"m", bytes(bad))
@@ -34,9 +36,11 @@ def test_wrong_message_or_modified_signature_rejected():
 
 
 def test_signature_from_another_group_rejected():
-    _, _, members_a, _ = _setup()
+    _, _, members_a, gs_a = _setup()
     _, _, _, gs_b = _setup()
-    assert not gs_b.verify(b"m", BBS04(gs_b.gpk).sign(members_a[0], b"m"))
+    sig = gs_a.sign(members_a[0], b"m")
+    assert gs_a.verify(b"m", sig) and not gs_b.verify(b"m", sig)
+    assert not gs_b.verify(b"m", gs_b.sign(members_a[0], b"m"))    # a credential of group A under the key of group B
 
 
 def test_signatures_are_randomized():
@@ -101,15 +105,26 @@ def test_group_public_key_serialisation_round_trip_and_sizes():
     from sp2ubi.groupsig_bbs04 import G1, GPK_BYTES, GroupPublicKey
     issuer, _, members, gs = _setup(1)
     b = issuer.gpk.to_bytes()
-    assert len(b) == GPK_BYTES == 4 * 48 + 2 * 96 == 384          # unchanged: gpk always carried g1 and g2
+    assert len(b) == GPK_BYTES == 4 * 48 + 2 * 96 == 384
     gpk = GroupPublicKey.from_bytes(b)
     assert gpk == issuer.gpk and gpk.to_bytes() == b
     sig = gs.sign(members[0], b"m")
-    assert len(sig) == SIGNATURE_BYTES == 336                      # signature size unchanged
+    assert len(sig) == SIGNATURE_BYTES == 336
     assert BBS04(gpk).verify(b"m", sig)
-    import pytest
     with pytest.raises(ValueError):
         GroupPublicKey.from_bytes(b[:-1])
     ident = G1.identity().to_compressed_bytes()
     with pytest.raises(ValueError):                                # identity generator refused
         GroupPublicKey.from_bytes(ident + b[48:])
+
+
+def test_malformed_signature_encodings_are_rejected():
+    _, _, members, gs = _setup(1)
+    sig = gs.sign(members[0], b"m")
+    assert Signature.from_bytes(sig).to_bytes() == sig
+    not_reduced = sig[:-32] + b"\xff" * 32                          # last scalar >= the group order
+    no_point = b"\x9f" + b"\xff" * 47 + sig[48:]                      # x coordinate >= the field modulus
+    for bad in (sig[:-1], sig + b"\0", not_reduced, no_point):
+        with pytest.raises(ValueError):
+            Signature.from_bytes(bad)
+        assert not gs.verify(b"m", bad)

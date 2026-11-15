@@ -1,7 +1,7 @@
 """In-house sweeps of study 1: the in-house channel only, no generator data, so
-they may run before or in parallel with P2; they feed Fig. C (K4) and Fig. E and never change a rule.
-  k4    per-beacon FDOA error against the raw-sample SNR (-5 ... 45 dB in 5-dB steps) at K in {0, 3.5, 6, 9, 15} dB and K = inf
-        (noise only), 15 m/s, isotropic scattering, no facade, nominal impairments off (the per-beacon estimator alone):
+they may run before or in parallel with the main run; they feed fig_C (sweep k4) and fig_E and never change a rule.
+  k4    per-beacon FDOA error against the raw-sample SNR (-5 ... 45 dB in 5-dB steps) at K in {0, 3.5, 6, 9, 15} dB and
+        K = inf (noise only), 15 m/s, isotropic scattering, no facade, nominal impairments off (the per-beacon estimator alone):
         RMS, median |e| and q90 |e| per (K, SNR); the pass sigma (select statistic, SD over the passes, calibrated by the
         mean) per (K, SNR); the single-tone CRLB of one beacon (two heads: sqrt(2) x the single-tone bound at the
         post-decimation SNR, N = M samples over the packet) and the pass-level Fisher bound with the measured per-beacon
@@ -12,6 +12,7 @@ they may run before or in parallel with P2; they feed Fig. C (K4) and Fig. E and
 Resumable (one JSON per point under runs/inhouse_<tag>/), provenance on every file; results/inhouse_<kind>_<tag>.json.
 Usage: python pipeline/inhouse_sweeps.py k4|fige --tag sens_inhouse [--passes N] [--sites N]"""
 import argparse
+import copy
 import json
 import os
 import sys
@@ -46,7 +47,8 @@ def _geo(rng):
 
 
 def one_pass(key, geo, K_db, snr_db=None, specular_db=None, impairments=False):
-    """One in-house pass: per-beacon FDOA error (Hz), SNR used, and the stage-2 statistics. snr_db None: the in-house site-accuracy mapping."""
+    """One in-house pass: per-beacon FDOA error (Hz), SNR used, and the stage-2 statistics. snr_db None: the in-house
+    site-accuracy mapping."""
     rng = np.random.default_rng([SEED] + key + [0])
     traj = make_trajectory(rng, geo, V0, x_start=-0.35 * geo.D, x_end=1.35 * geo.D)
     kd = 300.0 if K_db is None else K_db
@@ -61,7 +63,6 @@ def one_pass(key, geo, K_db, snr_db=None, specular_db=None, impairments=False):
     snr = itf.snr_e1_db(r) if snr_db is None else np.full_like(r, float(snr_db))
     yb = itf.finish(np.random.default_rng([SEED] + key + [2]), y, snr, gain=None, t_b=t_b)
     if impairments:                                     # K = inf with the nominal impairments
-        import copy
         u_x = (heads[:, 0][:, None] - x[None, :]) / r
         yb = itf.apply_impairments(np.random.default_rng([SEED] + key + [3]), yb, t_b, u_x, copy.deepcopy(C["impairments"]))
     fd = fdoa_from_samples(yb, PACKET_S)
@@ -71,7 +72,8 @@ def one_pass(key, geo, K_db, snr_db=None, specular_db=None, impairments=False):
 
 
 def crlb_beacon_hz(snr_raw_db, M=None):
-    """sqrt(2) x single-tone CRLB of one beacon: N = M samples over the packet, post-decimation SNR = raw SNR x fs T / M."""
+    """sqrt(2) x single-tone CRLB of one beacon: N = M samples over the packet, post-decimation SNR = raw SNR x fs T /
+    M."""
     M = M or C["pipeline_constants_from_code"]["channel_defaults"]["M"]
     Ts = PACKET_S / M
     snr = 10 ** (snr_raw_db / 10) * FS_RAW * PACKET_S / M
@@ -79,7 +81,8 @@ def crlb_beacon_hz(snr_raw_db, M=None):
 
 
 def fisher_pass_pct(rms_hz, v=V0):
-    """Pass-level Fisher bound (%), tied honest model without nuisance parameters (keep [x_m, v, acc]), per-packet FDOA noise = the measured per-beacon RMS. Geometry from the constants:
+    """Pass-level Fisher bound (%), tied honest model without nuisance parameters (keep [x_m, v, acc]), per-packet FDOA
+    noise = the measured per-beacon RMS. Geometry from the constants:
     dh = head height - car-roof antenna (3.4 m), lateral distance = the mean pole offset plus the test-lane offset
     (1.75 m), the window arc_L, the beacon period."""
     G = C["geometry"]

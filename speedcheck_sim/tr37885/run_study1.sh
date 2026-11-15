@@ -31,9 +31,14 @@ for FAM in H U N; do need_disk "stage 1 $FAM"; $PY pipeline/stage1_channels.py -
 # 3. snapshot placement (5 sites x 20 passes, P1-15 and P2-38)
 $PY pipeline/snapshot_placement.py --tag $PTAG
 
-# 4. stage 2: primary; link-budget sensitivity on U and H; beacon erasures on U and H (iid and Gilbert-Elliott, 10 % and 30 %)
+# 4. stage 2: primary; link-budget sensitivity and SNR offsets (-10, -20 dB) on U and H; beacon erasures on U and H
+#    (iid and Gilbert-Elliott, 10 % and 30 %)
 for FAM in H U N; do $PY pipeline/stage2_evaluate.py --family "$FAM" --sites $SITES --tag $TAG; done
 for FAM in H U; do $PY pipeline/stage2_evaluate.py --family "$FAM" --sites $SITES --tag $LTAG --lb-gain-shift-db -1.42; done
+for FAM in H U; do
+  $PY pipeline/stage2_evaluate.py --family "$FAM" --sites $SITES --tag sens_snr10 --lb-gain-shift-db -10
+  $PY pipeline/stage2_evaluate.py --family "$FAM" --sites $SITES --tag sens_snr20 --lb-gain-shift-db -20
+done
 for FAM in H U; do
   $PY pipeline/stage2_evaluate.py --family "$FAM" --sites $SITES --tag ${ETAG}_iid10 --erasure iid:0.1
   $PY pipeline/stage2_evaluate.py --family "$FAM" --sites $SITES --tag ${ETAG}_ge10 --erasure ge:0.1:3

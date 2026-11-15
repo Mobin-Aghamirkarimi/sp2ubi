@@ -1,0 +1,48 @@
+row,key,profile,pass_rate,rate,percent,tr37885,our_channel_model,table_B_governing
+scale error -5 %,persistent|-0.05|highway|5,highway,5,0.016,1.6,,,0.016
+scale error -5 %,persistent|-0.05|highway|15,highway,15,0.161,16,,,0.161
+scale error -5 %,persistent|-0.05|highway|40,highway,40,0.261,26,,,0.261
+scale error -5 %,persistent|-0.05|urban|5,urban,5,0.0,0,0.0,0.0,
+scale error -5 %,persistent|-0.05|urban|15,urban,15,0.0,0,0.0,0.0,
+scale error -5 %,persistent|-0.05|urban|40,urban,40,0.0,0,0.00025,0.0,
+scale error -5 %,persistent|-0.05|suburban|5,suburban,5,0.0,0,0.0,0.0,0.00275
+scale error -5 %,persistent|-0.05|suburban|15,suburban,15,0.0,0,0.0,0.0,0.11575
+scale error -5 %,persistent|-0.05|suburban|40,suburban,40,0.00025,<0.1,0.00125,0.00025,0.20925
+scale error -10 %,persistent|-0.1|highway|5,highway,5,0.2375,24,,,0.2375
+scale error -10 %,persistent|-0.1|highway|15,highway,15,0.7815,78,,,0.7815
+scale error -10 %,persistent|-0.1|highway|40,highway,40,0.8715,87,,,0.8715
+scale error -10 %,persistent|-0.1|urban|5,urban,5,0.0,0,0.002,0.0,
+scale error -10 %,persistent|-0.1|urban|15,urban,15,0.0365,3.7,0.1375,0.0365,
+scale error -10 %,persistent|-0.1|urban|40,urban,40,0.249,25,0.35275,0.249,
+scale error -10 %,persistent|-0.1|suburban|5,suburban,5,0.0,0,0.0075,0.0,0.1455
+scale error -10 %,persistent|-0.1|suburban|15,suburban,15,0.031,3.1,0.24725,0.031,0.70025
+scale error -10 %,persistent|-0.1|suburban|40,suburban,40,0.2015,20,0.42075,0.2015,0.82025
+scale error -30 %,persistent|-0.3|highway|5,highway,5,0.90775,91,,,0.90775
+scale error -30 %,persistent|-0.3|highway|15,highway,15,1.0,100,,,1.0
+scale error -30 %,persistent|-0.3|highway|40,highway,40,1.0,100,,,1.0
+scale error -30 %,persistent|-0.3|urban|5,urban,5,0.11625,12,0.4185,0.11625,
+scale error -30 %,persistent|-0.3|urban|15,urban,15,0.97475,97,1.0,0.97475,
+scale error -30 %,persistent|-0.3|urban|40,urban,40,0.99775,99.8,1.0,0.99775,
+scale error -30 %,persistent|-0.3|suburban|5,suburban,5,0.044,4.4,0.67,0.044,0.8185
+scale error -30 %,persistent|-0.3|suburban|15,suburban,15,0.82125,82,1.0,0.82125,1.0
+scale error -30 %,persistent|-0.3|suburban|40,suburban,40,0.9445,94,1.0,0.9445,1.0
+-15 % on 10 % of the days,days|-0.15|0.1|highway|5,highway,5,0.01175,1.2,,,0.01175
+-15 % on 10 % of the days,days|-0.15|0.1|highway|15,highway,15,0.099,9.9,,,0.099
+-15 % on 10 % of the days,days|-0.15|0.1|highway|40,highway,40,0.187,19,,,0.187
+-15 % on 10 % of the days,days|-0.15|0.1|urban|5,urban,5,0.0,0,0.0,0.0,
+-15 % on 10 % of the days,days|-0.15|0.1|urban|15,urban,15,0.0,0,0.0,0.0,
+-15 % on 10 % of the days,days|-0.15|0.1|urban|40,urban,40,0.00025,<0.1,0.00075,0.00025,
+-15 % on 10 % of the days,days|-0.15|0.1|suburban|5,suburban,5,0.0,0,0.0,0.0,0.00425
+-15 % on 10 % of the days,days|-0.15|0.1|suburban|15,suburban,15,0.0,0,0.0005,0.0,0.05775
+-15 % on 10 % of the days,days|-0.15|0.1|suburban|40,suburban,40,0.00175,0.2,0.008,0.00175,0.12725
+-15 % on 30 % of the days,days|-0.15|0.3|highway|5,highway,5,0.16675,17,,,0.16675
+-15 % on 30 % of the days,days|-0.15|0.3|highway|15,highway,15,0.89575,90,,,0.89575
+-15 % on 30 % of the days,days|-0.15|0.3|highway|40,highway,40,0.99225,99,,,0.99225
+-15 % on 30 % of the days,days|-0.15|0.3|urban|5,urban,5,0.0,0,0.0005,0.0,
+-15 % on 30 % of the days,days|-0.15|0.3|urban|15,urban,15,0.001,0.1,0.005,0.001,
+-15 % on 30 % of the days,days|-0.15|0.3|urban|40,urban,40,0.033,3.3,0.16425,0.033,
+-15 % on 30 % of the days,days|-0.15|0.3|suburban|5,suburban,5,0.0,0,0.0,0.0,0.08725
+-15 % on 30 % of the days,days|-0.15|0.3|suburban|15,suburban,15,0.004,0.4,0.04925,0.004,0.79725
+-15 % on 30 % of the days,days|-0.15|0.3|suburban|40,suburban,40,0.09225,9.2,0.57,0.09225,0.985
+honest vehicle,cv*|*|*,all,all,0.0,0,,,
+"honest vehicle, 95 % upper bound",cv*|*|*,all,all,0.00014977539622296283,0.015,,,

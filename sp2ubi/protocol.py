@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from .entities import OBU, TSP, BatchResult, Insurer
-from .fhe import SLOT_ID, SLOT_U, SLOT_X, RiskContext
+from .fhe import SLOT_ID, SLOT_U, SLOT_X, SLOTS, RiskContext
 from .groupsig_bbs04 import (G1, BBS04, Issuer as GroupIssuer, Signature, combine_opening, member_key_valid,
                              rand_scalar)
 from .opening_dkg import SessionRegistry, run_two_party
@@ -45,7 +45,7 @@ class MaliciousTSP(TSP):
             self.ct_w = self.risk.encrypt_weights(self.keys.pk, w_fake)
 
     def _delta(self, slots: Dict[int, int]):
-        v = [0] * 32
+        v = [0] * SLOTS
         for i, d in slots.items():
             v[i] = d
         return self.risk.encrypt_vector(self.keys.pk, v)

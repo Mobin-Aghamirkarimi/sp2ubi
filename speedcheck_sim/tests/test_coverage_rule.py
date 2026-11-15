@@ -1,4 +1,4 @@
-"""K7 calibration rule of per-replicate c_eff = max(c(n), c);
+"""Coverage calibration (check K7): per-replicate c_eff = max(c(n), c);
 conditional size with >= 20 runnable replicates, unconditional otherwise; 'not calibrated' instead of an error."""
 import os
 import sys
@@ -6,8 +6,7 @@ import sys
 import numpy as np
 
 ER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885")
-sys.path[:0] = [ER, os.path.join(ER, "..")]
-sys.path[:0] = [os.path.join(ER, ".."), os.path.join(ER, "..", "inhouse")]
+sys.path[:0] = [os.path.join(ER, ".."), os.path.join(ER, "..", "inhouse"), ER]
 from pipeline import coverage_check as CV  # noqa: E402
 from pipeline import stage3_criteria as K  # noqa: E402
 

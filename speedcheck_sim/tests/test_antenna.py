@@ -11,7 +11,7 @@ ER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "
 sys.path[:0] = [ER, os.path.join(ER, "..")]
 import antenna  # noqa: E402
 
-QUADRIGA = os.environ.get("QUADRIGA_PATCHED_DIR", "QuaDRiGa_patched")
+QUADRIGA = os.environ.get("QUADRIGA_PATCHED_DIR", os.path.join(os.path.dirname(ER), "quadriga_patched"))
 
 
 def test_head_gain_reference_values():

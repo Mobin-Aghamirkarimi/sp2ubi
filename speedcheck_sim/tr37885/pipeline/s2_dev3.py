@@ -2,10 +2,9 @@
 per-part identity test. The Dev-3 split is pre-specified here (evaluation_v6.dev3.parts, checked by
 s2_constants.check_against); run_study2.sh runs each part through this module.
 
-  parts          part a = sites 0-2, part b = sites 3-4 (contiguous ranges; as the pilot split); the
+  parts          part a = sites 0-2, part b = sites 3-4 (contiguous ranges); the
                  split changes no draw: seeds are per (family, site, k) and there is one Octave call per site
-  settings       evaluation_v6.dev3: site_timeout_h = 39 h (N14), workers_stage1 = 1 (run.* unchanged, so the study-1
-                 constants are unchanged)
+  settings       evaluation_v6.dev3: site_timeout_h = 39 h (N14), workers_stage1 = 1
   guard          Dev-3 stage 1 starts only after the development-stage design record is timestamped and the
                  study-1 records are merged
   identity       per part, on that part's own sites only: for every SUMO pass of D3U the track index k, meta, SUMO

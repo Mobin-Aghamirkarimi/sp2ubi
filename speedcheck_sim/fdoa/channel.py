@@ -12,6 +12,9 @@ Channel at head h (total power of LoS + diffuse = 1):
             independent per head: the same scatterers around the vehicle re-radiate towards both heads.
   specular  sqrt(rho_s * K/(K+1)) * exp(-j 2 pi (|p - p_r| + |p_r - head_h|) / lambda + j theta), a fixed point
             reflector (e.g. a facade across the road); unresolved in delay, i.e. worst case.
+
+Not used by the simulations of the paper: the wideband part (time of arrival), the LoS blockage (block), the head
+drift, the "ramp" and "frontback" Doppler manipulations and the moving reflector.
 """
 from dataclasses import dataclass
 
@@ -78,7 +81,8 @@ def simulate_pass(rng, site: Site, traj: Trajectory, cfg: ChannelConfig, beacon_
     doppler_scale: frequency-only manipulation. Every path's Doppler is multiplied by doppler_scale while the
     emitter's position follows the true trajectory -- the signature of a moving-phase-centre (commutated) array or a
     frequency-shifting surface on the vehicle, which mimics a different speed in the frequency domain only. A float
-    (constant) or ("ramp", beta_max): scale rises linearly from 1 to 1 + beta_max over the pass.
+    (constant), ("ramp", beta_max): scale rises linearly from 1 to 1 + beta_max over the pass, or
+    ("frontback", beta): offsets of beta * |v| / lambda with opposite signs towards the front and the back.
     reflector may carry a third element v_r (m/s along +x): a moving specular reflector (e.g. a truck in the adjacent
     lane); its Doppler is then the numerical derivative of the full two-hop path length."""
     t_b = np.arange(traj.t[0] + 0.05, traj.t[-1] - 0.05, 1.0 / beacon_hz)

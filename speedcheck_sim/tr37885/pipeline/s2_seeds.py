@@ -270,10 +270,10 @@ def check_collisions(seeds, C):
 
 
 def seeds_from_record(rec_path, C):
-    """Verify the seed record and derive the seeds. Always: the header meets its own proof of work with a target
-    <= POW_MAX_TARGET (3) and H = SHA256d(header) = the recorded block hash (2). If the record names a manifest and a
-    proof that exist: bundle SHA = SHA-256(manifest) = the proof's digest, no pending calendar left (4), the
-    lowest-height Bitcoin attestation's commitment = the header's Merkle root (1) and its height = the recorded height."""
+    """Verify the seed record and derive the seeds. Always: the header meets its own proof of work with a target <=
+    POW_MAX_TARGET (3) and H = SHA256d(header) = the recorded block hash (2). If the record names a manifest and a proof
+    that exist: bundle SHA = SHA-256(manifest) = the proof's digest, no pending calendar left (4), the lowest-height
+    Bitcoin attestation's commitment = the header's Merkle root (1) and its height = the recorded height."""
     reg = json.load(open(rec_path))
     base = os.path.dirname(os.path.abspath(rec_path))
     bundle_sha = reg["bundle_sha256"]

@@ -40,7 +40,8 @@ class Trajectory:
 def make_trajectory(rng, site: Site, v0: float, *, sigma_acc=0.3, tau_acc=2.0, tau_speed=10.0, lane_halfwidth=3.5,
                     p_lane_change=0.0, mean_acc=0.0, dt=0.01, x_start=None, x_end=None) -> Trajectory:
     """Cruising pass at nominal speed v0: Ornstein-Uhlenbeck acceleration (std sigma_acc, time constant tau_acc) with
-    reversion of the speed towards v0 (time constant tau_speed), speed floored at 1 m/s; random lane offset in
+    reversion of the speed towards v0 (time constant tau_speed), speed floored at 1 m/s; the initial speed is v0 plus
+    a normal deviation with sd sigma_acc * sqrt(tau_acc * tau_speed / 2); random lane offset in
     [-lane_halfwidth, lane_halfwidth]; with probability p_lane_change one 3.5 m lane change over 4 s. The trajectory is
     generated until the vehicle has left the window [x_start, x_end]. mean_acc (m/s^2) moves the reversion target
     linearly in time (e.g. -0.5 for a vehicle slowing towards a junction), floored at 3 m/s."""
@@ -59,9 +60,9 @@ def make_trajectory(rng, site: Site, v0: float, *, sigma_acc=0.3, tau_acc=2.0, t
         xs.append(x_k); vs.append(v_k)
     x, vx = np.array(xs), np.array(vs)
     t = np.arange(len(x)) * dt
-    stop = len(x)
-    y = np.full(stop, rng.uniform(-lane_halfwidth, lane_halfwidth))
-    vy = np.zeros(stop)
+    n = len(x)
+    y = np.full(n, rng.uniform(-lane_halfwidth, lane_halfwidth))
+    vy = np.zeros(n)
     if rng.random() < p_lane_change:
         dur = 4.0; t0 = rng.uniform(0, max(t[-1] - dur, 0.1)); amp = rng.choice([-3.5, 3.5])
         m = (t >= t0) & (t <= t0 + dur)

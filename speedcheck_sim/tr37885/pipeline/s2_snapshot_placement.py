@@ -1,18 +1,18 @@
 """Study 2 S-place light (N5): the fixed study-1 sensitivity
-pipeline/snapshot_placement.py (unchanged) run on the study-2 sites 20-24, cell P1-15, 20 passes per site, through its own
+pipeline/snapshot_placement.py run on the study-2 sites 20-24, cell P1-15, 20 passes per site, through its own
 functions (run_site_triple, summarise), with two inputs replaced for the duration of the call:
   * its site seed base: snapshot_placement.py draws every site from [SP.seed, cell idx, site]; here [the study-2
     G1_site_base (evaluation_v6.seeds), the U2 family index, site], i.e. the study-2 site stream of
     stage1_channels.seeds("U2", site); the QuaDRiGa seed follows from it as in snapshot_placement.py;
   * its site-bootstrap seed: the study-2 'bootstrap' seed (s2_heldout.s2_bootstrap).
-Everything else is snapshot_placement.py unchanged: three QuaDRiGa calls per site (B, A, N), term off, PRB 10, both mappings, nominal
-impairments, the rule rho_hat > 1.10 -> factor (constants sensitivities.S_place.rule_v4), the statistic in force
+Everything else is as in snapshot_placement.py: three QuaDRiGa calls per site (B, A, N), term off, PRB 10, both
+mappings, nominal impairments, the rule rho_hat > 1.10 -> factor (constants sensitivities.S_place.rule_v4), the statistic in force
 (plain LS: the Huber fit (d) is not adopted; the development stage adds no estimator, s2_heldout.check_supported). The
 study-2 factor enters stage 3 only through N5 (s2_criteria.s_place_factor: the larger of the study-1 and the study-2
 factors). The study-2 seed base is one of the five derived study-2 seeds, none of which is snapshot_placement.py's own
 seed.
 Outputs (as snapshot_placement.py): runs/s_place_<tag>/P1_site<k>.json, results/s_place_<tag>.json, tag
-s2_heldout.PLACE_TAG. No value is printed.
+s2_heldout.PLACE_TAG.
 Usage: python pipeline/s2_snapshot_placement.py [--sites 20 25]"""
 import argparse
 import os
@@ -47,7 +47,8 @@ def spec(C=None):
 
 @contextmanager
 def patched(sp):
-    """snapshot_placement.py's module inputs SP (seed, passes) and CELLS (P1 only, the U2 index) replaced for one call; restored."""
+    """snapshot_placement.py's module inputs SP (seed, passes) and CELLS (P1 only, the U2 index) replaced for one call;
+    restored."""
     old_sp, old_cells = SPL.SP, SPL.CELLS
     SPL.SP = dict(old_sp, seed=sp["seed"], passes=sp["passes"])
     SPL.CELLS = {sp["cell"]: dict(cfg=sp["cfg"], v0=sp["v0"], scenario=sp["scenario"], idx=sp["idx"])}
@@ -64,7 +65,8 @@ def check_sites(sites, sp):
 
 
 def run(sites=None, tag=HO.PLACE_TAG, C=None, out_dir=None, summarise=True):
-    """Run the pre-specified sites (resumable per site, as snapshot_placement.py) and write the summary; returns the summary path."""
+    """Run the pre-specified sites (resumable per site, as snapshot_placement.py) and write the summary; returns the
+    summary path."""
     sp = spec(C)
     sites = tuple(sites or sp["sites"])
     check_sites(sites, sp)

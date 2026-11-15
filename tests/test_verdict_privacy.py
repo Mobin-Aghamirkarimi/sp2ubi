@@ -82,7 +82,6 @@ def outputs(world, seed):
     bad = [0] * 40
     bad[SLOT_X] = 1                                                  # shifted score: rejected
     rejected_probe = risk.cc.EvalAdd(honest[1], risk.encrypt_vector(keys.pk, bad))
-    SpyTSP.log = None
     return honest, accepted_probe, rejected_probe
 
 

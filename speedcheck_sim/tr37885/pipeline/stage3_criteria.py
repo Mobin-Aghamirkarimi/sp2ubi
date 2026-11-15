@@ -1,9 +1,8 @@
 """Stage 3: pre-specified criteria from the stage-2 records (constants `criteria`, `conventions`, `window_rule`,
-`e1_reference`). Implemented here: C1 (paired accuracy ratio, three-way verdict, Holm m = 9, worst variant governs), the
+`e1_reference`). Implemented here: C1 (paired accuracy ratio, three-way verdict, Holm m = 6, worst variant governs), the
 headline rule incl. the comparison with the in-house site-accuracy simulation and the governing SNR mapping / PRB per
-stratum, C2 (i)
-TOST with Holm, C2 (ii) excess between-site variance (centred) with the τ̂² estimator, C2 (iii) transfer to type 3
-(P6) and the per-lane description, C3 (qualified share and gate false-discard rate with CIs), C5 (SUMO vs quadratic,
+stratum, C2 (i) TOST with Holm, C2 (ii) excess between-site variance (centred) with the tau_hat^2 estimator, C2 (iii)
+transfer to type 3 (P6) and the per-lane description, C3 (qualified share and gate false-discard rate with CIs), C5 (SUMO vs quadratic,
 select statistic, test passes, Holm, consequence list), C7 (P6 gate, monitor margin, false raise and false stop),
 the window-rule yield loss, the stop subset (reporting only), the variance decomposition, per-beacon effective number
 of beacons and FDOA error against SNR and K, realised K, P3 blocked shares, non-finite shares. C4 runs in
@@ -13,20 +12,22 @@ Definitions:
   * inclusion (identical for every consumer, RSU-observable): a pass enters only if its window [-0.05 L, 1.05 L] is
     traversed within one 40 s burst (window rule) and both statistics are finite (the pipeline drops a pass otherwise);
     stop_between is never an exclusion;
-  * per site and speed class the statistic b̂ is "select": matched or profile, whichever has the smaller variance over
-    the site's 30 reference passes (decided per arm); calibrated residual e = b̂ - β̂_s, β̂_s = mean of the references;
+  * per site and speed class the statistic b_hat is "select": matched or profile, whichever has the smaller variance
+    over the site's 30 reference passes (decided per arm); calibrated residual e = b_hat - beta_hat_s, beta_hat_s =
+    mean of the references;
   * qualification: sd of the references <= 6 %; gate: discard if the fit-residual RMS > 1.3 x the median RMS of the
     references; "qualified_gated" = test passes of qualified sites kept by the gate;
-  * σ (C1 and headline only) on e clipped to ±25 %; Δ, C2, C5, C7 unclipped (constants C1.clip_scope);
+  * sigma (C1 and headline only) on e clipped to +-25 %; Delta, C2, C5, C7 unclipped (constants C1.clip_scope);
   * CIs: site-clustered percentile bootstrap, B = 10,000, one generator per key (provenance.rng_for), the same
     site draws for 'all' and 'qualified_gated'; 95 % CI = q2.5 / q97.5, upper bound = q97.5;
   * a "confirmed" / "pass" claim needs a Holm-adjusted one-sided bootstrap p <= 0.025 per component, p = (1 + #)/(B + 1)
     (constants conventions); each reported quantity is the worst over the 2 SNR mappings x 3 PRB values (and the two
     passes sets where both exist), with the variant that sets it recorded.
-Under constants evaluation_v4 the two-sided C1 verdict is not used (C1 quantities stay as the descriptive model-diversity check, gen_off vs in-house); the run family is the 6 cells
-of U, H, N on primary sites 0-9 (optional extension 10-19); new: the one-sided in-house optimism check (gen_on vs
-in-house, unclipped 1.4826 MAD ratio, margin 1.5, widened site bootstrap, Holm m = 6, verdicts with reason codes) and the
-scope rule (k/n qualified primary sites per cell from the reference passes, covered / partly / not covered, type rule);
+Under constants evaluation_v4 the two-sided C1 verdict is not used (C1 quantities stay as the descriptive
+model-diversity check, gen_off vs in-house); the run family is the 6 cells of U, H, N on primary sites 0-9 (optional
+extension 10-19). Also here: the one-sided in-house optimism check (gen_on vs in-house, unclipped 1.4826 MAD ratio,
+margin 1.5, widened site bootstrap, Holm m = 6, verdicts with reason codes) and the scope rule (k/n qualified primary
+sites per cell from the reference passes, covered / partly / not covered, type rule);
 with constants lever_d.adopted the Huber (d) statistics are the statistics and the LS ones the ablation (both reported).
 C5 / C7 / C2 (iii) / P4 / P5 / P6 are not run.
 Usage: python pipeline/stage3_criteria.py --tag primary [--families U H N]"""
@@ -91,8 +92,8 @@ def assert_complete(families, tag, n_sites=None):
 
 
 def use_statistic(recs, stat):
-    """'ls': the stored plain LS statistics; 'd': the Huber fit (d) (prof_d / match_d / d_d) in the fields every criterion reads;
-    mse stays the LS residual (gate; monitor)."""
+    """'ls': the stored plain LS statistics; 'd': the Huber fit (d) (prof_d / match_d / d_d) in the fields every
+    criterion reads; mse stays the LS residual (gate; monitor)."""
     if stat == "ls":
         return recs
     out = []
@@ -133,9 +134,9 @@ def included(r):
 
 
 def ref_qualification(ref, min_ref=None):
-    """The one site-qualification rule (criteria and the P5 selection): included reference
-    passes (window rule, finite), at least MIN_REF of them, select statistic = the smaller variance of matched / profile,
-    qualified if its sd <= 6 %. Returns dict(n_ref, key, sd_ref, qualified)."""
+    """The one site-qualification rule (criteria and the P5 selection): included reference passes (window rule, finite),
+    at least MIN_REF of them, select statistic = the smaller variance of matched / profile, qualified if its sd <= 6 %.
+    Returns dict(n_ref, key, sd_ref, qualified)."""
     min_ref = MIN_REF if min_ref is None else min_ref
     ref = [r for r in ref if included(r)]
     if len(ref) < min_ref:
@@ -216,7 +217,7 @@ def sigma(e):
 
 
 def sigma_e2map(e):
-    """σ with the decision simulation's out-of-window mapping (|e| > 25 % -> -25 %), co-reported."""
+    """sigma with the decision simulation's out-of-window mapping (|e| > 25 % -> -25 %), co-reported."""
     return float(np.std(np.where(np.abs(e) > WIN, -WIN, e))) if e.size else np.nan
 
 
@@ -307,7 +308,7 @@ def c1_cell(recs, cell, v0, mapping, prb, rho=1.0):
 
 
 def c1_verdicts(c1):
-    """Holm with m = 9 per (mapping, prb, set); missing cells p = 1 ('not run'); governing = worst of 12 per cell."""
+    """Holm with m = 6 per (mapping, prb, set); missing cells p = 1 ('not run'); governing = worst of 12 per cell."""
     by = {(r["cell"], r["v0"], r["mapping"], r["prb"]): r for r in c1}
     for mp, prb in COMBOS:
         for key in ("all", "qualified_gated"):
@@ -352,7 +353,8 @@ def mad(e):
 
 
 def optimism_draws(recs, cell, v0, mapping, prb, rho=1.0):
-    """R, its site-cluster bootstrap draws, n (qualified generator sites with kept test passes) and the pooled residuals."""
+    """R, its site-cluster bootstrap draws, n (qualified generator sites with kept test passes) and the pooled
+    residuals."""
     G, _ = site_table(recs, cell, v0, "gen_on", mapping, prb)
     P, _ = site_table(recs, cell, v0, "inhouse", mapping, prb)
     sites = sorted(set(G) & set(P))
@@ -402,8 +404,8 @@ def optimism_cell(recs, cell, v0, mapping, prb, c_k7=1.0, rho=1.0):
 
 
 def optimism_verdicts(rows):
-    """Holm over the 6 cells per variant (missing / not run: p = 1); verdict per variant; the cell's verdict is the worst
-    variant (not run < contradicted < undetermined < not contradicted), with a reason code."""
+    """Holm over the 6 cells per variant (missing / not run: p = 1); verdict per variant; the cell's verdict is the
+    worst variant (not run < contradicted < undetermined < not contradicted), with a reason code."""
     by = {(r["cell"], r["v0"], r["mapping"], r["prb"]): r for r in rows}
     for mp, prb in COMBOS:
         adj = holm([by[(c, v, mp, prb)]["p"] if (c, v, mp, prb) in by else 1.0 for c, v in HOLM_FAMILY])
@@ -436,8 +438,9 @@ def optimism_verdicts(rows):
 
 def bridge(gov, opt_rows=()):
     """Consequence per site type: in-house-only results are usable for a type only
-    if every cell of the type is 'not contradicted' and, in each of these cells, the point ratio q99 |e| (worst variant; S-place factor applied) is <= the margin 1.5. case: 'usable', 'tails' (the central spread passes, a
-    q99 ratio exceeds 1.5) or 'verdict' (a cell is not 'not contradicted')."""
+    if every cell of the type is 'not contradicted' and, in each of these cells, the point ratio q99 |e| (worst variant;
+    S-place factor applied) is <= the margin 1.5. case: 'usable', 'tails' (the central spread passes, a q99 ratio
+    exceeds 1.5) or 'verdict' (a cell is not 'not contradicted')."""
     q99 = {}
     for r in opt_rows:
         if r is None or r.get("not_run"):
@@ -523,7 +526,8 @@ def separation(recs, cell, v0, arm, mapping, prb, T=None):
 
 
 def c4_light(recs):
-    """k3 per cell (P1-15, P2-30): separation per variant on gen_on and in-house; worst (smallest Z) governs; the rule."""
+    """k3 per cell (P1-15, P2-30): separation per variant on gen_on and in-house; worst (smallest Z) governs; the
+    rule."""
     K3 = EV4["k3_c4_light"]
     out = {}
     for key in K3["cells"]:
@@ -552,9 +556,9 @@ def rating(share):
 
 
 def scope(recs, cells, n_sites):
-    """Scope rule (constants evaluation_v4.scope_rule): per cell and variant, k = primary sites whose included references
-    qualify (gen_on, criteria's one qualification rule; a site without enough references is unqualified), n = the primary
-    sites run; the worst (smallest) k governs; rating and Clopper-Pearson; then the type rule."""
+    """Scope rule (constants evaluation_v4.scope_rule): per cell and variant, k = primary sites whose included
+    references qualify (gen_on, criteria's one qualification rule; a site without enough references is unqualified), n =
+    the primary sites run; the worst (smallest) k governs; rating and Clopper-Pearson; then the type rule."""
     out = {}
     for cell, v0 in cells:
         fam_sites = n_sites[cell]
@@ -656,7 +660,8 @@ def worst(rows, path, mode="max"):
 
 
 def place_factor(cell, sp):
-    """S-place stratum factor (constants sensitivities.S_place.strata): urban -> P1, P1d09, P3; highway -> P2; P4 the larger."""
+    """S-place stratum factor (constants sensitivities.S_place.strata): urban -> P1, P1d09, P3; highway -> P2; P4 the
+    larger."""
     u, h = sp.get("urban", 1.0), sp.get("highway", 1.0)
     return {"P1": u, "P1d09": u, "P3": u, "P2": h, "P4": max(u, h)}.get(cell, 1.0)
 
@@ -684,8 +689,8 @@ def load_s_place(tag):
             return None
         if tag == "primary":
             from pipeline import stage3_extra_checks as XC
-            if XC.window_closed():                       # S-place unfinished at
-                S_PLACE_STATUS.update(status="window closed", state=st)   # the window end -> stated as unquantified
+            if XC.window_closed():                       # S-place unfinished at the window end: unquantified
+                S_PLACE_STATUS.update(status="window closed", state=st)
                 return None
             raise RuntimeError(f"{path} missing: S-place must finish or fail before the primary stage 3 (or the window "
                                f"close); S state {st or 'absent'}")
@@ -743,7 +748,7 @@ def headline_and_c3(recs, cells, sp_factor=None, ls_rows=None):
         h["worst_gate_false_discard_ci_upper"] = worst(rows, ("gate_false_discard_ci", 1))
         h["worst_window_yield_loss"] = worst(rows, ("window_yield_loss",))
         h["worst_q99_qualified_gated"] = worst(rows, ("qualified_gated", "q99"))
-        # the paired in-house arm at the same sites (equal realised K): the worse-of of T1 / T2
+        # the paired in-house arm at the same sites (equal realised K)
         rin = [x for x in (cell_quantities(recs, cell, v0, mp, prb, arm="inhouse") for mp, prb in COMBOS) if x]
         h["inhouse_equalK"] = dict(variants=rin, worst_sigma=worst(rin, ("qualified_gated", "sigma")),
                                    worst_sigma_ci_upper=worst(rin, ("qualified_gated", "ci", 1)),
@@ -846,7 +851,7 @@ def c2_cell(recs, cell, v0, mapping, prb):
 
 def c2_all(recs, cells):
     rows = [x for x in (c2_cell(recs, c, v, mp, prb) for c, v in cells for mp, prb in COMBOS) if x]
-    fam = [(c, v) for c, v in HOLM_FAMILY]
+    fam = list(HOLM_FAMILY)
     for mp, prb in COMBOS:
         by = {(r["cell"], r["v0"]): r for r in rows if r["mapping"] == mp and r["prb"] == prb}
         adj = holm([by[c]["p_tost"] if c in by else 1.0 for c in fam])
@@ -996,11 +1001,11 @@ def realised_k(recs, cells):
 
 
 def k_report(tag, families):
-    """Fixed K report from the stage-1 records. Per (cell, v0,
-    scenario): realised broadband K (ls-based, the paired arm's basis) and in-band K per PRB — median, IQR and a
-    site-bootstrap 95 % CI of the mean; condition 4 per cell: ΔK = K_on − K_off from the merged coefficients, broadband
-    and in-band — signed mean with site-bootstrap CI and median |ΔK|, plus 'unbiased' = CI inside ±0.1 dB; per segment
-    the realised K (term off) minus the builder's K — median, q10, q90; the per-beacon-normalised in-band K (diagnostic);
+    """Fixed K report from the stage-1 records. Per (cell, v0, scenario): realised broadband K (ls-based, the paired
+    arm's basis) and in-band K per PRB (median, IQR and a site-bootstrap 95 % CI of the mean); per cell Delta K =
+    K_on - K_off from the merged coefficients, broadband and in-band (signed mean with site-bootstrap CI and median
+    |Delta K|, plus 'unbiased' = CI inside +-0.1 dB); per segment the realised K (term off) minus the builder's K
+    (median, q10, q90); the per-beacon-normalised in-band K (diagnostic);
     the configured KF (mean, sd) from QuaDRiGa's config (constants quadriga.kf_reference_db). Descriptive only."""
     from pipeline.stage1_channels import FAMILIES
     ref = C["quadriga"]["kf_reference_db"]

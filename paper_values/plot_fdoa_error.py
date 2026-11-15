@@ -24,6 +24,7 @@ import speedcheck_paths as SP  # noqa: E402
 
 import matplotlib  # noqa: E402
 matplotlib.use("Agg")
+import matplotlib.collections  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import matplotlib.transforms  # noqa: E402
 

@@ -36,7 +36,7 @@ The other parts use their own pinned environments, created the same way:
 | `.venv-riskmodel` | `requirements/riskmodel.lock` | risk-model fit |
 | `.venv-speed` | `requirements/speed.lock` | Fig. 2, timing figures, speed-path timings |
 | `.venv-paillier` | `requirements/paillier.lock` | Paillier baseline of the timings (created by `experiments/timings/setup_envs.sh`) |
-| `.venv-sim` | `requirements/speedcheck_sim.lock` | speed-check simulation, Figs. 6 and 7, supplement Fig. S1 |
+| `.venv-sim` | `requirements/speedcheck_sim.lock` | speed-check simulation, Figs. 7 and 8, supplement Fig. S1 |
 
 For example: `python3.12 -m venv .venv-riskmodel && .venv-riskmodel/bin/pip install -r requirements/riskmodel.lock`.
 
@@ -50,12 +50,12 @@ stage-2 records of the speed-check simulation are included; see `speedcheck_sim/
 .venv/bin/python -m pytest -q tests
 ```
 
-133 tests (short). Without the data set the five tests that need it are skipped (128 passed, 5 skipped). The tests
+136 tests (short). Without the data set the five tests that need it are skipped (131 passed, 5 skipped). The tests
 exercise the protocol and the deviations of a TSP named in the paper: a substituted model, and altered, replayed,
 dropped or injected records. `.venv/bin/python scripts/run_epoch_demo.py` runs one honest epoch and every deviation
 and prints what the insurer detects. Further tests: `.venv/bin/python -m pytest -q experiments/sizes` (sizes of the
-simpler designs) and `.venv-sim/bin/python -m pytest -q speedcheck_sim/tests` (speed-check pipeline components; the
-QuaDRiGa tests are skipped without Octave).
+simpler designs) and `.venv-sim/bin/python -m pytest -q speedcheck_sim/tests` (speed-check pipeline components and the
+urban estimator; 32 tests, of which the two QuaDRiGa tests are skipped without Octave).
 
 ## Results and how to reproduce them
 
@@ -66,38 +66,46 @@ supplement.
 
 | Paper item | Command | Expected result | Runtime |
 |---|---|---|---|
-| Protocol tests, deviations of the TSP (Section VI) | `.venv/bin/python -m pytest -q tests` | all tests pass | short |
+| Protocol tests, deviations of the TSP (Section VII-B) | `.venv/bin/python -m pytest -q tests` | all tests pass | short |
 | HomMAC numerical check (Section VII-B; Supplement S1, Table S1) | `.venv/bin/python experiments/hommac_checks/hommac_checks.py`, then `.venv/bin/python experiments/hommac_checks/verdict_channel.py` | `hommac_checks.json`, `verdict_channel.json`, byte-identical | medium |
-| Dating of a single record (Table 10, Section VII-A) | `.venv/bin/python experiments/dating/record_classes.py`, then `insurer_alone_dating.py`, then `coalition_dating.py` (same folder) | the three result files, byte-identical | medium |
-| Risk model (Section VI, data and risk model; Supplement S11) | `.venv-riskmodel/bin/python experiments/risk_model/fit_risk_model.py` | `integer_model.json` and the integer weights byte-identical; the other CSV files equal up to the last floating-point digits (D² 0.136, Gini 0.495 as printed) | medium |
-| Parameters and sizes (Tables 5, 7 and 14; Section VI-B) | `.venv/bin/python experiments/sizes/<script>.py` for `risk_path_sizes`, `simpler_designs_sizes`, `settlement_sizes`, `baseline_params`, `speed_beacon_emission`, `smudging_scale_range` (in this order) | the six files of `experiments/sizes/results/`, byte-identical | short |
+| Dating of a single record (Table 11, Section VII-A) | `.venv/bin/python experiments/dating/record_classes.py`, then `insurer_alone_dating.py`, then `coalition_dating.py` (same folder) | the three result files, byte-identical | medium |
+| Risk model (Section VI, data and risk model; Supplement S11.3) | `.venv-riskmodel/bin/python experiments/risk_model/fit_risk_model.py` | `integer_model.json` and the integer weights byte-identical; the other CSV files equal up to the last floating-point digits (D² 0.136, Gini 0.495 as printed) | medium |
+| Parameters and sizes (Tables 5 and 7; Section VI-B) | `.venv/bin/python experiments/sizes/<script>.py` for `risk_path_sizes`, `simpler_designs_sizes`, `settlement_sizes`, `baseline_params`, `speed_beacon_emission`, `smudging_scale_range` (in this order) | the six files of `experiments/sizes/results/`, byte-identical; the paper compares the two simpler designs in words and prints no value of `simpler_designs_sizes.json` | short |
 | Lattice security (Table 5) | `SAGE=<sage> LATTICE_ESTIMATOR=<checkout> bash experiments/lattice_security/run_per_attack.sh`, then `.venv/bin/python experiments/lattice_security/summarize_per_attack.py` | `estimate_summary.json`, minimum 242.6 bits (dual hybrid); the Arora-GB job does not finish within the time limit | long |
 | Error of the evaluation keys (Table 5) | `.venv/bin/python experiments/lattice_security/check_evalkey_sigma.py` | rms about 3.19 (public key) and 1.0 (evaluation keys), `confirmed` true; key generation is not seeded, so the digits vary | short |
 | Fig. 2 (FDOA principle) | `.venv-speed/bin/python experiments/figures/plot_fdoa_principle.py` | `experiments/figures/results/fig_fdoa_principle.pdf` | short |
-| Derived sizes, channel times, storage, timings, timing sums and ratios (Tables 5 to 7 and 14, Section VI) | `.venv/bin/python paper_values/derived_values.py` | `paper_values/paper_values.csv` (146 values, column `printed` as in the paper), byte-identical | short |
-| Figs. 3 to 5 from the stored timings | `.venv-speed/bin/python paper_values/plot_timing_figures.py` | the three timing figures, byte-identical | short |
+| Derived sizes, channel times, storage, timings, timing sums and ratios (Tables 5 to 7, Section VI) | `.venv/bin/python paper_values/derived_values.py` | `paper_values/paper_values.csv` (146 values; column `printed` uses the rounding of the paper; values that the paper does not print feed the figures or are reference rows), byte-identical | short |
+| Figs. 3 to 5 from the stored timings | `.venv-speed/bin/python paper_values/plot_timing_figures.py` | the three timing figures (the same file on every run) | short |
 | New timings on your machine | `bash experiments/timings/setup_envs.sh`, then `bash experiments/timings/run_timings.sh --out <dir>` | timing files of your machine (not comparable with the stored ones on other hardware) | hardware-dependent |
-| Figs. 6 and 7, supplement Fig. S1 (Fisher bound) | `.venv-sim/bin/python paper_values/plot_fdoa_error.py`, `plot_separation.py`, `plot_fisher.py` (same folder) | the three figures, drawn from the stored speed-check results, byte-identical | short |
-| Table 3, Tables 8, 9 and 11 (matching), Section VI-D and Supplements S3 to S9 | see `speedcheck_sim/` below | stored report files, byte-identical | short (from stored outputs) to very long (full runs) |
+| Figs. 7 and 8, supplement Fig. S1 (Fisher bound) | `.venv-sim/bin/python paper_values/plot_fdoa_error.py`, `plot_separation.py`, `plot_fisher.py` (same folder) | the three figures, drawn from the stored speed-check results (the same file on every run) | short |
+| Fig. 6 (detection rates), every cell | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/detection_figure.py --check` | `speedcheck_sim/results/study3/detection_figure.csv`, byte-identical | short |
+| Table 9 and the other numbers of the urban estimator (study 3; Section VI-D, Supplement S8.4) | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/study3_values.py --check` | every key of `speedcheck_sim/results/study3/speedpath-s3.tex` | short |
+| Table 3, Table 8, Table 12 (matching), Section VI-D and Supplements S3 to S9 | see `speedcheck_sim/` below | stored report files, byte-identical | short (from stored outputs) to very long (full runs) |
 
 Baseline labels: the timing code and its result files label the baselines B1 to B4. B2 (SP2UBI context with clear
 weights), B3 (CKKS) and B4 (Paillier-3072) are the baselines B1, B2 and B3 of the paper (Fig. 4); B1 of the code
 (single-key BFV with encrypted weights, without the slot fill) is an extra reference row that the paper does not print.
 
 The figure scripts write `paper_values/figures/` (`timing_operations.pdf`, `timing_baselines.pdf`,
-`timing_throughput.pdf` = Figs. 3 to 5; `fdoa_error_vs_snr.pdf` = Fig. 6; `separation.pdf` = Fig. 7;
-`fisher_bound.pdf` = supplement Fig. S1).
+`timing_throughput.pdf` = Figs. 3 to 5; `fdoa_error_vs_snr.pdf` = Fig. 7; `separation.pdf` = Fig. 8;
+`fisher_bound.pdf` = supplement Fig. S1). Fig. 1 is a drawing, and Fig. 6 prints the values of
+`speedcheck_sim/results/study3/detection_figure.csv`; no script of this repository draws them.
 
 ## Speed-check simulation
 
-`speedcheck_sim/` holds the roadside speed-check evaluation: the FDOA geometry and estimators (`fdoa/`), the
-simulations on our channel model (`inhouse/`) and the TR 37.885 pipeline with QuaDRiGa and SUMO (`tr37885/`), with the
-stored outputs that the paper and the supplement print (`results/`). Tables 8 and 9, the data of Figs. 6 and 7, the
-matching numbers of Table 11 and every study-1 number of Section VI-D and of the supplement regenerate in minutes from
-the stored stage-3 outputs. The erasure rows (Supplement Table S19) also need the stage-2 records in
-`speedcheck_sim/results/stage2/` (SHA-256 sums in `speedcheck_sim/SHA256SUMS`). The
-study-2 numbers and texts (Section VI-D, Supplement S8) regenerate from `speedcheck_sim/results/study2/`. Full runs
-(`speedcheck_sim/tr37885/run_study1.sh`, then `run_study2.sh`) need Octave 8.4.0, QuaDRiGa v2.8.1 patched by
+`speedcheck_sim/` holds the roadside speed-check evaluation: the FDOA geometry and the two estimators (`fdoa/`: the
+base estimator in `estimator.py`, the urban estimator in `urban.py`), the simulations on our channel model
+(`inhouse/`) and the TR 37.885 pipeline with QuaDRiGa and SUMO (`tr37885/`), with the stored outputs that the paper
+and the supplement print (`results/`). The evaluation has three parts: study 1 (the speed check at highway-type and
+urban sites with the base estimator), study 2 (a second survey design for urban street sites; Supplement S8) and
+study 3 (the urban estimator on newly simulated urban LOS sites and the detection rules with it). Table 8, the
+highway cells of Fig. 6, the data of Figs. 7 and 8, the matching numbers of Table 12 and every study-1 number of
+Section VI-D and of the supplement regenerate in minutes from the stored stage-3 outputs. The erasure rows (Supplement
+Table S24) also need the stage-2 records in `speedcheck_sim/results/stage2/` (SHA-256 sums in
+`speedcheck_sim/SHA256SUMS`). The study-2 numbers and texts (Supplement S8) regenerate from
+`speedcheck_sim/results/study2/`, and the study-3 numbers (Table 9, Fig. 6, Supplement S8.4) from
+`speedcheck_sim/results/study3/` (also listed in `speedcheck_sim/SHA256SUMS`). Full runs
+(`speedcheck_sim/tr37885/run_study1.sh`, then `run_study2.sh` and `run_study3.sh`) need Octave 8.4.0, QuaDRiGa v2.8.1 patched by
 `speedcheck_sim/tr37885/quadriga/patch/build_patched_tree.sh` (QuaDRiGa has its own non-commercial licence and is not
 included) and eclipse-sumo 1.28.0, and take several days on many cores. Environment: `requirements/speedcheck_sim.lock`
 (`.venv-sim`). Commands, expected outputs and the legend of the keys and labels of the stored data:
@@ -120,7 +128,7 @@ included) and eclipse-sumo 1.28.0, and take several days on many cores. Environm
 | `experiments/timings/` | timing scripts of the risk path, the baselines, the TSP throughput and the speed path; stored timings |
 | `experiments/figures/` | FDOA principle figure |
 | `paper_values/` | derived values and the figures of the evaluation |
-| `speedcheck_sim/` | speed-check simulation (FDOA channel models, TR 37.885 pipeline, stored results of studies 1 and 2) |
+| `speedcheck_sim/` | speed-check simulation (FDOA channel models, base and urban estimator, TR 37.885 pipeline, stored results of studies 1 to 3) |
 
 ## Reproducibility notes
 
@@ -129,8 +137,8 @@ included) and eclipse-sumo 1.28.0, and take several days on many cores. Environm
   the tests, which draw fresh keys (their pass or fail outcome does not depend on the keys).
 - The timings are hardware-dependent. The stored timing files in `experiments/timings/results/` were measured on the
   authors' laptop, an Intel Core i7-1195G7 (governor `performance`, idle machine; `machine.txt`), and are the values the
-  paper reports. `run_timings.sh` records the CPU, governor, load and the SHA-256 of the timed code with every result,
-  and `check_machine.sh` checks the machine before a run.
+  paper reports. `run_timings.sh` records the CPU, governor and load with every result and, for a new run, the SHA-256 of the
+  timed code (the stored files do not carry these hashes), and `check_machine.sh` checks the machine before a run.
 - The data set of So et al. (2021) is not redistributed; `data/fetch_so2021.sh` checks the downloaded file against the
   SHA-256 every result was computed from.
 - Where a regenerated file is not byte-identical to the stored one, the table above or `speedcheck_sim/README.md`

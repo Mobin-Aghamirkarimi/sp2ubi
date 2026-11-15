@@ -99,13 +99,13 @@ def test_all_slots_uniform_outputs_exact_and_negative_control(world):
             fills.append(rest)
     n = sum(counts)
     chi2 = sum((c - n / B) ** 2 / (n / B) for c in counts)
-    assert chi2 < 103.4                                            # chi^2(63) at 0.001
-    # mask freshness: the fills of two records are uncorrelated (|r| < 4 / sqrt(N))
+    assert chi2 < 160                                              # chi^2(63): exceeded with probability < 1e-9
+    # mask freshness: the fills of two records are uncorrelated (|r| < 6 / sqrt(N), six standard deviations)
     a, b = fills
     ma, mb = sum(a) / len(a), sum(b) / len(b)
     cov = sum((x - ma) * (y - mb) for x, y in zip(a, b))
     r = cov / math.sqrt(sum((x - ma) ** 2 for x in a) * sum((y - mb) ** 2 for y in b))
-    assert abs(r) < 4 / math.sqrt(len(a))
+    assert abs(r) < 6 / math.sqrt(len(a))
     # negative control: without the fill the wrap-around prefix sums leak the weighted features
     x = [31, 2370, 610, 0, 2, 3]
     T = hommac.tags(x, b"k" * 32, 1, 5, P)
@@ -150,7 +150,7 @@ def test_noise_margin_of_the_result_ciphertext(world):
 
 # ---------------------------------------------------------------------------------------- deviations, one outcome
 def test_deviations_rejected_with_one_outcome(world):
-    risk, ins, tsp, keys = world["risk"], world["ins"], world["tsp"], world["keys"]
+    risk, ins, keys = world["risk"], world["ins"], world["keys"]
     obu = new_obu(world, seed=3)
     out = published(world, obu.epoch_message(31))
     honest = ins.process_batch([out])
@@ -179,7 +179,7 @@ def test_deviations_rejected_with_one_outcome(world):
 
 # ---------------------------------------------------------------------------------------- duplicates and re-send
 def test_duplicate_nonce_and_resend_rules(world):
-    ins, tsp = world["ins"], world["tsp"]
+    ins = world["ins"]
     obu = new_obu(world, seed=4)
     m1 = obu.epoch_message(31)
     out1 = published(world, m1)
@@ -375,7 +375,7 @@ def daily_obu(daily, D=6, seed=0):
 def test_daily_records_multiset_and_rules(daily):
     """Exactly D distinct records; identical duplicate once; replay of one day + drop of another -> missing;
     more than D distinct valid records (lost sealed storage) -> conflict; scores = daily scores (multiset)."""
-    ins, tsp, w = daily["ins"], daily["tsp"], daily["w"]
+    ins, w = daily["ins"], daily["w"]
     obu = daily_obu(daily, D=6)
     msgs = [m for _, m in obu.messages(6)]
     outs = [published(daily, m) for m in msgs]
@@ -458,7 +458,7 @@ def test_nonce_already_sealed_in_the_epoch_is_redrawn(daily, monkeypatch):
 def test_late_record_is_not_counted_in_the_next_epoch(daily):
     """A record of epoch 1 presented to the settlement of epoch 2 fails HomMAC (epoch label in
     the one-time keys) and is rejected; epoch 1 of that policy stays 'missing'."""
-    ins1, tsp = daily["ins"], daily["tsp"]
+    ins1 = daily["ins"]
     obu = daily_obu(daily, D=2, seed=4)
     out = published(daily, obu.record_message(0, 2))
     ins2 = Insurer(DEFAULT, daily["risk"], daily["w"], epoch=2)

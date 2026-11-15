@@ -4,13 +4,16 @@ traffic with the TR 37.885 clause 6.1.2 drop statistics (bumper gap max{2 m, Exp
 lane, type 2 cars, urban option A / highway option A); urban: 2 lanes per direction of 3.5 m and one signal-controlled
 junction 50-150 m downstream of head B (TR Annex A lane width); highway: 3 lanes per direction of 4 m.
 Test vehicles are inserted one after another (one pass each) and their FCD is cut to the pass window
-x in [-0.35 D, 1.35 D] (as `quadriga/driver.py.build_pass`), resampled to 0.01 s with SUMO's ballistic kinematics (speed
-linear per step, position its integral, checked against SUMO's positions to 5 cm) and returned as `fdoa.geometry.Trajectory` in the in-house frame (x along the road
-with head A at 0, y to the right of travel from the centre of the outer lane, heads at y = pole offset).
+x in [-0.35 D, 1.35 D] (as build_pass of quadriga/driver.py), resampled to 0.01 s with SUMO's ballistic kinematics
+(speed linear per step, position its integral, checked against SUMO's positions to 5 cm) and returned as
+`fdoa.geometry.Trajectory` in the in-house frame (x along the road with head A at 0, y to the right of travel from the
+centre of the outer lane, heads at y = pole offset).
 Plausibility: |a| <= 4.5 m/s^2 (SUMO's default passenger-car decel, an assumption, not a TR value) is checked and
 the number of violating samples is returned."""
 import os
+import shutil
 import subprocess
+import sys
 import tempfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -21,7 +24,6 @@ ER = os.path.dirname(os.path.abspath(__file__))
 STEP = 0.1
 A_MAX = 4.5
 
-import sys  # noqa: E402
 sys.path[:0] = [os.path.join(ER, ".."), os.path.join(ER, "..", "inhouse")]
 from fdoa.geometry import Site, Trajectory  # noqa: E402
 
@@ -65,8 +67,8 @@ def _write_net(wd, sc: Scenario, x_lo, x_hi, x_j, v0):
 def _write_routes(rng, wd, route, v0, n_test, t_first, t_gap, horizon, model, lanes, test_lane, mean_gap, background=True,
                   keep_lane=False):
     """Background flow per lane, headway (max{2, Exp(mean_gap)} + 5 m) / v0 (TR clause 6.1.2 gap rule in time with
-    mean_gap = 2 s * v0; thinned at a signal, see site_passes); test vehicles every t_gap s plus a uniform jitter over one
-    90 s signal cycle (desired speed exactly v0)."""
+    mean_gap = 2 s * v0; thinned at a signal, see site_passes); test vehicles every t_gap s plus a uniform jitter over
+    one 90 s signal cycle (desired speed exactly v0)."""
     cf = 'carFollowModel="IDM"' if model == "IDM" else 'carFollowModel="Krauss" sigma="0.5"'
     # keep_lane: the test vehicle never changes lane (strategic, keep-right, speed-gain and cooperative changes off;
     # otherwise SUMO's keep-right moves the P3 test vehicle into the blocker lane)
@@ -114,7 +116,7 @@ def _read_fcd(path, prefix="test"):
     return {k: np.array(v) for k, v in out.items()}
 
 
-def _to_trajectory(a, site: Site, x_head_a, y_outer, x_start, x_end, dt=0.01):
+def _to_trajectory(a, x_head_a, y_outer, x_start, x_end, dt=0.01):
     """FCD rows (t, x, y, speed, acc, angle) -> Trajectory in the in-house frame over the pass window, resampled."""
     t, x, y, v = a[:, 0], a[:, 1] - x_head_a, -(a[:, 2] - y_outer), a[:, 3]
     vx = v                  # SUMO speed = longitudinal speed along the straight +x lane (the FCD angle is only the
@@ -133,7 +135,7 @@ def _to_trajectory(a, site: Site, x_head_a, y_outer, x_start, x_end, dt=0.01):
     vys = (np.diff(y) / np.diff(t))[k]                    # lateral speed: derivative of the linear y
     drift = float(np.max(np.abs(xs - np.interp(tt, t, x))))
     if drift > 0.05:
-        raise RuntimeError(f"sumo_kin: integrated position deviates from SUMO's by {drift:.3f} m")
+        raise RuntimeError(f"sumo_kinematics: integrated position deviates from SUMO's by {drift:.3f} m")
     m = (xs >= x_start) & (xs <= x_end)
     i0, i1 = np.argmax(m), len(m) - np.argmax(m[::-1])
     tt = tt[i0:i1] - tt[i0]
@@ -148,7 +150,7 @@ DEMAND_VC = 0.7          # degree of saturation of the background demand at the 
 def site_passes(rng, site: Site, v0, n_pass, scenario: Scenario = URBAN, model="Krauss", test_lane=None,
                 t_gap=None, workdir=None, keep=False, demand_vc=DEMAND_VC, background=True, keep_lane=None):
     """Run SUMO once for a site and return (trajectories, info). background=False: free road (survey-like reference
-    passes, C2 (iii)); the signal still operates. info: junction position, number of FCD samples with
+    passes); the signal still operates. info: junction position, number of FCD samples with
     |a| > A_MAX, stopped passes (speed < 0.5 m/s inside the window), lane-change passes, passes dropped (not
     crossing the window)."""
     D = site.D
@@ -184,7 +186,7 @@ def site_passes(rng, site: Site, v0, n_pass, scenario: Scenario = URBAN, model="
         if a is None:
             dropped += 1
             continue
-        tr = _to_trajectory(a, site, x_head_a, y_outer, -0.35 * D, 1.35 * D)
+        tr = _to_trajectory(a, x_head_a, y_outer, -0.35 * D, 1.35 * D)
         if tr is None:
             dropped += 1
             continue
@@ -199,6 +201,5 @@ def site_passes(rng, site: Site, v0, n_pass, scenario: Scenario = URBAN, model="
     info = dict(junction_x=None if x_j is None else x_j - x_head_a, acc_violations=n_acc, stopped_passes=stopped,
                 lane_change_passes=lc, dropped=dropped, n=len(trajs), workdir=wd if keep else None)
     if not keep and workdir is None:
-        import shutil
         shutil.rmtree(wd, ignore_errors=True)
     return trajs, info

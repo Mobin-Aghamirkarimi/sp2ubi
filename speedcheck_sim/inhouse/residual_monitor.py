@@ -6,8 +6,8 @@ the ratio rho = running median / reference median:
   rho > RAISE  -> the disclosed sigma level is raised by one step (raise-only; at most one raise per epoch);
   rho > STOP   -> the (site, speed class) stops producing entries until re-survey by the survey vehicle.
 Simulated per site: 30 reference passes, 100 passes before a change, 100 after. Changes (from pass 0 of the
-"after" part): none (false-alarm control), a specular reflector appears (-6 dB), the K-factor drops by 6 dB, the
-noise of the error grows via both (reflector + K - 6 dB). For every pass also the speed-check error of the "select"
+"after" part): none (false-alarm control), a specular reflector appears (-6 dB), the K-factor drops by 6 dB, or
+both (reflector and K - 6 dB). For every pass also the speed-check error of the "select"
 statistic is recorded, so the actual sigma before/after each change is known.
 Reported per cell: false raise/stop rate per window position without change; detection probability and latency
 (passes after the change) of raise and stop; actual sigma ratio after/before.
@@ -119,7 +119,7 @@ def main():
               f"{r['p_stop']:.2f} lat {r['latency_stop_median']} | actual sigma after/before {r['sigma_ratio_after_before_median']:.2f}",
               flush=True)
     json.dump(dict(cells=rep, n_win=N_WIN, raise_=RAISE, stop=STOP, seconds=time.time() - t0),
-              open(os.path.join(OUT, f"residual_monitor_{'smoke' if a.smoke else 'full'}.json"), "w"), indent=1)
+              open(os.path.join(OUT, f"residual_monitor_{tag}.json"), "w"), indent=1)
     print(f"elapsed {time.time() - t0:.0f} s")
 
 

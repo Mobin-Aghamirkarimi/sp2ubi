@@ -5,7 +5,7 @@ Configuration: 8 levels (3 bits), site qualification sigma_hat <= 6 %. R2 varian
     residuals from all policies (1.4826 * MAD, corrected for the policy-mean fit) and uses max(1, scale_level) *
     sigma_eff in R2. The calibration population is honest (manipulators are a minority).
 Honest false punitive at actual noise = 1.0 / 1.2 / 1.5 x disclosed sigma_eff (per-cell multiplier), and power at
-nominal noise for day-level manipulation (-15 %, f 0.3).
+nominal noise for day-level manipulation (-15 % on a share 0.3 of the days).
 Usage: python inhouse/residual_scale.py [--vehicles 10000]
 """
 import argparse
@@ -16,8 +16,8 @@ import numpy as np
 
 import decisions_base as DB
 import decisions_levels as E
-from levels_qualification import requalify, scale_to_disclosed
 from decisions_base import EPOCHS, seed
+from levels_qualification import requalify, scale_to_disclosed
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -65,15 +65,15 @@ def main():
                 h = E.honest_summary(E.decide(sim, sim["b_hon"], qtab, r2_scale=r2s))
                 row["honest"][f"{vt}|{lam}|x{k}"] = dict(punitive=h["punitive_per_year"], ub95=h["punitive_ub95"],
                                                          scale=None if f is None else f.round(3).tolist())
-            for att in (("days", -0.15, 0.3),):
-                sim = E.simulate(seed("rr-p", att, vt, lam), A, sw, max(nv // 5, 200), lam, vt, "empirical",
-                                 attack=att, rng_att=seed("rr-a", att, vt, lam), qual=qual)
-                if variant == "popcal":
-                    f = population_scale(sim, sim["b_hon"], len(A["levels"])); r2s = f[sim["lvl"]]
-                else:
-                    r2s = np.full(sim["se_i"].shape, float(variant[1:]))
-                da = E.decide(sim, sim["b_att"], qtab, r2_scale=r2s)
-                row["power"][f"{att[0]}|{vt}|{lam}"] = float(da["punitive"].mean())
+            att = ("days", -0.15, 0.3)
+            sim = E.simulate(seed("rr-p", att, vt, lam), A, sw, max(nv // 5, 200), lam, vt, "empirical",
+                             attack=att, rng_att=seed("rr-a", att, vt, lam), qual=qual)
+            if variant == "popcal":
+                f = population_scale(sim, sim["b_hon"], len(A["levels"])); r2s = f[sim["lvl"]]
+            else:
+                r2s = np.full(sim["se_i"].shape, float(variant[1:]))
+            da = E.decide(sim, sim["b_att"], qtab, r2_scale=r2s)
+            row["power"][f"{att[0]}|{vt}|{lam}"] = float(da["punitive"].mean())
         out[variant] = row
         print(f"{variant:7s} honest punitive " + " ".join(f"{k}:{v['punitive']:.1e}" for k, v in row["honest"].items())
               + " | power " + " ".join(f"{k}:{v:.2f}" for k, v in row["power"].items()), flush=True)

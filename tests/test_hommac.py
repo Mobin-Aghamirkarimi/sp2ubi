@@ -39,6 +39,12 @@ def test_modified_score_or_nonce_rejected():
     assert not hommac.verify(R, T_R, u, [w[0] + 1] + w[1:], K, 1, P)  # other model
 
 
+def test_field_modulus():
+    """p is the smallest prime above 2^40 that is 1 modulo 2^16 (batching for ring dimensions up to 2^15)."""
+    assert P == 2 ** 40 + 1_310_721 and is_prime(P) and P % (1 << 16) == 1
+    assert not any(is_prime(q) for q in range(2 ** 40 + 1, P, 1 << 16))
+
+
 def test_model_substitution_succeeds_with_probability_about_1_over_p():
     """Small field p = 257: a TSP applying w' != w to (x, T) passes verification for ~1/p of the keys."""
     p = 257

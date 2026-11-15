@@ -1,10 +1,12 @@
+"""Receiver impairments of interface.py: phase noise, IQ imbalance, ADC, pole sway and time scaling."""
 import os
 import sys
 
 import numpy as np
 import pytest
 
-sys.path[:0] = [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885"), os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885"), "..")]
+ER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tr37885")
+sys.path[:0] = [ER, os.path.join(ER, "..")]
 import interface as itf  # noqa: E402
 
 

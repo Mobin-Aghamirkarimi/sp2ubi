@@ -92,7 +92,7 @@ def table_a(cr, nums):
                    spearman=((qv.get(key) or {}).get("at_governing") or {}).get("spearman_sdref_vs_test_sigma"))
         rows.append(row)
         for k_, v_ in row.items():
-            if isinstance(v_, (int, float)) and v_ is not None:
+            if isinstance(v_, (int, float)):
                 nums[f"A|{key}|{k_}"] = v_
     p3 = cr.get("p3_blocked")
     if p3:
@@ -190,7 +190,7 @@ class LadderError(KeyError):
 
 def r3_honest_rate(lam):
     """The R3 honest per-vehicle-year rate read from the in-house ladder at a fixed M = lambda: a stated fixed-M
-    approximation (item 5 and T5;  (ii), ): the decision simulation's epochs carry Poisson(lambda)
+    approximation: the decision simulation's epochs carry Poisson(lambda)
     entries and an epoch with fewer than five entries draws no R3 flag, so at lambda = 5 the reading is conservative."""
     d = json.load(open(INHOUSE_E3))[E3_CONFIG]
     key = str(int(float(lam)))
@@ -242,7 +242,7 @@ def stratum_rows(tables, e2, nums):
         if status in STRATUM_NOTE and status != "covered":
             out.append(STRATUM_NOTE[status].format(s=s, n_eval=d.get("n_eval"), min_eval=MIN_EVAL,
                                                    below=d.get("rows_below_min_eval"), rows=d.get("rows"), floor=FLOOR))
-    # section 6.1: if neither stratum is covered, the two notes are replaced by one sentence
+    # if neither stratum is covered, the two notes are replaced by one sentence
     if all(st.get(s, "no_records") not in ("covered", "covered_short") for s in ("urban", "highway")):
         out = ["Neither the urban nor the highway stratum is covered at the decision level, so Table B reports no "
                "decision-level rows."]
@@ -300,20 +300,19 @@ def r3_m5(nums):
 
 
 def table_b(e2, nums, strict=False):
-    """Table B (T1 / T5; d): per the decision simulation row the TR 37.885 value
-    (B|<sec>|<key>|<metric>), the in-house value of the same row (B|<sec>|<key>|inhouse|<metric>: the in-house decision simulation (monitor variant) run
-    on its own site-K population, TR 38.901 UMi N(9, 5^2) dB, not at equal K; labelled so in the table) and the worse of
-    the two per metric direction (adapter direction; B|<sec>|<key>|governing|<metric>; descriptive metrics have no
-    governing value). A row without an in-house value governs with its TR 37.885 value, flagged;
-    a primary run refuses an honest row without an in-house value. Per honest row the bound = the decision-simulation
-    value (escalation union, or R2
+    """Table B: per decision-simulation row the TR 37.885 value (B|<sec>|<key>|<metric>), the in-house
+    value of the same row (B|<sec>|<key>|inhouse|<metric>: the in-house decision simulation (monitor variant) run on its
+    own site-K population, TR 38.901 UMi N(9, 5^2) dB, not at equal K; labelled so in the table) and the worse of the
+    two per metric direction (adapter direction; B|<sec>|<key>|governing|<metric>; descriptive metrics have no governing
+    value). A row without an in-house value governs with its TR 37.885 value, flagged; a primary run refuses an honest
+    row without an in-house value. Per honest row the bound = the decision-simulation value (escalation union, or R2
     alone) + the R3 honest rate of its in-house ladder at the row's lambda (a union bound over the three rules). The
-    escalation is adopted ("adopted") if the worst bound with it is <= 1e-3, else "fallback"; "not evaluated" without
-    an honest row (no U / H stratum covered). B|esc|status / B|esc|adopted; B|honest|governing|all_union_ub95 = the
-    worst bound with the escalation (printed in both evaluated branches). The abstract keys
+    escalation is adopted ("adopted") if the worst bound with it is <= 1e-3, else "fallback"; "not evaluated" without an
+    honest row (no U / H stratum covered). B|esc|status / B|esc|adopted; B|honest|governing|all_union_ub95 = the worst
+    bound with the escalation (printed in both evaluated branches). The abstract keys
     B|honest|governing|punitive_per_year and |punitive_ub95 are the worst bounds of the adopted rule set.
-    B|honest|governing|r2_* / union_* keep the decision-simulation-only values. sens_tyre rows are reported over both channels
-    (B|sens_tyre|max|..., with its source), never tested."""
+    B|honest|governing|r2_* / union_* keep the decision-simulation-only values. sens_tyre rows are reported over both
+    channels (B|sens_tyre|max|..., with its source), never tested."""
     rows = []
     if not e2:
         return rows
@@ -421,10 +420,10 @@ def write_table(rows, path, notes=()):
 
 
 def fig_c(cr, k4, path, nums):
-    """Fig. C: in-house per-beacon RMS against SNR per K (and K = inf
-    with nominal impairments if run), the single-tone CRLB, the TR 37.885 RMS with q10-q90 bands at the governing PRB,
-    the histogram of the TR 37.885 operating SNR (twin axis) and the decoding line at each overlay's governing PRB (S22), with
-    the share of the overlay's beacons below it."""
+    """Fig. C: in-house per-beacon RMS against SNR per K (and K = inf with nominal impairments if run), the single-tone
+    CRLB, the TR 37.885 RMS with q10-q90 bands at the governing PRB, the histogram of the TR 37.885 operating SNR (twin
+    axis) and the decoding line at each overlay's governing PRB, with the share of the overlay's beacons below
+    it."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -453,7 +452,7 @@ def fig_c(cr, k4, path, nums):
         xs = sorted(float(b) for b in pb["by_snr"])
         rows = [pb["by_snr"][f"{int(x)}"] for x in xs]
         xc = [x + 2.5 for x in xs]
-        ax.semilogy(xc, [r["rms"] for r in rows], "s-", ms=4, lw=2, label=f"TR 37.885 {NAMES[key[:2]]} {key[3:]} m/s RMS")   # no code name
+        ax.semilogy(xc, [r["rms"] for r in rows], "s-", ms=4, lw=2, label=f"TR 37.885 {NAMES[key[:2]]} {key[3:]} m/s RMS")
         ax.fill_between(xc, [max(r["q10"], 1e-3) for r in rows], [r["q90"] for r in rows], alpha=0.15)
         hc, he = pb["snr_hist"]["counts"], pb["snr_hist"]["edges"]
         ax2.stairs(np.asarray(hc) / max(sum(hc), 1), he, alpha=0.35)
@@ -465,7 +464,7 @@ def fig_c(cr, k4, path, nums):
             nums[f"C|{key}|decoding_db"] = pb["decoding_db"]
             nums[f"A|{key}|below_decoding_pct"] = 100 * pb["below_decoding_share"]
             nums[f"A|{key}|snr_q01_db"] = pb["snr_q01_db"]
-    ax2.set_ylabel("share of TR 37.885 beacons (histogram)")   # no code name
+    ax2.set_ylabel("share of TR 37.885 beacons (histogram)")
     ax.set_xlabel("raw-sample SNR per beacon, weaker head (dB)")
     ax.set_ylabel("per-beacon FDOA error (Hz)")
     ax.legend(fontsize=6, ncol=2)
@@ -477,9 +476,9 @@ def fig_c(cr, k4, path, nums):
 
 
 def fig_e(cr, fe, path, nums):
-    """Fig. E: (a) sigma against the realised in-band K: in-house per-site survey sd and test sigma (configured K
-    = realised by construction) with the median curve, TR 37.885 per-site survey sd and test sigma (weaker head, governing PRB),
-    the 6 % line; (b) the qualification probability: binned shares with Clopper-Pearson and the logistic fit
+    """Fig. E: (a) sigma against the realised in-band K: in-house per-site survey sd and test sigma (configured K =
+    realised by construction) with the median curve, TR 37.885 per-site survey sd and test sigma (weaker head, governing
+    PRB), the 6 % line; (b) the qualification probability: binned shares with Clopper-Pearson and the logistic fit
     (descriptive)."""
     import matplotlib
     matplotlib.use("Agg")

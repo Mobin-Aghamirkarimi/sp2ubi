@@ -15,7 +15,7 @@ Escalation:
     (R3, the consistency rule, is not simulated here.)
 Added outputs per row: escalation_per_year (share of vehicle-years with >= 1 escalation), escalation_ub95,
 inspections_per_year (mean number of escalations), punitive_union_per_year, punitive_union_ub95. Added section
-sens_tyre: honest vehicles with s = -5 % exactly (an oversized tyre), reported, never part of the honest fallback test.
+sens_tyre: honest vehicles with s = -5 % exactly (an oversized tyre), reported separately, not part of the honest rows.
 Usage: python inhouse/decisions.py --levels 8 [--vehicles 20000] [--smoke]
 """
 import argparse
@@ -28,11 +28,11 @@ from scipy import stats
 
 import decisions_base as DB
 import decisions_levels as E
-from levels_qualification import requalify, scale_to_disclosed
 from decisions_base import ALPHA_R1, C_WIN, EPOCHS, M_MIN, N_REF, S_RULE, cp_upper, seed
 from decisions_levels import B_WINDOW
 from decisions_monitor import (ARC_M, BURST_S, HONEST, SIGMA_MAX, _sim_view, atomic_json, decide_popcal, keep_prob,
                             simulate)
+from levels_qualification import requalify, scale_to_disclosed
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "results")
@@ -84,6 +84,7 @@ def escalation(sim, b, s_insp, guard=True, recentre=True):
 
 
 def add_union(out, punitive, n_esc, n):
+    """Add the escalation rates and the union (R2 punitive or any escalation) to the row out."""
     esc = n_esc > 0
     union = punitive | esc
     out.update(escalation_per_year=float(esc.mean()), escalation_ub95=cp_upper(int(esc.sum()), n),
@@ -155,7 +156,7 @@ def main():
                 rep["honest"][f"cv{cv}|{vt}|{lam}"] = h; save()
                 log(f"honest cv={cv} {vt:8s} lam={lam:2d}: punitive/yr {h['punitive_per_year']:.1e} union/yr "
                     f"{h['punitive_union_per_year']:.1e} (UB {h['punitive_union_ub95']:.1e}) esc/yr {h['escalation_per_year']:.1e}")
-    for vt in E.PROFILES:                                    # sens_tyre: reported, never in the fallback test
+    for vt in E.PROFILES:                                    # sens_tyre: reported separately
         for lam in lams:
             if f"tyre|{vt}|{lam}" in rep["sens_tyre"]:
                 continue

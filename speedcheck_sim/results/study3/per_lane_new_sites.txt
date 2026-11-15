@@ -1,0 +1,12 @@
+== TR survey role ref 18:17:50
+U3 h_pp_now_c20: survey crossings per lane (all sites, both speeds) {0: 405, 1: 195}
+  v10 lane 0: n =  1702 (crossing x variant), mean -0.44 % [-0.85, +0.05], sd 3.80 %
+  v10 lane 1: n =   816 (crossing x variant), mean +0.93 % [+0.17, +1.78], sd 4.41 %
+  v15 lane 0: n =  1960 (crossing x variant), mean -0.55 % [-1.16, -0.10], sd 3.60 %
+  v15 lane 1: n =   792 (crossing x variant), mean +1.86 % [+0.90, +2.67], sd 3.98 %
+== TR survey role reff 18:21:44
+U3 h_pp_now_c20: survey crossings per lane (all sites, both speeds) {0: 405, 1: 195}
+  v10 lane 0: n =  2208 (crossing x variant), mean +0.55 % [+0.01, +1.16], sd 4.18 %
+  v10 lane 1: n =  1150 (crossing x variant), mean +2.18 % [+1.45, +2.88], sd 5.01 %
+  v15 lane 0: n =  2536 (crossing x variant), mean +0.34 % [-0.08, +0.81], sd 3.93 %
+  v15 lane 1: n =  1062 (crossing x variant), mean +3.02 % [+2.29, +3.69], sd 4.41 %

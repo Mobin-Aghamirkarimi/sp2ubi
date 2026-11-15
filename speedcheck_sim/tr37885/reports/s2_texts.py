@@ -1,5 +1,4 @@
-"""Study 2 texts (keys S2|...; no hand-typed number). The study-2 keys, branches and templates live here; the study-1
-report modules are not changed.
+"""Study 2 texts (keys S2|...; no hand-typed number). The study-2 keys, branches and templates live here.
   numbers(crit, outcome, dec)   number keys S2|<cell>|..., S2|splace|..., S2|d0r1|..., S2|d0r2|<cell>|<Dev>|share / |eb, S2|design|..., the Table A2 keys A2|... (stage 3, make_reports.table_a)
   branches(outcome, crit, dec)  branch keys S2b|... (the outcome map: template; gate; rung per cell; k = 0; adopted
                                 estimator / N2 rule; H2; the study-2 S-place status)
@@ -13,6 +12,8 @@ report modules are not changed.
                                 clause, the study-1 urban clause STUDY1_URBAN_CLAUSE is replaced; abstract_check(tex, branches) applies the pre-specified rule on the realised branch
 Naming: the Dev-3 control tracks are "free-flow control crossings" in every study-2 text; the word
 "quadratic" never appears in a text key."""
+import argparse
+import ast
 import itertools
 import json
 import os
@@ -27,7 +28,7 @@ sys.path.insert(0, ER)
 
 U2_CELLS = ("P1-10", "P1-15")
 DEVS = ("Dev-1", "Dev-2")
-WIN = 0.25                                                # criteria.WIN (the +-25 % clip); checked in the tests
+WIN = 0.25                                                # stage3_criteria.WIN (the +-25 % clip)
 CONTROL_TRACKS = "free-flow control crossings"
 
 
@@ -101,12 +102,11 @@ def numbers(crit, outcome, dec):
 
 
 def design_numbers(C=None):
-    """Pre-specified design values printed in the texts, read from where they are pre-specified,
-    never typed: the Dev-3 sites (evaluation_v6.dev3.sites, half-open), the SUMO degree of saturation (sumo_kinematics.py.DEMAND_VC)
-    and the L2 share (evaluation_v4.scope_rule)."""
+    """Pre-specified design values printed in the texts, read from where they are pre-specified, never typed: the Dev-3
+    sites (evaluation_v6.dev3.sites, half-open), the SUMO degree of saturation (sumo_kinematics.py.DEMAND_VC) and the L2
+    share (evaluation_v4.scope_rule)."""
     C = C or json.load(open(os.environ.get("SPEEDCHECK_CONSTANTS", os.path.join(ER, "config", "study2_constants.json"))))
     lo, hi = C["evaluation_v6"]["dev3"]["sites"]
-    import ast
     src = open(os.path.join(ER, "sumo_kinematics.py")).read()   # read without importing sumo_kinematics.py (it needs the SUMO tools)
     vc = next(ast.literal_eval(node.value) for node in ast.parse(src).body if isinstance(node, ast.Assign)
               and any(getattr(t, "id", None) == "DEMAND_VC" for t in node.targets))
@@ -241,7 +241,7 @@ SUMMARY_END = (" The development-stage diagnosis and every rejected candidate ar
 
 
 def t3n_text(k, rating=None):
-    """T3-N on the study-2 records: the pre-specified study-1 T3-N template exactly (access.tex T3-N),
+    """T3-N on the study-2 records: the pre-specified study-1 T3-N template of the paper source,
     'free-road survey' -> 'survey in traffic' only: sigma_g1 with the upper end of its
     95 % CI (A2|P3-15|sigma_g1, A2|P3-15|sigma_g1_ci_hi); the limitation sentence only when the scope rating is
     'not covered', as in study-1."""
@@ -387,9 +387,9 @@ def b_unquantified(crit):
 
 
 def table_b_keys(adapter_dir, tag):
-    """At L3: the reports/make_reports functions for the Table B stratum rows,
-    Table B (honest bound, escalation status) and the matching-simulation keys, applied to the decision adapter's outputs on the
-    held-out records (tables_, e2_extracted_, e5_extracted_<tag>.json); every key prefixed S2|... Returns (keys, notes)."""
+    """At L3: the reports/make_reports functions for the Table B stratum rows, Table B (honest bound, escalation status)
+    and the matching-simulation keys, applied to the decision adapter's outputs on the held-out records (tables_,
+    e2_extracted_, e5_extracted_<tag>.json); every key prefixed S2|... Returns (keys, notes)."""
     from reports import make_reports as MR
 
     def load(name):
@@ -428,9 +428,9 @@ def write(crit, outcome, dec, out_dir, tag, adapter_dir=None):
 
 # ---------------------------------------------------------------------------------------------- D0.1 printing
 def d0_1_cell(entry):
-    """One D0.1 stratum (s2_selection.d0_1: bias, sigma (residuals clipped at +-25 %, stage3_criteria.sigma), n) as printed in the
-    supplement. sigma = 0 with n >= 2 and |bias| > 25 % means every residual was clipped on the same side: printed as
-    "all |e| > 25 %"; n < 2: sigma is not defined. n is always printed."""
+    """One D0.1 stratum (s2_selection.d0_1: bias, sigma (residuals clipped at +-25 %, stage3_criteria.sigma), n) as
+    printed in the supplement. sigma = 0 with n >= 2 and |bias| > 25 % means every residual was clipped on the same
+    side: printed as "all |e| > 25 %"; n < 2: sigma is not defined. n is always printed."""
     b, s, n = entry.get("bias"), entry.get("sigma"), int(entry.get("n", 0))
     bs = f"{100 * b:.1f} %" if _fin(b) else "n/a"
     if n < 2:
@@ -597,7 +597,7 @@ NOT_COVERED = ("not_covered_floor", "not_covered_unqualified", "not_covered_c5",
 def realised_choice(tex, branches_tex):
     """The realised study-1 branch of the abstract from the generated branch file (speedpath/speedpath-branches.tex):
     \\sphwonly prints its first argument iff Bstratum|urban is not covered and Bstratum|highway is covered or
-    covered_short (access.tex \\sphwonly / \\spstratum); \\spfeas its first argument unless feas|status = feasibility;
+    covered_short (\\sphwonly / \\spstratum of the paper source); \\spfeas its first argument unless feas|status = feasibility;
     each tested \\spb key its realised value ('other' if untested)."""
     br = dict(re.findall(r"\\csname spb@([^\\]*)\\endcsname\{([^{}]*)\}", branches_tex))
     _, _, spb = abstract_parts(tex)
@@ -610,8 +610,9 @@ def realised_choice(tex, branches_tex):
 
 
 def abstract_check(tex, branches_tex=None, design_constants=None):
-    """The pre-specified abstract rule (abstract <= 250 words): every branch without the study-2 clause is <= 250
-    words, and the realised study-1 branch with the two-cell L3 clause (L3 needs both U2 cells at L2) is <= 250 words. The one-cell count is reported only."""
+    """The pre-specified abstract rule (abstract <= 250 words): every branch without the study-2 clause is <= 250 words,
+    and the realised study-1 branch with the two-cell L3 clause (L3 needs both U2 cells at L2) is <= 250 words. The
+    one-cell count is reported only."""
     res = abstract_word_counts(tex, design_constants)
     out = dict(max_without=max(w for _, cl, w in res if cl is None), combinations=len(res))
     if branches_tex is not None:
@@ -627,13 +628,15 @@ def abstract_check(tex, branches_tex=None, design_constants=None):
 
 
 def main():
-    import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--abstract", help="paper .tex: the abstract <= 250 words rule (with --branches: on the realised branch)")
     ap.add_argument("--branches", help="the generated study-1 branch file speedpath/speedpath-branches.tex")
-    ap.add_argument("--criteria"), ap.add_argument("--outcome"), ap.add_argument("--decision")
+    ap.add_argument("--criteria")
+    ap.add_argument("--outcome")
+    ap.add_argument("--decision")
     ap.add_argument("--adapter-dir", help="the adapter outputs of stage 3 (Table B keys at L3)")
-    ap.add_argument("--out"), ap.add_argument("--tag")
+    ap.add_argument("--out")
+    ap.add_argument("--tag")
     a = ap.parse_args()
     if a.abstract:
         r = abstract_check(open(a.abstract).read(), open(a.branches).read() if a.branches else None)

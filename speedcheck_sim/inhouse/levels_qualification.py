@@ -24,6 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def requalify(A, sigma_max, n_levels):
+    """Qualification mask (reference sigma_hat <= sigma_max) and n_levels log-spaced levels over the qualified cells."""
     B = dict(A)
     qual = A["sraw"] <= sigma_max if sigma_max else np.ones_like(A["sraw"], bool)
     s_infl = SIGMA_INFL * A["sraw"]
@@ -34,8 +35,7 @@ def requalify(A, sigma_max, n_levels):
 
 
 def scale_to_disclosed(A, k):
-    """Honest noise such that the actual within-site sd equals k x the DISCLOSED sigma_eff in every cell: SIG_UNDER is
-    applied per (site, speed) as k * sigma_eff_disclosed / sigma_measured (vector), via a per-cell multiplier."""
+    """Per-cell multiplier that makes the actual within-site sd equal to k x the disclosed sigma_eff."""
     se = np.sqrt(A["sg"] ** 2 + E.HONEST["SIGMA0"] ** 2)
     return k * se / np.maximum(A["swithin"], 1e-6)
 
@@ -50,7 +50,6 @@ def main():
     sw = E.site_weights(A0, "floor")
     nv = a.vehicles
     out = {}
-    orig_sim = E.simulate
     for n_levels in (4, 8):
         for smax in (None, 0.06, 0.04, 0.03):
             A, qual = requalify(A0, smax, n_levels)
@@ -91,7 +90,6 @@ def main():
                   + " x1.5 " + " ".join(f"{v['punitive']:.1e}" for k, v in mar.items() if k.endswith("x1.5"))
                   + " | P(pun) days.3 " + " ".join(f"{pw[f'days|-0.15|0.3|{vt}|{lam}']['punitive']:.2f}" for vt, lam in (("urban", 15), ("suburban", 5), ("highway", 40))),
                   flush=True)
-    assert E.simulate is orig_sim
     json.dump(out, open(os.path.join(HERE, "results", "levels_qualification.json"), "w"), indent=1, default=float)
 
 

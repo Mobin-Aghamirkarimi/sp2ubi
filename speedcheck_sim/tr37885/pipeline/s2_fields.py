@@ -1,36 +1,38 @@
 """Study 2: the stage-2 fields of the development-stage candidates and diagnostics, computed beside the study-1 fields
-of every record by pipeline/s2_evaluate.py, which runs pipeline/stage2_evaluate.evaluate_site unchanged (stage-2 re-runs
-from the stage-1 records: tags dev_s2_cal and dev_s2) and adds these fields afterwards. Every field is RSU-observable unless marked "truth
-(reporting only)"; no VSS datum enters a field (the VSS speed enters only the numerator of b̂). Every field is
+of every record by pipeline/s2_evaluate.py, which runs pipeline/stage2_evaluate.evaluate_site (stage-2 re-runs from the
+stage-1 records: tags dev_s2_cal and dev_s2) and adds these fields afterwards. Every field is RSU-observable unless
+marked "truth (reporting only)"; no VSS datum enters a field (the VSS speed enters only the numerator of b_hat). Every field is
 computed identically for honest and manipulated (beta) passes and for every arm.
 
-Fields (all new):
-  rho_fit          ρ̂ of the pass's tied offset LS fit (fit_pass_offset); L-B′ (N18) and E-e read it
+Fields:
+  rho_fit          rho_hat of the pass's tied offset LS fit (fit_pass_offset); L-B' (N18) and E-e read it
   acc_fit          E-c: p[2], the fitted acceleration of that fit (m/s^2)
-  stop_abs         E-d, the RSU-only low-speed-run (stop) detector (N12; pre-specified span only): the
-                   smallest score in Hz for which the detector fires: min over runs of consecutive received beacons whose
-                   air times span >= 1 s, lying wholly inside the inter-head span (FDOA bracket 0.25 max |FDOA - δ̂|
-                   ∪ x̂ in [0, D]), of the run's max |FDOA - δ̂|. Stage 3 detects iff stop_abs < k_stop x the
-                   site's survey rms_ref_med (s2_criteria.stop_detected); the threshold is set by free-road survey
-                   passes, so it is a level of |FDOA - δ̂| that a slow steady crawl can also stay below (stated in the
-                   supplement). No stage-2 verdict is stored: the stop decision is made at stage 3 only.
+  stop_abs         E-d, the RSU-only low-speed-run (stop) detector (N12; pre-specified span only): the smallest
+                   score in Hz for which the detector fires: min over runs of consecutive received beacons whose air
+                   times span >= 1 s, lying wholly inside the inter-head span (FDOA bracket 0.25 max |FDOA - delta_hat|
+                   union x_hat in [0, D]), of the run's max |FDOA - delta_hat|. Stage 3 detects iff stop_abs < k_stop x
+                   the site's survey rms_ref_med (s2_criteria.stop_detected); the threshold is set by free-road survey
+                   passes, so it is a level of |FDOA - delta_hat| that a slow steady crawl can also stay below (stated
+                   in the supplement). No stage-2 verdict is stored: the stop decision is made at stage 3 only.
   c_prof, c_match, c_n
-                   E-f (N17): the study-1 sums over the core beacons x̂ in [-0.05 D, 1.05 D] of the full-window fit
+                   E-f (N17): the study-1 sums over the core beacons x_hat in [-0.05 D, 1.05 D] of the full-window fit
   n_beacons        the number of beacons of the record's fit (D0.3: E-f core share = c_n / n_beacons)
-  w_mse            the ±4 s window fit's mse (reported only)
-  blk_drop_max_db  L-B: the largest drop of the head-A received power per beacon (10 log10 mean |y_A|^2 over the beacon's
-                   samples) below the pass's own fitted large-scale trend a + b log10 r̂_A (r̂_A from the tied fit's
-                   x̂ and ρ̂), dB. No entry under L-B if blk_drop_max_db > Δ_blk (N13) (stage-3 inclusion, pass level).
+  w_mse            the +-4 s window fit's mse (reported only)
+  blk_drop_max_db  L-B: the largest drop of the head-A received power per beacon (10 log10 mean |y_A|^2 over the
+                   beacon's samples) below the pass's own fitted large-scale trend a + b log10 r_hat_A (r_hat_A from the
+                   tied fit's x_hat and rho_hat), dB. No entry under L-B if blk_drop_max_db > Delta_blk (N13) (stage-3
+                   inclusion, pass level).
   blk_drop_med5_db reported only (D0.6): the largest 5-beacon running median of the same drop
   prof_2s, match_2s[prof_2s_T; match_2s_T]
-                   E-e: the profile / matched statistics of the two-segment, ρ-fixed fit (fdoa.estimator
-                   .fit_pass_two_segment), ρ fixed per lane from the site's survey ρ̂ (median per survey lane over the
-                   included survey passes, same variant; the survey vehicle's lane is known by design); a pass takes the
-                   survey lane whose ρ̂ is nearest its own ρ̂_fit (RSU-side; the test pass's SUMO lane is never used).
+                   E-e: the profile / matched statistics of the two-segment, rho-fixed fit (fdoa.estimator
+                   .fit_pass_two_segment), rho fixed per lane from the site's survey rho_hat (median per survey lane
+                   over the included survey passes, same variant; the survey vehicle's lane is known by design); a pass
+                   takes the survey lane whose rho_hat is nearest its own rho_fit (RSU-side; the test pass's SUMO lane
+                   is never used).
                    Reading F: survey = role "ref" as recorded; reading T (Dev-2 only, surrogate=True): survey = test
                    passes jr < 30.
   v_min_window     truth (reporting only, D0.1): the true minimum speed inside the window [-0.05 L, 1.05 L]
-  g_share_window   truth (reporting only, D0.3): share of the total |Δg| of the pass covered by the ±4 s window
+  g_share_window   truth (reporting only, D0.3): share of the total |Delta g| of the pass covered by the +-4 s window
   junction_x       truth (reporting only, D0.1): the SUMO junction position of the site's track (info.junction_x)"""
 import os
 import sys
@@ -51,7 +53,7 @@ VERSION = "study2-fields-2"          # version of the study-2 fields, stored in 
 
 # ---------------------------------------------------------------------------------------------- tied fit
 def tied_fit(t_b, fd, site):
-    """The study-1 tied offset fit: p = (x_mid, v_mid, acc, rho), δ̂, t_mid, residuals."""
+    """The study-1 tied offset fit: p = (x_mid, v_mid, acc, rho), delta_hat, t_mid, residuals."""
     q, tm, resid, ok = fit_pass_offset(t_b, fd, site)
     return q[:4], float(q[4]), tm, resid, bool(ok)
 
@@ -70,13 +72,13 @@ def run_windows(t_b, run_s=S2.N12_STOP_RUN_S):
 
 
 def bracket_fit(xhat, D):
-    """'Inside [0, D]' from the tied fit's x̂."""
+    """'Inside [0, D]' from the tied fit's x_hat."""
     return (xhat >= 0.0) & (xhat <= D)
 
 
 def bracket_fdoa(fd, delta, frac=S2.N12_BRACKET_FRAC):
     """N12: RSU-observable head bracketing from the pass's own FDOA curve (inside the heads |g| >~ 1): the
-    inter-head span runs from the first to the last beacon with |FDOA - δ̂| >= frac x its maximum; a
+    inter-head span runs from the first to the last beacon with |FDOA - delta_hat| >= frac x its maximum; a
     stop inside the heads lies within it."""
     a = np.abs(fd - delta)
     inside = np.zeros(fd.size, bool)
@@ -87,14 +89,15 @@ def bracket_fdoa(fd, delta, frac=S2.N12_BRACKET_FRAC):
 
 
 def bracket_span(fd, delta, xhat, D):
-    """N12: the pre-specified inter-head span: the FDOA bracket ∪ {x̂ in [0, D]}."""
+    """N12: the pre-specified inter-head span: the FDOA bracket union {x_hat in [0, D]}."""
     return bracket_fdoa(fd, delta) | bracket_fit(xhat, D)
 
 
 def core_statistics(t_b, fd, vx, p, tm, delta, D, arc):
-    """N17, E-f: the study-1 profile / matched sums restricted to the core set C = {i : x̂(τ_i) in [arc0 D, arc1 D]}
-    of the full-window tied fit (same p, δ̂, tm; no refit): c_prof = Σ_C v̂ v_sen / Σ_C v̂² - 1, c_match =
-    Σ_C g² v_sen / (λ Σ_C g f̃) - 1, f̃ = f - δ̂. Fewer than 12 core beacons -> NaN (no entry)."""
+    """N17, E-f: the study-1 profile / matched sums restricted to the core set C = {i : x_hat(tau_i) in [arc0 D, arc1
+    D]} of the full-window tied fit (same p, delta_hat, tm; no refit): c_prof = sum_C v_hat v_sen / sum_C v_hat^2 - 1,
+    c_match = sum_C g^2 v_sen / (lambda sum_C g f_tilde) - 1, f_tilde = f - delta_hat. Fewer than 12 core beacons -> NaN
+    (no entry)."""
     tau = t_b - tm
     xh = p[0] + p[1] * tau + 0.5 * p[2] * tau ** 2
     c = (xh >= arc[0] * D) & (xh <= arc[1] * D)
@@ -109,9 +112,9 @@ def core_statistics(t_b, fd, vx, p, tm, delta, D, arc):
 
 
 def stop_scores(t_b, fd, delta, rms, xhat, D, run_s=S2.N12_STOP_RUN_S, inside=None):
-    """Per start beacon i: the max of |FDOA - δ̂| / RMS over the run [i, j(i)] if the whole run lies inside the head
-    bracket (default: x̂ in [0, D]), else +inf. The detector fires at k if some score < k. rms = 1 gives the score in Hz
-    (normalised at stage 3 by the site scale rms_ref_med)."""
+    """Per start beacon i: the max of |FDOA - delta_hat| / RMS over the run [i, j(i)] if the whole run lies inside the
+    head bracket (default: x_hat in [0, D]), else +inf. The detector fires at k if some score < k. rms = 1 gives the
+    score in Hz (normalised at stage 3 by the site scale rms_ref_med)."""
     n = t_b.size
     sc = np.full(n, np.inf)
     if n == 0 or not np.isfinite(rms) or rms <= 0:
@@ -139,8 +142,8 @@ def head_power_db(yb_head):
 
 
 def blk_drop_max_db(p_db, xhat, rho_hat):
-    """The largest drop (dB) of the per-beacon power below the pass's own fitted large-scale trend a + b log10 r̂_A,
-    r̂_A = sqrt(x̂^2 + ρ̂^2) (head A at x = 0). NaN with fewer than 3 beacons."""
+    """The largest drop (dB) of the per-beacon power below the pass's own fitted large-scale trend a + b log10 r_hat_A,
+    r_hat_A = sqrt(x_hat^2 + rho_hat^2) (head A at x = 0). NaN with fewer than 3 beacons."""
     if p_db.size < 3:
         return float("nan")
     lr = np.log10(np.sqrt(xhat ** 2 + rho_hat ** 2))
@@ -163,7 +166,7 @@ def blk_drop_med5_db(p_db, xhat, rho_hat, k=5):
 
 # ---------------------------------------------------------------------------------------------- E-e
 def stats_two_segment(t_b, fd, vx, site, rho):
-    """Profile and matched statistics of the two-segment, ρ-fixed fit."""
+    """Profile and matched statistics of the two-segment, rho-fixed fit."""
     if not np.isfinite(rho) or t_b.size < 12:
         return np.nan, np.nan
     q, tm, _, ok = fit_pass_two_segment(t_b, fd, site, rho)
@@ -183,14 +186,15 @@ def lane_of(y_mean, lane_width):
 
 
 def included_s(r):
-    """stage3_criteria.included (the RSU-observable inclusion: window rule, finite statistics) without importing criteria."""
+    """stage3_criteria.included (the RSU-observable inclusion: window rule, finite statistics) without importing
+    criteria."""
     return bool(r.get("window_ok", True) and r.get("finite", np.isfinite(r.get("match", np.nan))
                                                     and np.isfinite(r.get("prof", np.nan))))
 
 
 def rho_table(survey_recs, lane_width):
-    """Survey ρ̂ per lane: median ρ̂_fit over the included survey passes of the lane (the survey vehicle's lane is known;
-    as for L-B′, only included survey passes)."""
+    """Survey rho_hat per lane: median rho_hat_fit over the included survey passes of the lane (the survey vehicle's
+    lane is known; as for L-B', only included survey passes)."""
     by = {}
     for r in survey_recs:
         if included_s(r) and np.isfinite(r.get("rho_fit", np.nan)):
@@ -199,19 +203,19 @@ def rho_table(survey_recs, lane_width):
 
 
 def rho_for(rec, table):
-    """RSU-side lane assignment: the survey lane whose ρ̂ is nearest the pass's own ρ̂_fit."""
+    """RSU-side lane assignment: the survey lane whose rho_hat is nearest the pass's own rho_hat_fit."""
     if not table or not np.isfinite(rec.get("rho_fit", np.nan)):
         return np.nan
     return min(table.values(), key=lambda v: abs(v - rec["rho_fit"]))
 
 
 def rho_lane_offset(recs, is_survey, lane_width):
-    """L-B′ (N18): per record, min over the site's surveyed lanes ℓ of
-    |ρ̂ - ρ̂_survey,ℓ|, ρ̂ = rho_fit, ρ̂_survey,ℓ = the median rho_fit of the site's survey passes in lane ℓ (same family,
-    cell, speed, arm, mapping, PRB); for a survey pass the median of its own lane EXCLUDES the pass itself
-    (leave-one-out). Survey passes: is_survey(r) (the caller's inclusion rule); their lane from y_mean (the survey
-    vehicle's lane is known by design); a test pass's lane is never used. lane_width: callable r -> lane width (m).
-    Returns a list of floats aligned with recs (NaN: no finite ρ̂, or no surveyed lane)."""
+    """L-B' (N18): per record, min over the site's surveyed lanes l of |rho_hat - rho_hat_survey,l|, rho_hat = rho_fit,
+    rho_hat_survey,l = the median rho_fit of the site's survey passes in lane l (same family, cell, speed, arm, mapping,
+    PRB); for a survey pass the median of its own lane EXCLUDES the pass itself (leave-one-out). Survey passes:
+    is_survey(r) (the caller's inclusion rule); their lane from y_mean (the survey vehicle's lane is known by design); a
+    test pass's lane is never used. lane_width: callable r -> lane width (m). Returns a list of floats aligned with recs
+    (NaN: no finite rho_hat, or no surveyed lane)."""
     grp = lambda r: (r.get("family"), r["site"], r["cell"], r["v0"], r["arm"], r["mapping"], r["prb"])
     members = {}
     for i, r in enumerate(recs):
@@ -233,9 +237,10 @@ def rho_lane_offset(recs, is_survey, lane_width):
 
 # ---------------------------------------------------------------------------------------------- the stage-2 hook
 class S2Fields:
-    """The study-2 fields of one site's stage-2 run (in record order; with the beacons of the record's fit; `attach` adds the fields to
-    the finished records). only_roles: restrict the passes (dev_s2_cal: ("ref")); surrogate: also the reading-T E-e fields (Dev-2 only); lane_width: the
-    scenario's lane width (stage3_criteria.lane_width rule); win_arc: the window rule's arc (constants window_rule.arc_L)."""
+    """The study-2 fields of one site's stage-2 run (in record order; with the beacons of the record's fit; `attach`
+    adds the fields to the finished records). only_roles: restrict the passes (dev_s2_cal: ("ref")); surrogate: also the
+    reading-T E-e fields (Dev-2 only); lane_width: the scenario's lane width (stage3_criteria.lane_width rule); win_arc:
+    the window rule's arc (constants window_rule.arc_L)."""
 
     def __init__(self, only_roles=None, surrogate=False, lane_width=3.5, win_arc=(-0.05, 1.05)):
         self.only_roles = tuple(only_roles) if only_roles else None
@@ -253,7 +258,7 @@ class S2Fields:
         return self.only_roles is None or m["role"] in self.only_roles
 
     def core(self, t_b, fd, vx, x, rho_true, survey, yb):
-        """The per-record fields from the record's beacons (t_b, FDOA, VSS speed, true position, true ρ, the survey
+        """The per-record fields from the record's beacons (t_b, FDOA, VSS speed, true position, true rho, the survey
         geometry, the received samples yb [2, n_b, M] of both heads)."""
         out = dict(rho_fit=np.nan, acc_fit=np.nan, blk_drop_max_db=np.nan, blk_drop_med5_db=np.nan, g_share_window=np.nan,
                    c_prof=np.nan, c_match=np.nan, c_n=0, w_mse=np.nan, stop_abs=np.nan)
@@ -280,10 +285,10 @@ class S2Fields:
 
     def attach(self, recs, meta):
         """Add the fields to the finished records (one `core` call per record, same order), the junction distance from
-        the stage-1 meta, then E-e on the whole site (ρ per lane from the survey of the same variant)."""
+        the stage-1 meta, then E-e on the whole site (rho per lane from the survey of the same variant)."""
         if len(recs) != len(self._stash):
             raise RuntimeError(f"study-2 fields: {len(self._stash)} fits for {len(recs)} records")
-        for r, (f, *_ ) in zip(recs, self._stash):
+        for r, (f, *_) in zip(recs, self._stash):
             clash = sorted(set(f) & set(r))
             if clash:
                 raise RuntimeError(f"study-2 field names clash with study-1 fields: {clash}")

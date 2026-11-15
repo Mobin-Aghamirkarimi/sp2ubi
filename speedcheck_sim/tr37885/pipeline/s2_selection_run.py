@@ -1,6 +1,6 @@
 """Study 2, development stage: loads exactly the pre-specified development records, refuses any record that
 this code did not produce, runs the pre-specified rules and the diagnostics D0.1-D0.6, and writes step0_decision.json
-and step0_report.json. It holds no rule of its own and prints no number.
+and step0_report.json. It holds no rule of its own.
 
 Inputs:
   --dev1 P0U=<dir> --dev1 P0N=<dir> --dev1 P0H=<dir>   Dev-1: the dev_s2 stage-2 re-run on the pilot stage-1 records
@@ -38,7 +38,7 @@ def _stage(prov, k):
 
 
 def load_dir(d, fam, kind, now):
-    """The records of one stage-2 folder; kind 's2' or 'study-1' (Dev-3)."""
+    """The records of one stage-2 folder; kind 's2' or 'study1' (Dev-3)."""
     from pipeline.s2_fields import VERSION
     paths = sorted(glob.glob(os.path.join(d, "site_*.json")))
     if not paths:

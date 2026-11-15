@@ -15,6 +15,8 @@ a claim by themselves) except the incomplete-run labels, which follow a rule pre
         Clopper-Pearson and a logistic fit, over the TR 37.885 sites of all cells; descriptive only, never a rule;
   * the incomplete-run labels: per cell, n completed sites of the planned 10;
         n >= 4 -> 'n of 10 planned site draws (compute window)', n <= 3 -> 'not run (compute)'."""
+import datetime as dt
+import json
 import os
 from contextlib import contextmanager
 
@@ -31,7 +33,8 @@ PLANNED = K.EV4["primary_sites"][1] - K.EV4["primary_sites"][0]
 
 @contextmanager
 def knobs(gate=None, sig_q=None, win=None, z_cut=None):
-    """Temporarily replace the pre-specified thresholds read by criteria's functions (gate None in the list = no gate)."""
+    """Temporarily replace the pre-specified thresholds read by criteria's functions (gate None in the list = no
+    gate)."""
     old = (K.GATE, K.SIG_Q, K.WIN, K.PC["z_threshold"])
     try:
         if gate is not None:
@@ -129,8 +132,7 @@ def snr_offset_rows(tag, families, governing):
     out = {}
     for off in SENS["snr_offsets_db"]:
         t = tag if off == 0 else (f"sens_snr{abs(off)}" if tag == "primary" else f"{tag}_snr{abs(off)}")
-        recs, _ = K.load(families, t)      # a missing tag loads as (reported as missing); a stage2_consistent
-        #                                    refusal propagates; the merge requires every tag
+        recs, _ = K.load(families, t)      # a missing tag loads no records and is reported as missing
         for key in SENS["snr_cells"]:
             cell, v0 = key.split("-")[0], float(key.split("-")[1])
             _, prb = _gov_variant(cell, governing)
@@ -189,9 +191,9 @@ def v2v_reading(recs, governing):
 
 # ------------------------------------------------------------------------------------------------ qualification vs K
 def qual_vs_k(recs, cells, governing, tag="primary", bins=(-np.inf, 2, 4, 6, 8, 10, np.inf)):
-    """Per TR 37.885 site: the weaker head's realised in-band K at the governing PRB over its survey passes, where it is qualified
-    (realised_k_median, role ref; then the stage-1 fields, then broadband), qualified or not, the survey sd and the gated
-    test sigma (Fig. E); the binned shares and the logistic fit leave out P3 (blocked crossings of urban
+    """Per TR 37.885 site: the weaker head's realised in-band K at the governing PRB over its survey passes, where it is
+    qualified (realised_k_median, role ref; then the stage-1 fields, then broadband), qualified or not, the survey sd
+    and the gated test sigma (Fig. E); the binned shares and the logistic fit leave out P3 (blocked crossings of urban
     sites, not a site type); and the type's realised K over its test passes (k_realised)."""
     from scipy.optimize import minimize
     fam_of = {"P1": "U", "P2": "H", "P3": "N"}
@@ -235,10 +237,10 @@ def qual_vs_k(recs, cells, governing, tag="primary", bins=(-np.inf, 2, 4, 6, 8, 
                 note="descriptive only; never a rule")
 
 
-# ------------------------------------------------------------------------------------------------ R8 (iv), (f)
+# ------------------------------------------------------------------------------------------------ R8 (iv)
 def over_governing(recs, cells, governing, head):
     """Share of qualified sites whose gated test sigma exceeds 1.5 x the governing sigma of the cell, with
-    Clopper-Pearson (the calibration of the T8 falsification statement)."""
+    Clopper-Pearson (the calibration of the falsification statement)."""
     out = {}
     hd = {f"{h['cell']}-{h['v0']:g}": h for h in head}
     for cell, v0 in cells:
@@ -287,7 +289,7 @@ def per_beacon_governing(recs, cells, governing, bins=tuple(range(-5, 50, 5))):
 
 
 def decode_threshold_db(prb):
-    """The decoding line at a PRB (constants evaluation_v5.decoding; evaluate.decode_threshold_db)."""
+    """The decoding line at a PRB (constants evaluation_v5.decoding; stage2_evaluate.decode_threshold_db)."""
     d = EV5["decoding"]
     return float(d["snr_50rb_db"] + 10 * np.log10(prb / d["refsens_rb"]))
 
@@ -298,7 +300,8 @@ INHOUSE_K_GRID = (6.0, 10.0, 15.0, 20.0)
 def realised_k_median(recs, cell, prb, v0=None, site=None, role="test"):
     """The one realised-K function: the equal-K cell (Table B), the bridge label, the
     K-anchor value and Fig. E. Median over the stratum's (or one site's) honest test passes at the PRB of the weaker
-    head's in-band K of the TR 37.885 pass (K_inhouse_db: the per-head in-band K at which the paired in-house arm is drawn);
+    head's in-band K of the TR 37.885 pass (K_inhouse_db: the per-head in-band K at which the paired in-house arm is
+    drawn);
     role="ref": over the survey passes, the K at which a site is qualified."""
     ks = [min(r["K_inhouse_db"]) for r in recs if r["cell"] == cell and r["arm"] == "inhouse" and r["prb"] == prb
           and r["role"] == role and r.get("beta", 0.0) == 0.0 and r.get("K_inhouse_db") and r.get("kin", "sumo") == "sumo"
@@ -314,12 +317,11 @@ def inhouse_k_cell(k_med):
 def site_inband_k(fam, site, tag, prb):
     """Median over the site's reference passes of the weaker head's realised in-band K at the PRB (stage-1 K fields,
     npz or kx extract); None if absent."""
-    import json as _j
     d = os.path.join(K.RUNS, f"g1_{fam}")
     js = os.path.join(d, f"site_{site:03d}.json")
     if not os.path.exists(js):
         return None
-    S1 = _j.load(open(js))
+    S1 = json.load(open(js))
     if S1.get("provenance", {}).get("tag") != tag:
         return None
     if os.path.exists(js[:-5] + ".npz"):
@@ -329,7 +331,7 @@ def site_inband_k(fam, site, tag, prb):
         kx = js[:-5] + ".kx.json"
         if not os.path.exists(kx):
             return None
-        Z = {k: np.asarray(v, float) for k, v in _j.load(open(kx)).items()}
+        Z = {k: np.asarray(v, float) for k, v in json.load(open(kx)).items()}
         prbs = list(C["beacon"]["prb"]["swept"])
     if prb not in prbs:
         return None
@@ -354,7 +356,7 @@ def incomplete_labels(n_sites):
 
 
 def apply_incomplete_scope(sc, labels):
-    """: under --incomplete-run, a cell labelled 'not run (compute)' gets that rating and leaves the type rule; a
+    """Under --incomplete-run, a cell labelled 'not run (compute)' gets that rating and leaves the type rule; a
     type is rated on its run cells, with the suffix '(speed classes [v] not run: compute window)'."""
     out = dict(cells=dict(sc["cells"]), types={})
     for c, lab in labels.items():
@@ -374,7 +376,6 @@ def apply_incomplete_scope(sc, labels):
 
 def window_closed(now_utc=None):
     """True if the pre-specified compute window (constants evaluation_v5.window_end_utc) has closed."""
-    import datetime as dt
     end = EV5.get("window_end_utc")
     if not end:
         return False

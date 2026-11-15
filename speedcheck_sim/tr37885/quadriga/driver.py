@@ -22,7 +22,7 @@ import scatterer_mobility as sm  # noqa: E402
 from fdoa.geometry import LAMBDA, Site, make_trajectory  # noqa: E402
 
 VEH_Z, HEAD_Z = 1.6, 5.0
-C_MAX, RAYS = 64, 20                  # cluster bound incl. QuaDRiGa sub-clusters (LOS smoke: 35 paths; NLOSv more); quadriga/site.m errors if exceeded
+C_MAX, RAYS = 64, 20                  # cluster bound incl. QuaDRiGa sub-clusters; quadriga/site.m errors if exceeded
 
 
 @dataclass
@@ -38,6 +38,7 @@ class PassInput:
 QUADRIGA_PATH = os.environ.get("QUADRIGA_PATCHED_DIR", os.path.join(os.path.dirname(os.path.dirname(HERE)), json.load(open(
     os.environ.get("SPEEDCHECK_CONSTANTS", os.path.join(os.path.dirname(HERE), "config", "study1_constants.json"))))[
     "quadriga"]["patched_path"]))   # default: speedcheck_sim/quadriga_patched
+
 
 def beacon_schedule(rng, traj, beacon_hz=10.0, packet_s=1e-3):
     """Same rule as fdoa.channel.simulate_pass: 10 Hz from t0 + 0.05 s with a uniform random phase."""
@@ -76,11 +77,11 @@ def build_pass(rng, site: Site, v0, Q, v_scatt, alpha="uniform", granularity="ra
 
 
 def run_site(cfg, site: Site, passes, seed, workdir=None, veh_el=None, tx_heads=None, ckpt_dir=None):
-    """Run quadriga/site.m for one site; returns dict[(pass, head)] -> dict(off, on, dl, kf, pf, nray, ls). Head element: TR 37.885
-    UE-type RSU (antenna.HEAD); vehicle: iso (primary) or veh_el (e.g. antenna.VEH_TYPE2, sensitivity). cfg: scenario name
-    or one per transmitter (with tx_heads); passes must be built with n_tx = number of transmitters. ckpt_dir: per-builder
-    checkpoint folder of quadriga/site.m, outside the work folder so that it survives a restart;
-    None: no checkpoint."""
+    """Run quadriga/site.m for one site; returns dict[(pass, head)] -> dict(off, on, dl, dlon, kf, pf, nray, ls). Head
+    element: TR 37.885 UE-type RSU (antenna.HEAD); vehicle: iso (primary) or veh_el (e.g. antenna.VEH_TYPE2,
+    sensitivity). cfg: scenario name or one per transmitter (with tx_heads); passes must be built with n_tx = number of
+    transmitters. ckpt_dir: per-builder checkpoint folder of quadriga/site.m, outside the work folder so that it
+    survives a restart; None: no checkpoint."""
     wd = workdir or tempfile.mkdtemp(prefix="g1_")
     try:
         fin, fout = os.path.join(wd, "in.mat"), os.path.join(wd, "out.mat")
@@ -91,9 +92,11 @@ def run_site(cfg, site: Site, passes, seed, workdir=None, veh_el=None, tx_heads=
         if r.returncode != 0 or not os.path.exists(fout):
             raise RuntimeError(r.stdout[-2000:] + r.stderr[-2000:])
         return read_output(fout, len(passes), n_tx)
-    finally:                                            # own work folder (in.mat + out.mat, up to ~2.5 GB at full size):
-        if workdir is None:                             # removed on success and on any Python-level failure;
-            shutil.rmtree(wd, ignore_errors=True)       # a SIGKILL leaves it for the next start to clean up
+    finally:
+        # own work folder (in.mat + out.mat, up to ~2.5 GB at full size): removed on success and on any Python-level
+        # failure; a SIGKILL leaves it for the next start to clean up
+        if workdir is None:
+            shutil.rmtree(wd, ignore_errors=True)
 
 
 def write_input(fin, cfg, site: Site, passes, seed, veh_el=None, tx_heads=None):
@@ -116,7 +119,7 @@ def write_input(fin, cfg, site: Site, passes, seed, veh_el=None, tx_heads=None):
 
 def octave_cmd(fin, fout, ckpt_dir=None):
     ck = f", '{ckpt_dir}'" if ckpt_dir else ""
-    return ["octave", "--no-gui", "-q", "--eval", f"addpath('{HERE}'); g1_site('{fin}', '{fout}'{ck});"]
+    return ["octave", "--no-gui", "-q", "--eval", f"addpath('{HERE}'); site('{fin}', '{fout}'{ck});"]
 
 
 def read_output(fout, n_pass, n_tx):
@@ -139,10 +142,7 @@ if __name__ == "__main__":                              # smoke test: 2 passes, 
     rng = np.random.default_rng(1)
     site = Site(D=100.0, pole_offset=float(rng.uniform(6, 12)), dh=HEAD_Z - VEH_Z)
     passes = [build_pass(rng, site, 15.0, Q=16, v_scatt=16.7) for _ in range(2)]
-    import time
-    t0 = time.time()
     res = run_site("3GPP_37.885_Urban_LOS", site, passes, seed=1)
-    print("site run s", round(time.time() - t0, 1))
     for k, v in res.items():
         print(k, "paths x snaps", v["off"].shape, "kf seg dB", np.round(v["kf"], 2), "pf median", np.round(np.median(v["pf"][:, 1:]), 3),
               "snaps expected", passes[k[0]].t_snap.size)

@@ -1,12 +1,12 @@
 """Site-accuracy simulation: per-pass speed-check error with site structure, for the matched and profile statistics.
 
-Changes from e1_fdoa_accuracy.py (kept for the first grid):
+Model:
   * sites: each cell has N_SITES sites with their own surveyed geometry (pole offset 6-12 m, head height 4.5-6.5 m
-    above the vehicle antenna, known to the RSU) and, where present, a site-FIXED specular reflector; passes are
+    above the vehicle antenna, known to the RSU) and, where present, a site-fixed specular reflector; passes are
     nested in sites, so between-site bias is measured instead of averaged away;
   * lane changes with probability 0.1, optional mean deceleration (vehicles slowing towards a junction);
   * statistics per pass: profile (fitted smooth speed), matched (geometry from the fit, speed profile from the VSS),
-    matched with TRUE geometry (diagnostic: separates estimation error of g from channel-induced bias);
+    matched with true geometry (diagnostic: separates estimation error of g from channel-induced bias);
   * two analysis windows: full pass, and +-4 s around the crossing of the mid-point between the heads;
   * per-pass records (incl. the fitted speed class, the RSU's own covariate) saved for the decision simulation.
 Honest VSS here is perfect (v_sen = v_true); VSS errors are added in the decision simulation.
@@ -31,13 +31,12 @@ from fdoa.geometry import FC, LAMBDA, Site, make_trajectory
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "results")
 HALF_WINDOW_S = 4.0
-
-
-OFFSET_FIT = False        # estimate the head-to-head offset delta as a nuisance parameter
+OFFSET_FIT = False       # estimate the head-to-head offset delta as a nuisance parameter
 
 
 def statistics(t_b, fd, vx, x_true, rho_true, site):
-    """Fit the pass and return (profile, matched, matched_true_geometry, v_mid, rss/n, n) for these beacons."""
+    """Fit the pass and return (profile, matched, matched_true_geometry, v_mid, rss/n, n, ok, params, t_mid) for these
+    beacons."""
     if OFFSET_FIT:
         q, tm, resid, ok = fit_pass_offset(t_b, fd, site)
         p, delta = q[:4], q[4]
@@ -69,7 +68,7 @@ def run_cell(args):
         refl = draw_reflector(rng, site)
         for _ in range(n_passes):
             traj = make_trajectory(rng, site, cell["v0"], p_lane_change=cell["p_lane_change"], mean_acc=cell["mean_acc"])
-            t_b, y, fD = simulate_pass(rng, site, traj, cfg, reflector=refl)
+            t_b, y, _ = simulate_pass(rng, site, traj, cfg, reflector=refl)
             fd = fdoa_from_samples(y, cfg.packet_s)
             x, yy, vx, _ = traj.at(t_b)
             rho_true = np.hypot(site.pole_offset - yy, site.dh)
@@ -103,7 +102,7 @@ def summarize(cell, recs):
 
 
 def cells_v3():
-    """the site-accuracy simulation grid: offset fit, per-site head offset up to 5 ppb, K down to 6 dB, v up to 38 m/s."""
+    """Grid of the --tag extra run: offset fit, per-site head offset up to 5 ppb, K down to 6 dB, v up to 38 m/s."""
     return [dict(D=100.0, v0=v, K_db=K, scattering=sc, specular_db=sp, packet_s=1e-3, p_lane_change=0.1, mean_acc=0.0,
                  offset_fit=True, head_ppb=5.0)
             for v, K, sc, sp in itertools.product((10.0, 15.0, 20.0, 30.0, 38.0), (6.0, 10.0, 15.0, 20.0),
@@ -127,7 +126,7 @@ def main():
     ap.add_argument("--passes", type=int, default=100)
     ap.add_argument("--workers", type=int, default=os.cpu_count())
     ap.add_argument("--k-list", type=float, nargs="+", default=[15.0, 20.0])
-    ap.add_argument("--tag", default=None, help="output tag (default: smoke/full); extra K cells use e.g. --tag k10")
+    ap.add_argument("--tag", default=None, help="output tag (default: smoke/full); --tag extra runs the extended grid")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     cs = cells_v3() if a.tag == "extra" else cells(a.smoke, tuple(a.k_list), with_decel=a.tag is None)
