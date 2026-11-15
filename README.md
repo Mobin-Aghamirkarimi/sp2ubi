@@ -1,7 +1,7 @@
 # SP2UBI
 
 Reference implementation and evaluation code of **SP2UBI: Secure and Privacy-Preserving Usage-Based Insurance**
-(IEEE Access). The repository contains the protocol of the four entities (OBU, RSU, TSP, insurer) with its risk path
+(manuscript submitted to IEEE Access). The repository contains the protocol of the four entities (OBU, RSU, TSP, insurer) with its risk path
 (BFV under one insurer key, homomorphic MAC with two tag blocks, BBS04 group signatures with a dealer-free opening key,
 receipts, settlement and dispute) and its speed-verification path (roadside FDOA speed check with two-party
 exponential ElGamal), the unit and protocol tests, the scripts that produce every computed number, table and figure
