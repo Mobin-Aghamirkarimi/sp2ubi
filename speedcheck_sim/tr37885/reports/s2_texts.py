@@ -1,23 +1,20 @@
 """Study 2 texts (keys S2|...; no hand-typed number). The study-2 keys, branches and templates live here.
-  numbers(crit, outcome, dec)   number keys S2|<cell>|..., S2|splace|..., S2|d0r1|..., S2|d0r2|<cell>|<Dev>|share / |eb, S2|design|..., the Table A2 keys A2|... (stage 3, make_reports.table_a)
+  numbers(crit, outcome, dec)   number keys S2|<cell>|..., S2|splace|..., S2|d0r1|..., S2|d0r2|<cell>|<Dev>|share / |eb,
+                                S2|design|..., the Table A2 keys A2|... (stage 3, make_reports.table_a)
   branches(outcome, crit, dec)  branch keys S2b|... (the outcome map: template; gate; rung per cell; k = 0; adopted
                                 estimator / N2 rule; H2; the study-2 S-place status)
   texts(outcome, crit, dec)     the pre-specified sentences (cause, future work, disclosure, yield, K, the summary
                                 paragraph, the L1 and T3-N texts) with the number keys inserted as \\spn{S2|...}
-  table_b_keys(adapter_dir, tag) at L3: the fixed make_reports Table B / stratum / the matching simulation keys on the adapter outputs, S2|B|...
+  table_b_keys(adapter_dir, tag) at L3: the fixed make_reports Table B / stratum / matching simulation keys on the
+                                adapter outputs, S2|B|...
   write(...)                    s2_numbers_<tag>.json, s2_texts_<tag>.json, speedpath-s2.tex (\\spn / \\spb macros)
   d0_1_cell(entry)              the supplement cell of a D0.1 stratum (never sigma 0.0; every stratum prints n)
-  abstract_word_counts(tex)     the abstract <= 250 words check over every branch combination of the study-1 abstract
-                                with and without the study-2 L3 clause; with the
-                                clause, the study-1 urban clause STUDY1_URBAN_CLAUSE is replaced; abstract_check(tex, branches) applies the pre-specified rule on the realised branch
-Naming: the Dev-3 control tracks are "free-flow control crossings" in every study-2 text; the word
-"quadratic" never appears in a text key."""
+Outcome sentences are selected by pre-specified rules from the stage-3 outputs. The Dev-3 control tracks are
+"free-flow control crossings" in every study-2 text."""
 import argparse
 import ast
-import itertools
 import json
 import os
-import re
 import sys
 
 import numpy as np
@@ -178,9 +175,8 @@ def _sig(cells):
 
 
 def l3_abstract_clause(cells):
-    """L3 abstract clause. It replaces the study-1 urban
-    clause STUDY1_URBAN_CLAUSE (with its leading '; ') after the study-1 sentence; the study-1 'not covered at the
-    decision level' stays."""
+    """L3 clause (key S2|text|abstract_clause): the held-out urban street sites that qualified, with their error
+    standard deviations."""
     pl = len(cells) > 1
     return ("a second, separately pre-specified design qualified held-out urban street sites in " + _kn(cells) + " at "
             + _cells_phrase(cells) + " (error standard deviation" + ("s " if pl else " ") + _sig(cells)
@@ -227,7 +223,7 @@ SPLACE2_UNQUANTIFIED = ("The study-2 S-place check did not complete; the urban S
                         "quantified.")
 PRECISION_RUNG = ("the precision rung (a qualified share of the held-out sites of at least " + _spn("S2|design|l2_share")
                   + " and a per-crossing error standard deviation of at most \\dcn{qual_limit})")
-L1_VIIC = ("a second pre-specified design (Section VI-D) made qualification valid in traffic and held the calibrated bias within "
+L1_TEXT = ("a second pre-specified design (Section VI-D) made qualification valid in traffic and held the calibrated bias within "
            "$\\pm$" + _spn("S2|l1_band") + "\\,\\%, but did not reach " + PRECISION_RUNG)
 SUMMARY_OPEN = (
     "A second, separately pre-specified study of urban street sites (Section VI-D; design record timestamped before "
@@ -241,10 +237,9 @@ SUMMARY_END = (" The development-stage diagnosis and every rejected candidate ar
 
 
 def t3n_text(k, rating=None):
-    """T3-N on the study-2 records: the pre-specified study-1 T3-N template of the paper source,
-    'free-road survey' -> 'survey in traffic' only: sigma_g1 with the upper end of its
-    95 % CI (A2|P3-15|sigma_g1, A2|P3-15|sigma_g1_ci_hi); the limitation sentence only when the scope rating is
-    'not covered', as in study-1."""
+    """T3-N on the study-2 records: the pre-specified study-1 T3-N template with 'survey in traffic' in place of
+    'free-road survey': sigma_g1 with the upper end of its 95 % CI (A2|P3-15|sigma_g1, A2|P3-15|sigma_g1_ci_hi); the
+    limitation sentence only when the scope rating is 'not covered', as in study 1."""
     c = "S2|P3-15|"
     if k == 0:
         return ("At the held-out urban sites of study 2, no site qualified on a survey in traffic in the far lane ("
@@ -371,7 +366,7 @@ def texts(outcome, crit, dec):
             " held-out urban sites with σ " + " and ".join(_spn(f"S2|{c}|sigma_governing") + "\\,\\%" for c in named) +
             f" at {_cells_phrase(named)}; not covered at the decision level")
     elif tpl == "L1":
-        t["S2|text|VIIC"] = L1_VIIC
+        t["S2|text|VIIC"] = L1_TEXT
     elif tpl == "L0":
         t["S2|text|VIIC"] = "a second, separately pre-specified design (Section VI-D) also did not cover them"
     elif tpl == "L0_k0":
@@ -451,186 +446,8 @@ def d0_1_rows(d01):
     return rows
 
 
-# ---------------------------------------------------------------------------------------------- abstract <= 250 words
-def _arg(s, i):
-    """The balanced {...} argument starting at s[i] == '{'; returns (content, index after)."""
-    if i >= len(s) or s[i] != "{":
-        raise ValueError(f"expected '{{' at {i}: {s[i:i + 30]!r}")
-    d, j = 0, i
-    while j < len(s):
-        if s[j] == "\\":
-            j += 2
-            continue
-        if s[j] == "{":
-            d += 1
-        elif s[j] == "}":
-            d -= 1
-            if d == 0:
-                return s[i + 1:j], j + 1
-        j += 1
-    raise ValueError("unbalanced braces")
-
-
-def _skip_ws(s, i):
-    while i < len(s) and s[i] in " \t\n":
-        i += 1
-    return i
-
-
-def expand(s, choice, defs, dcn):
-    """Expand the abstract's macros under one branch choice. choice: {'sphwonly': 0|1, 'spfeas': 0|1,
-    'spb|<key>': value}. Numbers become the token 0.0; design constants their value; unknown macros keep their text."""
-    out, i = [], 0
-    while i < len(s):
-        c = s[i]
-        if c == "%" and (i == 0 or s[i - 1] != "\\"):
-            j = s.find("\n", i)
-            i = len(s) if j < 0 else j + 1
-            continue
-        if c != "\\":
-            out.append(" " if c == "~" else ("" if c in "{}" else c))
-            i += 1
-            continue
-        m = re.match(r"\\([A-Za-z@]+)\*?", s[i:])
-        if not m:
-            out.append(" ")
-            i += 2
-            continue
-        name, i = m.group(1), i + m.end()
-        if name == "revdel":
-            _, i = _arg(s, _skip_ws(s, i))
-        elif name in ("rev", "textit", "textbf", "emph"):
-            a, i = _arg(s, _skip_ws(s, i))
-            out.append(expand(a, choice, defs, dcn))
-        elif name in ("spn",):
-            _, i = _arg(s, i)
-            out.append("0.0")
-        elif name == "dcn":
-            a, i = _arg(s, i)
-            out.append(dcn.get(a, "0.0"))
-        elif name in ("ref", "label", "cite", "eqref"):
-            _, i = _arg(s, i)
-            out.append("1")
-        elif name == "sprange":
-            a, i = _arg(s, i)
-            _, i = _arg(s, i)
-            out.append(expand(a, choice, defs, dcn) + "–0.0")
-        elif name in ("sphwonly", "spfeas"):
-            a, i = _arg(s, i)
-            b, i = _arg(s, i)
-            out.append(expand((a, b)[choice[name]], choice, defs, dcn))
-        elif name == "spif":
-            cond, i = _arg(s, i)
-            val, i = _arg(s, i)
-            body, i = _arg(s, i)
-            key = re.match(r"\\spb\{([^{}]*)\}", cond.strip()).group(1)
-            if choice.get("spb|" + key) == val:
-                out.append(expand(body, choice, defs, dcn))
-        elif name in defs:
-            out.append(expand(defs[name], choice, defs, dcn))
-        elif name.startswith("sp@"):
-            out.append("0.0")
-        else:
-            out.append(" ")
-    return "".join(out)
-
-
-def word_count(text):
-    return sum(1 for w in text.split() if re.search(r"[A-Za-z0-9]", w))
-
-
-def abstract_parts(tex):
-    a = re.search(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", tex, re.S)
-    if not a:
-        raise ValueError("no abstract")
-    defs = {}
-    for m in re.finditer(r"\\newcommand\{\\(sp[A-Za-z@]+)\}(?!\[)", tex):
-        try:
-            defs[m.group(1)], _ = _arg(tex, m.end())
-        except ValueError:
-            pass
-    spb = sorted(set((k, v) for k, v in re.findall(r"\\spif\{\\spb\{([^{}]*)\}\}\{([^{}]*)\}", a.group(1))))
-    return a.group(1), defs, spb
-
-
-# At L3 this study-1 clause of the abstract (the
-# Bstratum|urban = not_covered_unqualified branch; its content stays in Section VI-D) is replaced by the L3 clause
-STUDY1_URBAN_CLAUSE = "; the survey underestimates their error in traffic, which exceeds the qualification limit"
-ABSTRACT_LIMIT = 250
-
-
-def _with_clause(base, clause_txt):
-    """The abstract at L3: the study-1 urban clause, if printed in this branch, is replaced by the L3 clause; otherwise
-    the clause follows the study-1 sentence."""
-    if STUDY1_URBAN_CLAUSE in base:
-        return base.replace(STUDY1_URBAN_CLAUSE, " ; " + clause_txt, 1)
-    return base + " ; " + clause_txt
-
-
-def abstract_word_counts(tex, design_constants=None):
-    """Word counts of the abstract for every branch combination (sphwonly x spfeas x each spb key's tested values plus
-    'other'), each without and with the study-2 L3 clause naming one or two cells (with the clause, the replacement rule
-    of _with_clause). Returns [(choice, clause, words)]."""
-    body, defs, spb = abstract_parts(tex)
-    dcn = _dcn(design_constants)
-    keys = sorted({k for k, _ in spb})
-    vals = {k: sorted({v for kk, v in spb if kk == k}) + ["other"] for k in keys}
-    clauses = [None, ("P1-15",), ("P1-10", "P1-15")]
-    out = []
-    for hw, fe, *bv in itertools.product((0, 1), (0, 1), *[vals[k] for k in keys]):
-        choice = dict(sphwonly=hw, spfeas=fe, **{"spb|" + k: v for k, v in zip(keys, bv)})
-        base = expand(body, choice, defs, dcn)
-        for cl in clauses:
-            txt = base if cl is None else _with_clause(base, expand(l3_abstract_clause(cl), choice, defs, dcn))
-            out.append((choice, cl, word_count(txt)))
-    return out
-
-
-def _dcn(design_constants=None):
-    return {c["key"]: c["value"] for c in (design_constants or json.load(open(os.path.join(
-        ER, "config", "design_constants.json"))))["constants"]}
-
-
-NOT_COVERED = ("not_covered_floor", "not_covered_unqualified", "not_covered_c5", "no_records")
-
-
-def realised_choice(tex, branches_tex):
-    """The realised study-1 branch of the abstract from the generated branch file (speedpath/speedpath-branches.tex):
-    \\sphwonly prints its first argument iff Bstratum|urban is not covered and Bstratum|highway is covered or
-    covered_short (\\sphwonly / \\spstratum of the paper source); \\spfeas its first argument unless feas|status = feasibility;
-    each tested \\spb key its realised value ('other' if untested)."""
-    br = dict(re.findall(r"\\csname spb@([^\\]*)\\endcsname\{([^{}]*)\}", branches_tex))
-    _, _, spb = abstract_parts(tex)
-    hw_scoped = br.get("Bstratum|urban") in NOT_COVERED and br.get("Bstratum|highway") in ("covered", "covered_short")
-    choice = dict(sphwonly=0 if hw_scoped else 1, spfeas=1 if br.get("feas|status") == "feasibility" else 0)
-    for k in sorted({k for k, _ in spb}):
-        tested = {v for kk, v in spb if kk == k}
-        choice["spb|" + k] = br.get(k) if br.get(k) in tested else "other"
-    return choice
-
-
-def abstract_check(tex, branches_tex=None, design_constants=None):
-    """The pre-specified abstract rule (abstract <= 250 words): every branch without the study-2 clause is <= 250 words,
-    and the realised study-1 branch with the two-cell L3 clause (L3 needs both U2 cells at L2) is <= 250 words. The
-    one-cell count is reported only."""
-    res = abstract_word_counts(tex, design_constants)
-    out = dict(max_without=max(w for _, cl, w in res if cl is None), combinations=len(res))
-    if branches_tex is not None:
-        body, defs, _ = abstract_parts(tex)
-        dcn = _dcn(design_constants)
-        ch = realised_choice(tex, branches_tex)
-        base = expand(body, ch, defs, dcn)
-        out["realised_without"] = word_count(base)
-        for name, cl in (("realised_one_cell", ("P1-15",)), ("realised_two_cells", ("P1-10", "P1-15"))):
-            out[name] = word_count(_with_clause(base, expand(l3_abstract_clause(cl), ch, defs, dcn)))
-        out["ok"] = bool(out["max_without"] <= ABSTRACT_LIMIT and out["realised_two_cells"] <= ABSTRACT_LIMIT)
-    return out
-
-
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--abstract", help="paper .tex: the abstract <= 250 words rule (with --branches: on the realised branch)")
-    ap.add_argument("--branches", help="the generated study-1 branch file speedpath/speedpath-branches.tex")
     ap.add_argument("--criteria")
     ap.add_argument("--outcome")
     ap.add_argument("--decision")
@@ -638,13 +455,6 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--tag")
     a = ap.parse_args()
-    if a.abstract:
-        r = abstract_check(open(a.abstract).read(), open(a.branches).read() if a.branches else None)
-        print(f"{r['combinations']} combinations; max {r['max_without']} words without the study-2 clause"
-              + (f"; realised branch {r['realised_without']} words, with the L3 clause {r['realised_two_cells']} (two "
-                 f"cells) / {r['realised_one_cell']} (one cell); <= 250: {r['ok']}" if "ok" in r else
-                 f"; <= 250 without the clause: {r['max_without'] <= ABSTRACT_LIMIT} (give --branches for the L3 rule)"))
-        return
     print(write(json.load(open(a.criteria)), json.load(open(a.outcome)), json.load(open(a.decision)), a.out, a.tag,
                 a.adapter_dir))
 

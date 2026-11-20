@@ -3,14 +3,14 @@ run. The carrier records are the stage-2 records of the U3 sites 30-39 (stage2_e
 inhouse); the statistics of the urban estimator come from pipeline/s3_estimate.py (variant h_pp_now_c20).
 
 Rules:
-* survey: with "free", the records of role "ref" (survey in traffic) are dropped and role "reff" is relabelled "ref"
+* survey: with "free", the records of role "ref" (survey in traffic) are dropped and role "reff" is relabeled "ref"
   (stage 3 and the decision adapter read "ref" as the survey); with "traffic", role "reff" is dropped.
 * estimator "urban": prof, match and mse of a record are replaced by those of the urban estimator (matched by site,
   track, mapping and PRB; arm gen_on from the series label U3, arm inhouse from U3in), and finite is set from the new
   values. The consistency statistics d and d_d of the base estimator are removed, the records with a Doppler scale
   (beta != 0) and the arm gen_off are dropped: the urban estimator has none of them, and no quantity of the detection
   rules reads them.
-* channel "tr": the arms gen_on and inhouse are written; channel "inhouse": only the arm inhouse, relabelled gen_on
+* channel "tr": the arms gen_on and inhouse are written; channel "inhouse": only the arm inhouse, relabeled gen_on
   (stage 3 and the adapter take their governing quantities from gen_on).
 * estimator "base" (control run, channel "tr" only): the carrier records unchanged except for the survey rule.
 Every call re-reads what it wrote and checks it against its inputs: each substituted statistic equals the value of the

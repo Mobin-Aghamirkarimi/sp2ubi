@@ -1,19 +1,15 @@
-"""Speed-verification path: correctness; two-party DKG with proofs of knowledge; DLEQ proofs on every
-partial decryption and partial opening; public opening-setup check; TSP membership check; threshold split (no single party
-decrypts or opens); non-overlapping certified bursts with rolling ephemeral signatures; one entry per crossing with
-freshness, span and completeness checks; storage until after the epoch with release-time order, re-randomisation and
-signing at release; count report independent of the entries; RSU-sourced encrypted count total; disclosure resolution;
-decode window; one-term smudging (term drawn by the OBU inside the signed trailer; substituted term rejected; c
-guard; worst-case c over the acceptance envelope; surveyed-direction rule); invalid messages ignored, never a reason to
-discard a crossing; count at storage (a lost stored entry fails the count check)."""
+"""Speed-verification path: key generation and proofs (two-party DKG, DLEQ proofs on partial decryptions and openings,
+opening-setup check, threshold split), the OBU's certified bursts with rolling signatures, the RSU's entry rule
+(freshness, span, completeness, surveyed direction, invalid messages ignored), storage and release after the epoch, the
+count report and the encrypted count total, the TSP's membership check, the decode window and the smudging term."""
 import math
 import random
 
 import pytest
 
-from sp2ubi.opening_dkg import run_two_party
 from sp2ubi.elgamal import Ciphertext, ThresholdKey, dkg_accept_peer, dkg_commitment, joint_public_key
 from sp2ubi.groupsig_bbs04 import BBS04, Issuer, combine_opening
+from sp2ubi.opening_dkg import run_two_party
 from sp2ubi.proofs import prove_dlog, verify_opening_setup
 from sp2ubi.speedcheck import (BEACON_PERIOD_MS, Beacon, BURST_MS, C_MAX, COUNT_REPORT_SPREAD_S, FORWARD_WINDOW_S,
                                FRESH_MS, K_MAX, MIN_COVER, N_LEVELS, S_BITS, SMUDGE_FRAC, SPAN_MIN, UNIT_MPS, V_MAX,
@@ -247,7 +243,7 @@ def test_post_epoch_forwarding_and_count_total(world):
     sent += rsu.release(epoch_end + FORWARD_WINDOW_S)
     assert len(sent) == 3 and rsu.release(epoch_end + 10 * FORWARD_WINDOW_S) == [] and rsu.stored() == []
     assert all(verify_entry(w["rsu_gs"], e) for e in sent)               # signed at release
-    # re-randomised at release: a seized store image does not match the forwarded (published) entries
+    # re-randomized at release: a seized store image does not match the forwarded (published) entries
     assert not ({e.B.to_bytes() for e in sent} & set(stored_B))
     assert not ({e.T3.to_compressed_bytes() for e in sent} & {e.T3.to_compressed_bytes() for _, e in st})
     for _ in range(50):                                                  # count-report time: [24, 25) h after the epoch
@@ -276,7 +272,7 @@ def test_epoch_label_is_signed_and_checked(world):
     e = _cross(w, rec, vmap, (rec.beacons[0].t_ms, rec.beacons[-1].t_ms), rsu=rsu)
     assert e.epoch == 7 and verify_entry(w["rsu_gs"], e, epoch=7) and not verify_entry(w["rsu_gs"], e, epoch=8)
     moved = type(e)(e.T1, e.T2, e.T3, e.B, e.level, e.z, epoch=8, rsu_sig=e.rsu_sig)
-    assert not verify_entry(w["rsu_gs"], moved)                          # relabelling breaks the RSU signature
+    assert not verify_entry(w["rsu_gs"], moved)                          # relabeling breaks the RSU signature
     out = TSPShuffle(w["gs"], w["pk"]).shuffle([e])[0]
     assert out.epoch == 7
 
@@ -345,7 +341,7 @@ def test_out_of_window_result_is_none(world):
 
 
 def test_disclosure_resolution_of_level_and_z(world):
-    """Only the level (N_LEVELS values) and the clipped, quantised z can leave the RSU."""
+    """Only the level (N_LEVELS values) and the clipped, quantized z can leave the RSU."""
     zmax = round(Z_CLIP / Z_STEP)
     assert [z_to_units(x) for x in (-9.0, 0.0, 7.5)] == [-zmax, 0, zmax]
     w = world
@@ -370,7 +366,7 @@ def test_sizes(world):
 # ------------------------------------------------------------------------------------------------ one-term smudging
 def test_smudging_term_is_signed_and_substitution_rejected(world):
     """The trailer's Enc(e_s) is inside the signed content: a substituted term fails verification of the trailer, so
-    the crossing yields no entry (an unsigned term could be replaced by Enc(+0.1 * 2^S), cancelling a -10 % VSS)."""
+    the crossing yields no entry (an unsigned term could be replaced by Enc(+0.1 * 2^S), canceling a -10 % VSS)."""
     w = world
     recs, vmap, _ = _drive(w, n=60)
     rec = recs[0]
@@ -470,7 +466,7 @@ def _envelope_c_max(site_bias=0.0):
 def test_worst_case_c_over_acceptance_envelope():
     sigma = SMUDGE_FRAC * (1 << S_BITS)
     assert sigma / C_MAX >= 16                                          # Supplement S11.2: 0.001 * 2^34 / 2^20 = 16.384
-    assert _envelope_c_max(0.0) == 88_102                               # slow_sweep value (2.546 m/s)
+    assert _envelope_c_max(0.0) == 88_102                               # c_max_code_path_bias0 of smudging_scale_range.json
     for bias in (0.0, -0.03, -0.06, 0.06):
         c_max = _envelope_c_max(bias)
         assert c_max <= C_MAX and sigma / c_max >= 183                  # Supplement S11.2: "at least 183 times"
@@ -487,9 +483,9 @@ def test_surveyed_direction_only(world):
     assert rsu.accept(rec, arr, window, direction=-1)[0]
 
 
-def test_rsu_rerandomises_enc_b(world):
+def test_rsu_rerandomizes_enc_b(world):
     """Enc(B) is a public linear combination of broadcast ciphertexts; the RSU's output is not that combination
-    (without re-randomisation a recorder colluding with an RSU that knows c and w_i could recompute it)."""
+    (without re-randomization a recorder colluding with an RSU that knows c and w_i could recompute it)."""
     w = world
     recs, vmap, _ = _drive(w, n=40, smudge="real")
     rec = recs[0]

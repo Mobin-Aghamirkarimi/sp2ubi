@@ -1,9 +1,9 @@
 """The per-record HomMAC verdict as a test channel for a deviating TSP.
 
-Numeric checks only, no timing. Plaintext model of the slot-wise affine operations that the TSP can apply to the BFV
-ciphertexts with public keys alone (it holds pk_Ins and the evaluation keys): add an encryption of a vector to a slot
-group, or multiply a slot by a plaintext constant, before or after the product with [[w]] and the rotate-and-sum. The
-tag slots are left untouched, so the aggregated tags T_R, T'_R are the honest ones and only the score slot changes.
+Plaintext model of the slot-wise affine operations that the TSP can apply to the BFV ciphertexts with public keys
+alone (it holds pk_Ins and the evaluation keys): add an encryption of a vector to a slot group, or multiply a slot by a
+plaintext constant, before or after the product with [[w]] and the rotate-and-sum. The tag slots are left untouched, so
+the aggregated tags T_R, T'_R are the honest ones and only the score slot changes.
 
   V1. add delta != 0 to feature slot j of the record only:   accepted  iff  w_j * delta == 0 (mod p), i.e. w_j == 0
       (one rejected or accepted record per slot reveals the zero pattern of the weights);

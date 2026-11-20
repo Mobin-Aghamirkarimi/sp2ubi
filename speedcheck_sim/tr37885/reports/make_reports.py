@@ -102,7 +102,7 @@ def table_a(cr, nums):
         for k_ in ("w_v2v", "entry_yield_unblocked_P1_15", "entry_yield_blocked_P3_15", "entry_yield_v2v",
                    "entry_yield_blocked_majority", "factor_vs_unblocked", "n_blocked_majority"):
             nums[f"A|V2V|{k_}"] = v2v.get(k_)
-    # per-type keys of the abstract skeleton: k min / max and n over the type's cells; the
+    # per-type summary keys: k min / max and n over the type's cells; the
     # governing sigma min / max over the cells with k >= 1
     for t, cells in (("P1", ["P1-10", "P1-15"]), ("P2", ["P2-20", "P2-30", "P2-38"]), ("P3", ["P3-15"])):
         rr = [r for r in rows if r["cell"] in cells]
@@ -114,7 +114,7 @@ def table_a(cr, nums):
     if sg:
         nums["A|qual|sigma_min"], nums["A|qual|sigma_max"] = min(sg), max(sg)
     qk = cr.get("qualification_vs_k") or {}
-    for name, v in (qk.get("k_realised") or {}).items():   # the type's realised K
+    for name, v in (qk.get("k_realised") or {}).items():   # the type's realized K
         if v is not None:
             nums[f"K|{name}|median"] = v
     text_keys(cr, nums)
@@ -177,7 +177,7 @@ TB_METRICS = ("punitive_per_year", "punitive_ub95", "notice_per_year", "entries_
               "crossings_per_epoch_mean", "low_m_share", "escalation_per_year", "inspections_per_year",
               "punitive_union_per_year", "punitive_union_ub95")
 ESC_FALLBACK_UB95 = 1e-3      # the escalation is adopted only if the honest bound <= 1e-3
-# R3 honest per-vehicle-year rate from its in-house ladder (consistency simulation, traffic standardisation, level
+# R3 honest per-vehicle-year rate from its in-house ladder (consistency simulation, traffic standardization, level
 # groups, q3; nominal site shift; weighted mean over sites), per pass rate lambda; added to the decision-simulation
 # union as a union bound
 INHOUSE_E3 = os.path.join(ER, "..", "inhouse", "results", "consistency_analysis_full.json")
@@ -302,14 +302,14 @@ def r3_m5(nums):
 def table_b(e2, nums, strict=False):
     """Table B: per decision-simulation row the TR 37.885 value (B|<sec>|<key>|<metric>), the in-house
     value of the same row (B|<sec>|<key>|inhouse|<metric>: the in-house decision simulation (monitor variant) run on its
-    own site-K population, TR 38.901 UMi N(9, 5^2) dB, not at equal K; labelled so in the table) and the worse of the
+    own site-K population, TR 38.901 UMi N(9, 5^2) dB, not at equal K; labeled so in the table) and the worse of the
     two per metric direction (adapter direction; B|<sec>|<key>|governing|<metric>; descriptive metrics have no governing
     value). A row without an in-house value governs with its TR 37.885 value, flagged; a primary run refuses an honest
     row without an in-house value. Per honest row the bound = the decision-simulation value (escalation union, or R2
     alone) + the R3 honest rate of its in-house ladder at the row's lambda (a union bound over the three rules). The
     escalation is adopted ("adopted") if the worst bound with it is <= 1e-3, else "fallback"; "not evaluated" without an
     honest row (no U / H stratum covered). B|esc|status / B|esc|adopted; B|honest|governing|all_union_ub95 = the worst
-    bound with the escalation (printed in both evaluated branches). The abstract keys
+    bound with the escalation (printed in both evaluated branches). The keys
     B|honest|governing|punitive_per_year and |punitive_ub95 are the worst bounds of the adopted rule set.
     B|honest|governing|r2_* / union_* keep the decision-simulation-only values. sens_tyre rows are reported over both
     channels (B|sens_tyre|max|..., with its source), never tested."""
@@ -458,7 +458,7 @@ def fig_c(cr, k4, path, nums):
         ax2.stairs(np.asarray(hc) / max(sum(hc), 1), he, alpha=0.35)
         if pb.get("decoding_db") is not None:           # the decoding line at this overlay's governing PRB
             dl = f"decoding line, {pb['prb']} PRB (TS 36.101, one-element head)"   # one legend entry and one
-            seen = dict(zip(ax.get_legend_handles_labels()[1], ax.get_legend_handles_labels()[0]))   # colour per label
+            seen = dict(zip(ax.get_legend_handles_labels()[1], ax.get_legend_handles_labels()[0]))   # color per label
             ax.axvline(pb["decoding_db"], color=seen[dl].get_color() if dl in seen else ax.lines[-1].get_color(),
                        ls=":", lw=1, label=None if dl in seen else dl)
             nums[f"C|{key}|decoding_db"] = pb["decoding_db"]
@@ -476,8 +476,8 @@ def fig_c(cr, k4, path, nums):
 
 
 def fig_e(cr, fe, path, nums):
-    """Fig. E: (a) sigma against the realised in-band K: in-house per-site survey sd and test sigma (configured K =
-    realised by construction) with the median curve, TR 37.885 per-site survey sd and test sigma (weaker head, governing
+    """Fig. E: (a) sigma against the realized in-band K: in-house per-site survey sd and test sigma (configured K =
+    realized by construction) with the median curve, TR 37.885 per-site survey sd and test sigma (weaker head, governing
     PRB), the 6 % line; (b) the qualification probability: binned shares with Clopper-Pearson and the logistic fit
     (descriptive)."""
     import matplotlib
@@ -509,11 +509,11 @@ def fig_e(cr, fe, path, nums):
         if qk.get("k50_db") is not None:
             nums["E|k50_db"] = qk["k50_db"]
     ax.axhline(6.0, color="grey", ls=":")
-    ax.set_xlabel("realised in-band Ricean K, weaker head (dB)")
+    ax.set_xlabel("realized in-band Ricean K, weaker head (dB)")
     ax.set_ylabel("per-crossing sigma (%)")
     ax.legend(fontsize=6)
     ax.grid(alpha=0.3)
-    bx.set_xlabel("realised in-band Ricean K (dB)")
+    bx.set_xlabel("realized in-band Ricean K (dB)")
     bx.set_ylabel("P(site qualifies)")
     bx.set_ylim(-0.02, 1.02)
     bx.legend(fontsize=6)
@@ -553,9 +553,9 @@ def design_record_numbers(nums):
 def inhouse_zq(cr, nums, tag="primary"):
     """Table B rows of the honest per-site P(z_q = -1) of the in-house channel:
       B|zq_inhouse|<cell>|...      the comparator: the paired in-house arm of the TR 37.885 records, same estimator and same
-                                   (in-sample) standardisation as TR 37.885 (criteria.c4_light; arm inhouse);
-      B|zq_inhouse_oos|<cell>|...  second row, 'out-of-sample traffic standardisation': the in-house consistency-simulation honest z at
-                                   the equal-K cell (stage3_extra_checks.inhouse_k_cell of the one realised-K function),
+                                   (in-sample) standardization as TR 37.885 (criteria.c4_light; arm inhouse);
+      B|zq_inhouse_oos|<cell>|...  second row, 'out-of-sample traffic standardization': the in-house consistency-simulation honest z at
+                                   the equal-K cell (stage3_extra_checks.inhouse_k_cell of the one realized-K function),
                                    traffic passes; median and range over the in-house sites."""
     from pipeline import stage3_extra_checks as XC
     for key, d in ((cr or {}).get("c4_light") or {}).items():
@@ -608,7 +608,7 @@ def fig_d(cr, path):
     rows = (cr or {}).get("c4_light") or {}
     labs = []
     for i, (key, d) in enumerate(sorted(rows.items())):
-        # (presentation only) one fixed colour per arm, so every cell uses the colours of the legend
+        # (presentation only) one fixed color per arm, so every cell uses the colors of the legend
         for arm, mk, col, lab in (("gen_on", "o", "C0", "TR 37.885"), ("inhouse", "s", "C1", "our channel model")):
             z = [r["Z"] for r in d["variants"] if r["arm"] == arm and np.isfinite(r["Z"])]
             ax.scatter([i + (0.1 if arm == "inhouse" else -0.1)] * len(z), z, marker=mk, s=16, color=col,

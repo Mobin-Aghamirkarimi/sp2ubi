@@ -3,7 +3,8 @@
 For record nonce u in epoch t and tag block b in {0, 1}, with domain-separated PRF labels:
     block 0:  alpha_u  = PRF_K(t, u, "alpha") + 1,     r_{u,i}  = PRF_K(t, u, "r", i)
     block 1:  alpha'_u = PRF_K(t, u, "alpha", 1) + 1,  r'_{u,i} = PRF_K(t, u, "r", i, 1)
-Tags (computed by the OBU):      T_i = alpha_u x_i + r_{u,i},  T'_i = alpha'_u x_i + r'_{u,i}  (mod p),  x_0 = 1
+Tags (computed by the OBU):      T_i = alpha_u x_i + r_{u,i},  T'_i = alpha'_u x_i + r'_{u,i}  (mod p)
+                                 (x_0 = insured days covered by the record: 1 for a daily record)
 TSP evaluates the same linear F: R = sum w_i x_i,  T_R = sum w_i T_i,  T'_R = sum w_i T'_i
 Insurer verifies both:           T_R == alpha_u R + sum w_i r_{u,i}  and  T'_R == alpha'_u R + sum w_i r'_{u,i}
 

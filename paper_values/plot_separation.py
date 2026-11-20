@@ -2,8 +2,8 @@
 
 The points are those of the study-1 report generator (speedcheck_sim, make_reports.fig_d) on the stored stage-3 output
 criteria_primary.json (c4_light): the script runs fig_d, takes its plotted points and threshold line, and draws the same
-points with presentation changes only (beacon bandwidth on the x-axis, channel model by marker and colour, SNR mapping
-by a filled or an open marker, threshold labelled in the plot, legend below the axes, 85.29 mm wide). It asserts that
+points with presentation changes only (beacon bandwidth on the x-axis, channel model by marker and color, SNR mapping
+by a filled or an open marker, threshold labeled in the plot, legend below the axes, 85.29 mm wide). It asserts that
 the multiset of plotted separations per (cell, channel model) and the threshold equal the report figure's exactly.
 
 Output: paper_values/figures/separation.pdf

@@ -6,7 +6,7 @@ and writes results/study2/paper/speedpath-s2-derived.tex and study2_derived.json
 study-2 text files print in another format or do not print. Every value is read, none is recomputed from records.
 
 Format fixes:
-  S2d|K|urban|median      the study-2 urban realised Ricean K in dB (which misses the dB class of number_macros.py)
+  S2d|K|urban|median      the study-2 urban realized Ricean K in dB (which misses the dB class of number_macros.py)
   S2d|<cell>|p_holm       the Table A2 optimism p_Holm with three decimals
 Values added:
   S2d|<cell>|k_min/k_max, S2d|<cell>|k|<mapping>|<prb>       qualified sites per evaluation variant (scope rule)

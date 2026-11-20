@@ -62,7 +62,7 @@ def style(ax, axis="x"):
         ax.spines[s].set_visible(False)
 
 
-OPS_ROWS = [  # (label, key, colour) top to bottom
+OPS_ROWS = [  # (label, key, color) top to bottom
     ("TSP: group-signature check", "risk_path_budget|tsp_group_verify", BLUE),
     ("TSP: evaluation of the risk model", "risk_path_budget|tsp_evaluate", BLUE),
     ("TSP: slot fill", "risk_path_budget|tsp_fill", BLUE),

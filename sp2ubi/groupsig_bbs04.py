@@ -1,7 +1,7 @@
 """BBS04 short group signatures (Boneh, Boyen, Shacham, CRYPTO 2004) over BLS12-381 (type-3 pairing).
 
 Roles are split:
-  * Issuer:   holds gamma, enrols OBUs (A_i = g1^{1/(gamma + x_i)}); in SP2UBI: the insurer.
+  * Issuer:   holds gamma, enrolls OBUs (A_i = g1^{1/(gamma + x_i)}); in SP2UBI: the insurer.
   * Opener:   (xi1, xi2), the opening key. In SP2UBI it is generated without a dealer by the insurer and the TSP, each
               holding one additive share (opening_dkg.py); opening needs both (speedcheck.py). The single `Opener`
               below is the original BBS04 role.
@@ -11,8 +11,8 @@ Notation follows the scheme description of the paper, with G1 written additively
 multiplicatively. GT has no exponentiation in the binding, so every GT power is moved into G1 by bilinearity,
 e(P, Q)^s = e(s*P, Q); signing and verifying each cost one 2-term multi-pairing.
 
-Known property of BBS04: the issuer knows x_i, so the scheme is not exculpable against the
-issuer (it is in the original BBS04 model); revocation is not included here.
+Known property of BBS04: the issuer knows x_i, so the scheme is not exculpable against the issuer (it is in the original
+BBS04 model); revocation is not included here.
 """
 import hashlib
 import secrets
@@ -147,7 +147,7 @@ class Issuer:
 class Opener:
     def __init__(self, gpk: GroupPublicKey, xi1, xi2):
         self.gpk, self._xi1, self._xi2 = gpk, xi1, xi2
-        self.registry: Dict[bytes, str] = {}         # compressed A_i -> member label (filled at enrolment)
+        self.registry: Dict[bytes, str] = {}         # compressed A_i -> member label (filled at enrollment)
 
     def register(self, label: str, A: "G1") -> None:
         self.registry[A.to_compressed_bytes()] = label
@@ -156,7 +156,7 @@ class Opener:
         return self.open_tracing(sig.T1, sig.T2, sig.T3)
 
     def open_tracing(self, T1: "G1", T2: "G1", T3: "G1") -> Optional[str]:
-        """Decrypt a (possibly re-randomised) linear-encryption tracing ciphertext to the member label."""
+        """Decrypt a (possibly re-randomized) linear-encryption tracing ciphertext to the member label."""
         A = T3 - (T1 * self._xi1 + T2 * self._xi2)
         return self.registry.get(A.to_compressed_bytes())
 
@@ -186,7 +186,7 @@ def combine_opening(T3: "G1", p1: "G1", p2: "G1") -> "G1":
 
 
 def member_key_valid(gpk: GroupPublicKey, mk: MemberKey) -> bool:
-    """e(A, w + x*g2) == e(g1, g2): the OBU checks its credential at enrolment."""
+    """e(A, w + x*g2) == e(g1, g2): the OBU checks its credential at enrollment."""
     return GT.pairing(mk.A, gpk.w + gpk.g2 * mk.x) == GT.pairing(gpk.g1, gpk.g2)
 
 

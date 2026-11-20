@@ -1,8 +1,8 @@
 """Byte sizes and operation counts of SP2UBI and two simpler designs, per daily record, per policy-epoch and for
-the TSP's storage per 10^6 policies. Sizes and counts only, no timings.
+the TSP's storage per 10^6 policies.
 
   SP2UBI   record = BFV ciphertext (single insurer key, N = 8192, log2 Q = 120) + commitments + group signature;
-           numbers read from results/risk_path_sizes.json (OpenFHE BINARY serialisation).
+           numbers read from results/risk_path_sizes.json (OpenFHE BINARY serialization).
   Design A the OBU's TEE computes R = w.x, encrypts (ID, R, u, MAC) under the insurer's key with a hybrid scheme and
            group-signs the message; the TSP shuffles; the insurer decrypts and verifies the MAC. The model w sits in
            every TEE.

@@ -90,7 +90,7 @@ def compare(t_b, traj, site, sig_g, gain_g, sig_in, seed, mapping):
 
 def g1_driver_site(site_seed, n, Q, prb, v0=20.0):
     """Generator-driver arm: QuaDRiGa 'LOSonly' through quadriga/site.m / run_site and the stage-1
-    record path (band_avg_q of term off and term on with their own delays, ls normalisation, both SNR mappings)."""
+    record path (band_avg_q of term off and term on with their own delays, ls normalization, both SNR mappings)."""
     from quadriga.driver import build_pass, run_site
     rng = np.random.default_rng(site_seed)
     site = Site(D=100.0, pole_offset=rng.uniform(6, 12), dh=3.4)
@@ -111,7 +111,7 @@ def g1_driver_site(site_seed, n, Q, prb, v0=20.0):
     return out
 
 
-def summarise(R):
+def summarize(R):
     out, ok = {}, True
     for j, stat in enumerate(("profile", "matched")):
         ih = np.array([r["inhouse"][j] for r in R]); gn = np.array([r["generator"][j] for r in R])
@@ -129,7 +129,7 @@ def main_drivers(a):
     for sidx in range(a.passes // 10):
         for name, r in g1_driver_site(a.seed + 7919 * sidx, 10, a.Q, a.prb):
             groups.setdefault(name, []).append(r)
-    out = dict(arm=a.arm, passes=a.passes, Q=a.Q, prb=a.prb, seed=a.seed, groups={k: summarise(v) for k, v in groups.items()})
+    out = dict(arm=a.arm, passes=a.passes, Q=a.Q, prb=a.prb, seed=a.seed, groups={k: summarize(v) for k, v in groups.items()})
     out["C8_pass"] = all(v["C8_pass"] for v in out["groups"].values())
     write(a, out)
 
@@ -159,7 +159,7 @@ def main():
         return main_drivers(a)
     R = [one_pass(a.seed + i, a.Q, a.prb) for i in range(a.passes)]
     out = dict(passes=a.passes, Q=a.Q, prb=a.prb, seed=a.seed)
-    out.update(summarise(R))                            # profile, matched, C8_pass
+    out.update(summarize(R))                            # profile, matched, C8_pass
     out["arm"] = "interface"
     write(a, out)
 

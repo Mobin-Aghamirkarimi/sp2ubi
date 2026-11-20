@@ -14,7 +14,7 @@ text_branches_<tag>.json plus LaTeX macros \\spb{<key>} (speedpath-branches.tex)
   fnb|freq_types       the site types with Z >= 1 (footnote of the comparison table)
   fnb|freq_clause      ", and frequency-only manipulation at <types>" | ""  (whole clause)
   types|clause         the clause on the site types where frequency-only manipulation separates
-  K|anchor             inside | below | above   (the realised urban K against the range of the road-crossing means in
+  K|anchor             inside | below | above   (the realized urban K against the range of the road-crossing means in
                         the supplement's table of design constants; read from the design constant lit_k_crossing)
   T2|bias|<cell>       reduced | not reduced (|calibrated| < |uncalibrated| or not; at the variant Table A prints:
                         the worst-sigma variant)

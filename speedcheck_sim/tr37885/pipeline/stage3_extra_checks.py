@@ -11,7 +11,7 @@ a claim by themselves) except the incomplete-run labels, which follow a rule pre
         P_LOS(d) = min(1, 1.05 exp(-0.0114 d))) over the crossing at the site geometry, each such crossing behaving like
         the simulated P3 blocked crossings (partly blocked, head A only); plus the yield of P3 crossings blocked over most
         of their length (blocked-beacon share >= 0.5);
-  * qualification probability against the realised in-band K: binned shares with
+  * qualification probability against the realized in-band K: binned shares with
         Clopper-Pearson and a logistic fit, over the TR 37.885 sites of all cells; descriptive only, never a rule;
   * the incomplete-run labels: per cell, n completed sites of the planned 10;
         n >= 4 -> 'n of 10 planned site draws (compute window)', n <= 3 -> 'not run (compute)'."""
@@ -191,10 +191,10 @@ def v2v_reading(recs, governing):
 
 # ------------------------------------------------------------------------------------------------ qualification vs K
 def qual_vs_k(recs, cells, governing, tag="primary", bins=(-np.inf, 2, 4, 6, 8, 10, np.inf)):
-    """Per TR 37.885 site: the weaker head's realised in-band K at the governing PRB over its survey passes, where it is
+    """Per TR 37.885 site: the weaker head's realized in-band K at the governing PRB over its survey passes, where it is
     qualified (realised_k_median, role ref; then the stage-1 fields, then broadband), qualified or not, the survey sd
     and the gated test sigma (Fig. E); the binned shares and the logistic fit leave out P3 (blocked crossings of urban
-    sites, not a site type); and the type's realised K over its test passes (k_realised)."""
+    sites, not a site type); and the type's realized K over its test passes (k_realised)."""
     from scipy.optimize import minimize
     fam_of = {"P1": "U", "P2": "H", "P3": "N"}
     pts = []
@@ -228,7 +228,7 @@ def qual_vs_k(recs, cells, governing, tag="primary", bins=(-np.inf, 2, 4, 6, 8, 
     b = fit.x.tolist() if fit is not None and fit.success else None
     k50 = (-b[0] / b[1]) if b and b[1] > 0 else None
     kr = {}
-    for name, cell in (("urban", "P1"), ("highway", "P2")):     # the type's realised K
+    for name, cell in (("urban", "P1"), ("highway", "P2")):     # the type's realized K
         if any(c == cell for c, _ in cells):
             v = realised_k_median(recs, cell, _gov_variant(cell, governing)[1])
             kr[name] = v if np.isfinite(v) else None
@@ -298,7 +298,7 @@ INHOUSE_K_GRID = (6.0, 10.0, 15.0, 20.0)
 
 
 def realised_k_median(recs, cell, prb, v0=None, site=None, role="test"):
-    """The one realised-K function: the equal-K cell (Table B), the bridge label, the
+    """The one realized-K function: the equal-K cell (Table B), the bridge label, the
     K-anchor value and Fig. E. Median over the stratum's (or one site's) honest test passes at the PRB of the weaker
     head's in-band K of the TR 37.885 pass (K_inhouse_db: the per-head in-band K at which the paired in-house arm is
     drawn);
@@ -310,12 +310,12 @@ def realised_k_median(recs, cell, prb, v0=None, site=None, role="test"):
 
 
 def inhouse_k_cell(k_med):
-    """Equal-K rule for the in-house consistency z: the largest in-house K <= the realised median, >= 6 dB."""
+    """Equal-K rule for the in-house consistency z: the largest in-house K <= the realized median, >= 6 dB."""
     return max([k for k in INHOUSE_K_GRID if np.isfinite(k_med) and k <= k_med] or [INHOUSE_K_GRID[0]])
 
 
 def site_inband_k(fam, site, tag, prb):
-    """Median over the site's reference passes of the weaker head's realised in-band K at the PRB (stage-1 K fields,
+    """Median over the site's reference passes of the weaker head's realized in-band K at the PRB (stage-1 K fields,
     npz or kx extract); None if absent."""
     d = os.path.join(K.RUNS, f"g1_{fam}")
     js = os.path.join(d, f"site_{site:03d}.json")
@@ -356,7 +356,7 @@ def incomplete_labels(n_sites):
 
 
 def apply_incomplete_scope(sc, labels):
-    """Under --incomplete-run, a cell labelled 'not run (compute)' gets that rating and leaves the type rule; a
+    """Under --incomplete-run, a cell labeled 'not run (compute)' gets that rating and leaves the type rule; a
     type is rated on its run cells, with the suffix '(speed classes [v] not run: compute window)'."""
     out = dict(cells=dict(sc["cells"]), types={})
     for c, lab in labels.items():

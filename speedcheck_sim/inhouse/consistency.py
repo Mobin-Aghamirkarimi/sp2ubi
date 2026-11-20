@@ -1,11 +1,11 @@
-"""Consistency simulation: consistency test with RSU-side standardisation from traffic.
+"""Consistency simulation: consistency test with RSU-side standardization from traffic.
 
-Per (site, speed class) the RSU standardises the consistency statistic d with the median and 1.4826 * MAD of d over
+Per (site, speed class) the RSU standardizes the consistency statistic d with the median and 1.4826 * MAD of d over
 its recent traffic (N_TRAFFIC passes; d is physical and independent of the VSS; the median/MAD resist a manipulating
 minority), instead of the 30 survey passes only. The free fit has no head-offset parameter; a constant offset within
-+-5 ppb is absorbed by the standardisation.
++-5 ppb is absorbed by the standardization.
 Per site (6 sites per cell): 30 survey passes, 150 honest traffic passes (running window), 100 further honest
-passes (evaluated) and 30 manipulated passes per beta (-5 %, -10 %). For every evaluated pass both standardisations
+passes (evaluated) and 30 manipulated passes per beta (-5 %, -10 %). For every evaluated pass both standardizations
 are stored:
   z_ref = (d - median_ref) / (1.15 * 1.4826 * MAD_ref)       (survey passes)
   z_trf = (d - median_trf) / (1.4826 * MAD_trf)              (traffic window)

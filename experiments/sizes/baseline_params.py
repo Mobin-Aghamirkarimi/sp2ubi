@@ -1,7 +1,7 @@
 """Parameter sets of the baselines B1 (single-key BFV) and B3 (single-key CKKS), with the same OpenFHE calls as
 experiments/timings/bench_risk_path.py (_bfv_single_key; part_baselines, B3): ring dimension, log2 Q and the requested
-security level. Parameters only, no timing (hardware-independent). The ring dimensions must equal those recorded by
-the timing run (experiments/timings/results/baselines_bfv_ckks.json).
+security level (hardware-independent). The ring dimensions must equal those recorded by the timing run
+(experiments/timings/results/baselines_bfv_ckks.json).
 
 Run (from the repository root):  python experiments/sizes/baseline_params.py
 Output: experiments/sizes/results/baseline_params.json"""

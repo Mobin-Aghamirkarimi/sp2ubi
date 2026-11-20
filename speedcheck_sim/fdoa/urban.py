@@ -50,7 +50,7 @@ def running_median(a, k=21):
 
 def envelope_weights(pa_db, pb_db):
     """Per-beacon weight 1 / (1 + 1/P_A + 1/P_B), P the head's received power relative to its running median (linear),
-    normalised to mean 1. The conditional variance of the random FM of a fading signal given its envelope R falls as
+    normalized to mean 1. The conditional variance of the random FM of a fading signal given its envelope R falls as
     1/R^2 (Rice 1948), so this is an inverse-variance weight with a floor. Only the difference of the two heads' fades
     enters, so that a change of the transmit power, which is common to both heads, cannot move a weight."""
     da = np.asarray(pa_db, float) - running_median(pa_db)

@@ -27,7 +27,7 @@ matplotlib only.
 The stage-2 records of study 1 (`results/stage2/*.tar.gz`, 11 files) and the extra site-accuracy passes
 (`inhouse/results/site_accuracy_passes_extra.json`) are the largest files of the repository. Their SHA-256 sums are in
 `SHA256SUMS` (check with `cd speedcheck_sim && sha256sum -c SHA256SUMS`). They are needed for the erasure
-rows of the number file (`A|erasure|...`; Supplement Table S24), for the error-CDF figure `fig_S1` and for the in-house
+rows of the number file (`A|erasure|...`; Supplement Table S19), for the error-CDF figure `fig_S1` and for the in-house
 decision simulation (`inhouse/decisions.py`, which reads the extra passes). Every other command below runs without them.
 `SHA256SUMS` also lists the 14 stored study-3 outputs in `results/study3/`.
 
@@ -43,7 +43,7 @@ repository root; `python` below is `.venv-sim/bin/python`. Commands are run from
 | Constants files | build the patched QuaDRiGa tree (`QUADRIGA_DIR=<QuaDRiGa checkout> QUADRIGA_PATCHED_DIR=$PWD/quadriga_patched bash tr37885/quadriga/patch/build_patched_tree.sh`), then `cd tr37885`, `python make_constants.py` (study 1); `python make_constants.py --study2 --study2-calibration config/study2_calibration.json --study2-timestamped --study2-merge-done --study2-selected ../results/study2/step0_decision.json --study2-seeds config/study2_seed_record.json --out config/study2_constants.json` (study 2) | short |
 | Study 1, full run | `bash tr37885/run_study1.sh` | very long |
 | Study 2, full run (after study 1) | `bash tr37885/run_study2.sh` | very long |
-| Study 3 from the stored outputs: the number file of Table 9 and of Supplement S8.4, and every cell of Fig. 6 | `python tr37885/reports/study3_values.py --check`, `python tr37885/reports/detection_figure.py --check` | short |
+| Study 3 from the stored outputs: the number file of Table 9 and of Supplement S8.2, and every cell of Fig. 6 | `python tr37885/reports/study3_values.py --check`, `python tr37885/reports/detection_figure.py --check` | short |
 | Study 3, full run (after study 1) | `bash tr37885/run_study3.sh` | very long |
 | Decision simulation on the in-house channel | `python inhouse/decisions.py --levels 8` (writes `inhouse/results/decisions_L8_full.json` from `inhouse/results/site_accuracy_passes_extra.json`; equal to the stored file except the run-time field `seconds_last_run`) | long |
 | Matching simulation on the in-house channel | `python inhouse/matching.py --out-tag _trf` (writes `inhouse/results/matching_trf.json`, byte-identical) | medium |
@@ -59,9 +59,9 @@ Figs. 7 and 8 and of the supplement's Fig. S1 (Fisher bound) are drawn by `paper
 
 Without the stage-2 records, `make_reports.py` still writes every value except the erasure rows and `fig_S1`. The
 study-2 stages read `tr37885/config/study2_constants.json` (`run_study2.sh` sets `SPEEDCHECK_CONSTANTS`).
-`config/design_constants.json` holds the design constants of Table 3 and Supplement Table S25.
+`config/design_constants.json` holds the design constants of Table 3 and Supplement Table S20.
 `config/presentation_constants.json` holds presentation values of the paper, each taken from the source named in its
-`origin` field; it is stored as data (the script that collected them read files outside this repository).
+`origin` field; it is stored as data, and no script of this repository writes it.
 
 ## Study 3: the urban estimator
 
@@ -99,7 +99,7 @@ python tr37885/pipeline/s3_evaluate.py --res <res> --series <series> --family U2
 What is stored and what is not:
 
 - Stored: every output that the paper and the supplement read (`results/study3/`, listed in `SHA256SUMS`).
-  `study3_values.py --check` and `detection_figure.py --check` regenerate the numbers of Table 9, of Supplement S8.4
+  `study3_values.py --check` and `detection_figure.py --check` regenerate the numbers of Table 9, of Supplement S8.2
   and of Fig. 6 from them.
 - Not stored: the stage-1 channel records of the `U3` sites (about 60 MB per site), the per-beacon series, the
   per-crossing outputs of the estimators and the outputs of the five decision-level runs. They regenerate with
@@ -115,7 +115,7 @@ What is stored and what is not:
   files, which contain a provenance block.
 - `urban_rows.csv` is the output of the original runs. 1,488 of its 2,832 data lines (below a header line) belong to two
   attack classes (`coverage`, `signmixed`) or to nine metrics (`billed_*`, `bill_median`, `overbilled_share_gt2pct`,
-  `gain_*`, `f_min`, `f_min_union`) that the decision simulation of this repository no longer computes; the paper and
+  `gain_*`, `f_min`, `f_min_union`) that the decision simulation of this repository does not compute; the paper and
   the supplement print none of them. A fresh run writes the other 1,344 lines. Read from the stored outputs of the five
   original decision-level runs, `s3_decision_readout.py` writes `detection_runs.json` byte for byte and all 2,832 lines
   of `urban_rows.csv` with the same per-channel values; the 1,344 lines are byte-identical, and in the other 1,488 the
@@ -131,25 +131,23 @@ placement, the key `A` is the urban estimator and `registered_recomputed` the ba
 ## Notes on the stored data
 
 - The constants (`tr37885/config/study1_constants.json`, `study2_constants.json`) and the design constants were fixed
-  before the evaluation; the timestamped design records are described in Supplement S2. The release copies carry the
-  same values. Their notes were shortened, and the note fields that described only the internal run organisation were
-  removed, so their SHA-256 differs from the timestamped originals. Both constants files are the output of
-  `make_constants.py` as shipped.
+  before the evaluation; the timestamped design records are described in Supplement S2. The copies in this
+  repository carry the same values with shorter note fields, so their SHA-256 differs from that of the timestamped
+  files. Both constants files are the output of `make_constants.py`.
 - `quadriga.patched_tree_sha256` in the constants is the hash of the tree that `build_patched_tree.sh` builds from this
-  repository's patch. It differs from the hash recorded at the time of the runs, because one comment line of the patch
-  was changed; the code of the patch is unchanged.
+  repository's patch. It differs from the hash recorded at the time of the runs in one comment line of the patch;
+  the code of the patch is the same.
 - Study-2 seeds: `tr37885/config/study2_seed_record.json` holds the bundle hash and the Bitcoin block header of the
   timestamp; `pipeline/s2_seeds.py` checks the header (proof of work, block hash, Merkle root) and derives the seeds.
 - Provenance blocks of the stored outputs keep the tag, the tool versions and the run knobs. Where a stored output
-  records the SHA-256 of another stored file, the hash refers to the release copy.
+  records the SHA-256 of another stored file, the hash refers to the copy in this repository.
 - The `origin` fields of `config/design_constants.json` and `config/presentation_constants.json` and one note of the
-  constants files name paper sections, tables and figures as they were numbered when the files were written: their
-  "Section V-C" is the speed verification, Section V-D of the published paper; "Table 9" in
-  `presentation_constants.json` is the decision-level table of that layout, whose values are now Fig. 6 and
-  Supplement S7, and its "Fig. 6" is Fig. 7 (per-beacon error against SNR); "Table 11" in the constants files and in
-  `make_constants.py` is Table 12 (coalitions, with the matching numbers).
-- The first line of `results/study3/speedpath-s3.tex` names the script that wrote the stored copy;
-  `reports/study3_values.py` writes the same keys.
+  constants files use their own numbering of paper sections, tables and figures: their "Section V-C" is the speed
+  verification, Section V-D of the paper; "Table 9" in `presentation_constants.json` is the decision-level table,
+  whose values are in Fig. 6 and Supplement S7, and its "Fig. 6" is Fig. 7 (per-beacon error against SNR); "Table 11"
+  in the constants files and in `make_constants.py` is Table 12 (coalitions, with the matching numbers).
+- The stored `results/study3/speedpath-s3.tex` and the file written by `reports/study3_values.py` differ in the first
+  (comment) line only; every key and value is the same (`study3_values.py --check`).
 - Random seeds are part of the constants and of the code. Seed strings inside the code (for example
   `job_seed("e3v5", ...)`, `seed("p5", ...)`, `seed("h5", ...)`, the label `SEED_LABEL` of `pipeline/s3_family.py`) are
   kept unchanged so that every stored output can be regenerated.
@@ -173,7 +171,7 @@ they seed the random generators or name stored outputs.
   rule, `R3` consistency rule (keys such as `r1_thr`, `r2_epoch`, `r3_inhouse`).
 - Constants blocks `evaluation_v4`, `evaluation_v5` (study 1) and `evaluation_v6` (study 2); `step0` (constants block
   and the file names `step0_decision.json`, `step0_report.json`) is the development stage of study 2.
-- Key prefixes of the number files: `A|` (`table_A`, Table 8), `B|` (`table_B`, Fig. 6 and Supplement S7), `C|`, `D|`, `E|` (figures `fig_C` = Fig. 7, `fig_D` = Fig. 8, `fig_E`), `K|` (realised K),
+- Key prefixes of the number files: `A|` (`table_A`, Table 8), `B|` (`table_B`, Fig. 6 and Supplement S7), `C|`, `D|`, `E|` (figures `fig_C` = Fig. 7, `fig_D` = Fig. 8, `fig_E`), `K|` (realized K),
   `S|` (sensitivities), `E5|` (matching simulation), `reg|` (study-1 design record), `S2|`, `A2|`, `S2b|`, `S2d|`
   (study 2). Experiment labels `E1` (site-accuracy simulation), `E2` (decision simulation), `E3` (consistency
   simulation), `E5` (matching simulation) appear in key names and module aliases.
@@ -192,5 +190,5 @@ they seed the random generators or name stored outputs.
   (surrogate survey in traffic).
 - Keys of the branch files: `T2|` ... `T8|`, `T3N|` (outcome texts written for Section VI-D), `fnb|` (texts naming the
   site types of the frequency-only detection claim), `Bstratum|`, `Bnote|` (`table_B` stratum status and note). The
-  published paper reads only the switches `Bstratum|`, `esc|` and `K|` from these files; the other texts are still
-  written by the report generators and kept in the stored files.
+  paper reads only the switches `Bstratum|`, `esc|` and `K|` from these files; the other texts are written by the
+  report generators and kept in the stored files.

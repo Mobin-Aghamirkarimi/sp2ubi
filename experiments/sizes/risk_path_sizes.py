@@ -1,6 +1,5 @@
 """Single insurer key on the risk path: parameters chosen by OpenFHE, byte sizes of every key, ciphertext and message,
 the decryption noise margin of a result ciphertext, and the message sizes of the dealer-free opening-key generation.
-Sizes and parameters only; the timings are in experiments/timings.
 
 Usage (from the repository root):  python experiments/sizes/risk_path_sizes.py
 Output: experiments/sizes/results/risk_path_sizes.json"""
@@ -17,9 +16,8 @@ import openfhe as o  # noqa: E402
 from sp2ubi import hommac  # noqa: E402
 from sp2ubi.entities import OBU, TSP, Insurer  # noqa: E402
 from sp2ubi.fhe import SLOT_X, RiskContext  # noqa: E402
-from sp2ubi.groupsig_bbs04 import BBS04, SIGNATURE_BYTES, Issuer  # noqa: E402
+from sp2ubi.groupsig_bbs04 import BBS04, GPK_BYTES, SIGNATURE_BYTES, Issuer  # noqa: E402
 from sp2ubi.opening_dkg import AuthenticatedParty, SessionRegistry, long_term_key  # noqa: E402
-from sp2ubi.groupsig_bbs04 import GPK_BYTES  # noqa: E402
 from sp2ubi.params import DEFAULT as P  # noqa: E402
 from sp2ubi.proofs import proof_bytes  # noqa: E402
 from sp2ubi.risk_model import load_model  # noqa: E402

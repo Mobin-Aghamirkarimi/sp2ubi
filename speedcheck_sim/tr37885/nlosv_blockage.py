@@ -4,9 +4,9 @@ max{2 m, Exp(mean = speed * 2 s)}; all vehicles in a lane at the same speed); a 
 blocker box intersects the 3D segment vehicle antenna -> head A; the state is set per beacon; the blockage loss is the
 clause 6.2.1 additional loss max{0 dB, N(mean, sd) in dB}, case by antenna and blocker heights, one draw per blockage
 event (a run of consecutive blocked beacons by the same blocker) with the distance-dependent mean per beacon.
-Implementation readings (constants `p3_blockage`): type mix of urban option B
+Implementation readings (constants block `p3_blockage`, the NLOSv blockage constants): type mix of urban option B
 (20/60/20 %), blocker-lane speed per pass uniform over the urban option B lane speeds {60, 50, 25, 15} km/h, blocker
-lane centre 3.5 m (TR Annex A urban lane width) from the vehicle's lane centre towards the heads, same direction."""
+lane center 3.5 m (TR Annex A urban lane width) from the vehicle's lane center towards the heads, same direction."""
 from dataclasses import dataclass
 
 import numpy as np
@@ -16,12 +16,12 @@ TYPES = {1: (5.0, 2.0, 1.6), 2: (5.0, 2.0, 1.6), 3: (13.0, 2.6, 3.0)}          #
 
 @dataclass
 class Blockers:
-    x0: np.ndarray        # centre x of each box at t = t_ref (m)
+    x0: np.ndarray        # center x of each box at t = t_ref (m)
     length: np.ndarray
     width: np.ndarray
     height: np.ndarray
     vtype: np.ndarray
-    y_c: float            # lane centre (m)
+    y_c: float            # lane center (m)
     speed: float          # m/s, +x
     t_ref: float
 
@@ -111,9 +111,9 @@ LANE_WIDTH = 3.5                               # TR 37.885 Annex A, urban
 def pass_states(rng, site, traj, t_b, head_z, veh_z, mix=MIX_URBAN_B, speeds_kmh=LANE_SPEEDS_KMH, clearance=0.5,
                 y_c=None):
     """Blockers and per-beacon NLOSv state at head A (index 0 of site.heads) for one pass. Returns a dict with the
-    state per beacon (blocker index or -1), loss_db per beacon, d3d, lane speed, lane centre and whether the lane
-    centre had to be moved towards the vehicle to keep `clearance` between the widest box and the head line.
-    y_c: blocker-lane centre in the in-house frame (None: vehicle's mean y + 3.5 m towards head A)."""
+    state per beacon (blocker index or -1), loss_db per beacon, d3d, lane speed, lane center and whether the lane
+    center had to be moved towards the vehicle to keep `clearance` between the widest box and the head line.
+    y_c: blocker-lane center in the in-house frame (None: vehicle's mean y + 3.5 m towards head A)."""
     x, y, _, _ = traj.at(t_b)
     head = np.array([site.heads()[0][0], site.heads()[0][1], head_z])
     side = np.sign(head[1] - np.mean(y)) or 1.0

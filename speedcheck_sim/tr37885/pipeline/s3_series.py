@@ -1,7 +1,7 @@
 """Study 3: per-beacon series of every crossing of a stage-1 site record, produced as stage 2 produces them
 (stage2_evaluate.evaluate_site: the same interpolation, SNR mapping, head offset, noise and impairment random numbers),
 for every mapping x PRB variant and one arm: gen_on (TR 37.885 with the scatterer-motion term) or inhouse (our channel
-model at the realised in-band K, paired with the same crossing). The statistics of the base estimator are stored beside
+model at the realized in-band K, paired with the same crossing). The statistics of the base estimator are stored beside
 the series; they equal those of evaluate_site record by record (--check-against).
 
 Output: <out>/<label>_site_<k>.npz, label = the family (gen_on) or the family + "in" (inhouse), with, per record r

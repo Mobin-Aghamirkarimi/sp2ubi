@@ -6,28 +6,27 @@ TR 37.885 generator records by wrapping them. Only their inputs are replaced:
     window rule and finite statistics; gated inputs (constants window_rule.e2_e3_e5_inputs): test passes discarded by
     the residual gate give no entry, qualification is the decision simulation's own requalify; stop_between is never
     an exclusion. Select statistic per site and speed (smaller variance over the references), every site the
-    placeholder K = 9 dB (equal weights);
+    fixed equal-weight value K = 9 dB;
   * consequences decided before the data: C2 (ii) between-site excess tau_hat per cell (governing file) -> each site gets a
     seeded offset N(0, tau_hat^2) on its evaluated residuals and sqrt(sd_ref^2 + tau_hat^2) as reference sd; C5 failing classes are
     removed from the stratum's speed list and from the speed-profile table given to the decision and matching
-    simulations (renormalised; the removed mass per vehicle profile is reported as uncovered traffic share);
+    simulations (renormalized; the removed mass per vehicle profile is reported as uncovered traffic share);
   * strata: urban = P1 (U), highway = P2 (H); a stratum without any qualified (site, class) is reported "not covered";
-  * one 8-level grid over the qualified cells of P1 + P2 (requalify replaced by the same function on that grid); P4
-    (38.901) runs with its own grid as the secondary decision simulation, never pooled;
+  * one 8-level grid over the qualified cells of P1 + P2 (requalify replaced by the same function on that grid);
   * fixed row extraction: urban vehicle-profile rows from the urban table, highway rows from the highway table,
     suburban rows from both with the worse reported per metric (EXTRACTION); other rows are not reported;
-  * the consistency simulation: P5 per-site z files in the format of inhouse/consistency.py (survey 30, traffic 150,
+  * the consistency simulation (cell P5; designed, not run): P5 per-site z files in the format of inhouse/consistency.py (survey 30, traffic 150,
     evaluated 100; beta arms = the first 30 evaluated passes, jr < 30, asserted), only the selected sites of
-    selection.json (required), analysed by inhouse/consistency_analysis.py with the level map from the common grid and
+    selection.json (required), analyzed by inhouse/consistency_analysis.py with the level map from the common grid and
     equal weights;
   * the matching simulation: the same site tables; z from the stratum's own P5 cell for every speed of the stratum
-    (never across strata);
+    (never across strata), or, with P5 not run, the in-house z described below;
   * outputs only under results/adapter/, each with the SHA-256 of the stage-2 files used (input hash).
 The level grid is the fixed in-house design constant (evaluation_v4.level_grid; the data-derived grid runs only as the
 sensitivity `--grid data`); the top-level clipped share is reported. P5 is not run, so `e3` is not run on generator data
 and the matching simulation takes the in-house consistency z of inhouse/results/consistency_z_full.npz at the in-house K
-cell given by the equal-K rule (the largest in-house K value <= the stratum's realised in-band K median at the governing
-PRB, at least 6 dB; no specular), labelled; with lever_d.adopted the Huber (d) statistics are read.
+cell given by the equal-K rule (the largest in-house K value <= the stratum's realized in-band K median at the governing
+PRB, at least 6 dB; no specular), labeled; with lever_d.adopted the Huber (d) statistics are read.
 Usage: python pipeline/decision_adapter.py e2|e5 --tag primary [--smoke] [--grid data]   (run from inhouse/)"""
 import argparse
 import glob
@@ -53,7 +52,7 @@ C = json.load(open(os.environ.get("SPEEDCHECK_CONSTANTS", os.path.join(ER, "conf
 OUT = os.environ.get("SPEEDCHECK_ADAPTER_OUT", os.path.join(ER, "..", "results", "adapter"))
 RUNS = os.environ.get("SPEEDCHECK_RUNS", os.path.join(ER, "runs"))
 RESULTS = os.environ.get("SPEEDCHECK_RESULTS", os.path.join(ER, "..", "results"))
-K_PLACEHOLDER = 9.0
+K_EQUAL_WEIGHT_DB = 9.0
 BASE_PROFILES = {k: dict(v) for k, v in E.PROFILES.items()}
 PROV = {}                                               # provenance of this adapter run, written into every output
 PC = C["pipeline_constants_from_code"]
@@ -146,7 +145,7 @@ def site_table(recs, cell, mapping, prb, arm="gen_on", tau=0.0, drop_speeds=(), 
             tst = [r for r in rs if r["role"] == "test" and np.sqrt(r["mse"]) <= GATE * rms_ref]   # gated inputs
             ref_v = np.array([r[key] for r in ref], float)
             ev = np.array([r[key] for r in tst], float) + off
-            rows.append(dict(cc=(K_PLACEHOLDER, cell, None), site=s, v=v, ref=ref_v, ev=ev, all=np.concatenate([ref_v, ev]),
+            rows.append(dict(cc=(K_EQUAL_WEIGHT_DB, cell, None), site=s, v=v, ref=ref_v, ev=ev, all=np.concatenate([ref_v, ev]),
                              sraw=float(np.sqrt(ref_v.var(ddof=1) + tau ** 2))))
     keys = sorted({(r["cc"], r["site"]) for r in rows}, key=str)
     kidx = {k: i for i, k in enumerate(keys)}
@@ -175,16 +174,16 @@ def site_table(recs, cell, mapping, prb, arm="gen_on", tau=0.0, drop_speeds=(), 
     nu_cell = {k: max(stats.t.fit(np.concatenate(v), floc=0.0)[0], 2.5) for k, v in cell_resid.items()}
     for r in rows:
         A["nu"][kidx[(r["cc"], r["site"])], speeds.index(r["v"])] = nu_cell[r["v"]]
-    A["K"] = np.full(nS, K_PLACEHOLDER)
+    A["K"] = np.full(nS, K_EQUAL_WEIGHT_DB)
     return A
 
 
 def profiles_without(speeds_full, drop):
     """C5 consequence: the decision simulation's `profile` would give the mass of a removed class to the
-    nearest remaining one, i.e. still verify that traffic with a neighbouring class's errors. The adapter therefore
+    nearest remaining one, i.e. still verify that traffic with a neighboring class's errors. The adapter therefore
     hands the decision simulation and the matching simulation a speed-profile table (an input, not code) from which
     every profile speed whose nearest simulated class (on the full class list) failed C5 is removed and the rest
-    renormalised. Returns (profiles, uncovered share per
+    renormalized. Returns (profiles, uncovered share per
     vehicle profile); a profile whose whole mass is removed is left out and reported as uncovered 1.0."""
     full = np.array(speeds_full, float)
     prof, unc = {}, {}
@@ -388,11 +387,11 @@ def run_e2(a, tables, levels, hashes):
 
 
 def e3_arrays(recs, v0, mapping, prb, arm="gen_on"):
-    """Per P5 site: z of the evaluated and beta passes under the survey and the traffic standardisation. Every pass
+    """Per P5 site: z of the evaluated and beta passes under the survey and the traffic standardization. Every pass
     keeps its slot in track order: a pass that is not included (window rule, non-finite fit) or is discarded by the
     residual gate (constants window_rule. e2_e3_e5_inputs: gated inputs) carries NaN, which the consistency simulation
     maps to z_q = 0 as for a failed fit; the fixed per-site blocks of consistency_analysis / consistency_report (100
-    evaluated, 30 per beta) therefore stay aligned. References are never gated (they define the standardisation);
+    evaluated, 30 per beta) therefore stay aligned. References are never gated (they define the standardization);
     traffic passes are gated like evaluated passes. Asserts 100 / 30; reports the excluded and gated counts per site."""
     ne, nsp = 100, 30
     sel = [r for r in recs if r["cell"] == "P5" and r["v0"] == v0 and r["arm"] == arm and r["mapping"] == mapping
@@ -456,7 +455,7 @@ def write_e3(a, root, g):
         if not parts:
             extra[stratum] = "not covered (every selected P5 site dropped)"
             continue
-        cells.append(dict(v0=v0, K_db=K_PLACEHOLDER, specular_db=None,
+        cells.append(dict(v0=v0, K_db=K_EQUAL_WEIGHT_DB, specular_db=None,
                           sites=[dict(site=p["site"], sd_d_ref=p["sd_d_ref"], sd_d_trf=p["sd_d_trf"],
                                       gate_ratio_beta=p["gate_ratio_beta"], excluded=p["excluded"]) for p in parts]))
         j = len(cells) - 1
@@ -485,7 +484,7 @@ def run_e3(a, tables, levels, g):
             continue
         B, qual = requalify_on(levels)(tables[name], SMAX, 8)
         j = B["speeds"].index(v0) if v0 in B["speeds"] else int(np.argmin(np.abs(np.array(B["speeds"]) - v0)))
-        lmap[(v0, K_PLACEHOLDER, False)] = sorted(int(x) for x in B["lvl"][qual[:, j], j])
+        lmap[(v0, K_EQUAL_WEIGHT_DB, False)] = sorted(int(x) for x in B["lvl"][qual[:, j], j])
     A3.level_map = lambda: lmap
     A3.k_weights = lambda ks, mapping="floor": {k: 1.0 / len(ks) for k in ks}
     A3.HERE = root
@@ -507,7 +506,7 @@ def run_e3(a, tables, levels, g):
                    and r.get("beta", 0.0) == 0.0]
             sd = ref_qualification(ref)["sd_ref"]
             lv.append(int(min(np.searchsorted(levels, SIGMA_INFL * sd - 1e-15), len(levels) - 1)))
-        own[(c["v0"], K_PLACEHOLDER, False)] = lv               # site order: index (s + 0.5) / n * n = s
+        own[(c["v0"], K_EQUAL_WEIGHT_DB, False)] = lv               # site order: index (s + 0.5) / n * n = s
     for ext in ("json", "npz"):
         src = os.path.join(root, "results", f"consistency_{'z_' if ext == 'npz' else ''}{tag}.{ext}")
         shutil.copyfile(src, src.replace(tag, f"{tag}_ownlevel"))
@@ -516,7 +515,7 @@ def run_e3(a, tables, levels, g):
 
 
 def realised_k_median(fam, cell, tag, prb):
-    """stage3_extra_checks.realised_k_median on the family's records (one realised-K function)."""
+    """stage3_extra_checks.realised_k_median on the family's records (one realized-K function)."""
     from pipeline.stage3_extra_checks import realised_k_median as rkm
     return rkm(load_recs(fam, tag)[0], cell, prb)
 
@@ -545,7 +544,7 @@ def run_e5(a, tables, levels, g, hashes=None):
 
         def stratum_z(path, kind="trf", A=A, K_sel=K_sel):    # in-house z at the equal-K cell for every speed
             zin = orig(path, kind)
-            return {(v, K_PLACEHOLDER, False): zin[(v, K_sel, False)] for v in A["speeds"]}
+            return {(v, K_EQUAL_WEIGHT_DB, False): zin[(v, K_sel, False)] for v in A["speeds"]}
         E5.load_consistency_z = stratum_z
         E.load_sites = lambda tags, A=A: A
         E.PROFILES = A["profiles"]                               # C5 consequence: failing classes removed

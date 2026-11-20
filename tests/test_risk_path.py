@@ -395,10 +395,10 @@ def test_daily_records_multiset_and_rules(daily):
 
 
 def test_uu_per_record_schedule_receipts_retry_and_deadline(daily):
-    """Independent upload times in
-    [k-th interval end, + W); each record is attempted at its own time over its own connection (attempts are ordered by
-    the per-record times, never batched); a record stays pending until a valid receipt and is retried at an independently
-    drawn later time; records not acknowledged by the settlement deadline are missing."""
+    """Independent upload times in [k-th interval end, + W); each record is attempted at its own time over its own
+    connection (attempts are ordered by the per-record times, never batched); a record stays pending until a valid
+    receipt and is retried at an independently drawn later time; records not acknowledged by the settlement deadline are
+    missing."""
     from sp2ubi.protocol import uu_upload_loop
     tsp = daily["tsp"]
     obu = daily_obu(daily, D=4, seed=9)
@@ -456,8 +456,8 @@ def test_nonce_already_sealed_in_the_epoch_is_redrawn(daily, monkeypatch):
 
 
 def test_late_record_is_not_counted_in_the_next_epoch(daily):
-    """A record of epoch 1 presented to the settlement of epoch 2 fails HomMAC (epoch label in
-    the one-time keys) and is rejected; epoch 1 of that policy stays 'missing'."""
+    """A record of epoch 1 presented to the settlement of epoch 2 fails HomMAC (epoch label in the one-time keys) and is
+    rejected; epoch 1 of that policy stays 'missing'."""
     ins1 = daily["ins"]
     obu = daily_obu(daily, D=2, seed=4)
     out = published(daily, obu.record_message(0, 2))

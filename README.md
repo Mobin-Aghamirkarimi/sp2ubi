@@ -1,11 +1,11 @@
 # SP2UBI
 
 Reference implementation and evaluation code of **SP2UBI: Secure and Privacy-Preserving Usage-Based Insurance**
-(manuscript submitted to IEEE Access). The repository contains the protocol of the four entities (OBU, RSU, TSP, insurer) with its risk path
-(BFV under one insurer key, homomorphic MAC with two tag blocks, BBS04 group signatures with a dealer-free opening key,
-receipts, settlement and dispute) and its speed-verification path (roadside FDOA speed check with two-party
-exponential ElGamal), the unit and protocol tests, the scripts that produce every computed number, table and figure
-of the evaluation, the speed-check simulation, and the stored results of these scripts.
+(manuscript submitted to IEEE Access). The repository contains the protocol of the four entities (OBU, RSU, TSP,
+insurer) with its risk path (BFV under one insurer key, homomorphic MAC with two tag blocks, BBS04 group signatures
+with a dealer-free opening key, receipts, settlement and dispute) and its speed-verification path (roadside FDOA speed
+check with two-party exponential ElGamal), the unit and protocol tests, the scripts that produce every computed
+number, table and figure of the evaluation, the speed-check simulation, and the stored results of these scripts.
 
 ## Requirements
 
@@ -44,6 +44,13 @@ The data set is not redistributed. `data/fetch_so2021.sh` downloads it from the 
 address with `SO2021_URL`, or put the file at `data/telematics_syn-032021.csv` by hand) and checks its SHA-256. The
 stage-2 records of the speed-check simulation are included; see `speedcheck_sim/README.md`.
 
+## Documentation
+
+The folder `docs/` holds records that complement the paper and its supplement: the full record of the variant of the
+speed check with a survey in traffic, the scope of the evaluation, the columns of the data files behind the detection
+results, notes on the speed path, and the data file and SHA-256 sum behind every table of the supplement
+(`docs/README.md`).
+
 ## Tests
 
 ```
@@ -61,7 +68,7 @@ urban estimator; 32 tests, of which the two QuaDRiGa tests are skipped without O
 
 Each script writes its result into the `results/` folder next to it; the stored files there are the results the paper
 reports. Runtime classes: short (seconds to a few minutes), medium (up to about an hour), long (hours), very long
-(several days on many cores). Table, figure and section numbers are those of the published article and its
+(several days on many cores). Table, figure and section numbers are those of the submitted manuscript and its
 supplement.
 
 | Paper item | Command | Expected result | Runtime |
@@ -79,7 +86,7 @@ supplement.
 | New timings on your machine | `bash experiments/timings/setup_envs.sh`, then `bash experiments/timings/run_timings.sh --out <dir>` | timing files of your machine (not comparable with the stored ones on other hardware) | hardware-dependent |
 | Figs. 7 and 8, supplement Fig. S1 (Fisher bound) | `.venv-sim/bin/python paper_values/plot_fdoa_error.py`, `plot_separation.py`, `plot_fisher.py` (same folder) | the three figures, drawn from the stored speed-check results (the same file on every run) | short |
 | Fig. 6 (detection rates), every cell | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/detection_figure.py --check` | `speedcheck_sim/results/study3/detection_figure.csv`, byte-identical | short |
-| Table 9 and the other numbers of the urban estimator (study 3; Section VI-D, Supplement S8.4) | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/study3_values.py --check` | every key of `speedcheck_sim/results/study3/speedpath-s3.tex` | short |
+| Table 9 and the other numbers of the urban estimator (study 3; Section VI-D, Supplement S8.2) | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/study3_values.py --check` | every key of `speedcheck_sim/results/study3/speedpath-s3.tex` | short |
 | Table 3, Table 8, Table 12 (matching), Section VI-D and Supplements S3 to S9 | see `speedcheck_sim/` below | stored report files, byte-identical | short (from stored outputs) to very long (full runs) |
 
 Baseline labels: the timing code and its result files label the baselines B1 to B4. B2 (SP2UBI context with clear
@@ -101,13 +108,13 @@ urban sites with the base estimator), study 2 (a second survey design for urban 
 study 3 (the urban estimator on newly simulated urban LOS sites and the detection rules with it). Table 8, the
 highway cells of Fig. 6, the data of Figs. 7 and 8, the matching numbers of Table 12 and every study-1 number of
 Section VI-D and of the supplement regenerate in minutes from the stored stage-3 outputs. The erasure rows (Supplement
-Table S24) also need the stage-2 records in `speedcheck_sim/results/stage2/` (SHA-256 sums in
+Table S19) also need the stage-2 records in `speedcheck_sim/results/stage2/` (SHA-256 sums in
 `speedcheck_sim/SHA256SUMS`). The study-2 numbers and texts (Supplement S8) regenerate from
-`speedcheck_sim/results/study2/`, and the study-3 numbers (Table 9, Fig. 6, Supplement S8.4) from
+`speedcheck_sim/results/study2/`, and the study-3 numbers (Table 9, Fig. 6, Supplement S8.2) from
 `speedcheck_sim/results/study3/` (also listed in `speedcheck_sim/SHA256SUMS`). Full runs
-(`speedcheck_sim/tr37885/run_study1.sh`, then `run_study2.sh` and `run_study3.sh`) need Octave 8.4.0, QuaDRiGa v2.8.1 patched by
-`speedcheck_sim/tr37885/quadriga/patch/build_patched_tree.sh` (QuaDRiGa has its own non-commercial licence and is not
-included) and eclipse-sumo 1.28.0, and take several days on many cores. Environment: `requirements/speedcheck_sim.lock`
+(`speedcheck_sim/tr37885/run_study1.sh`, then `run_study2.sh` and `run_study3.sh`) need Octave 8.4.0, QuaDRiGa v2.8.1
+patched by `speedcheck_sim/tr37885/quadriga/patch/build_patched_tree.sh` (QuaDRiGa has its own non-commercial license
+and is not included) and eclipse-sumo 1.28.0, and take several days on many cores. Environment: `requirements/speedcheck_sim.lock`
 (`.venv-sim`). Commands, expected outputs and the legend of the keys and labels of the stored data:
 `speedcheck_sim/README.md`.
 
@@ -137,15 +144,16 @@ included) and eclipse-sumo 1.28.0, and take several days on many cores. Environm
   the tests, which draw fresh keys (their pass or fail outcome does not depend on the keys).
 - The timings are hardware-dependent. The stored timing files in `experiments/timings/results/` were measured on the
   authors' laptop, an Intel Core i7-1195G7 (governor `performance`, idle machine; `machine.txt`), and are the values the
-  paper reports. `run_timings.sh` records the CPU, governor and load with every result and, for a new run, the SHA-256 of the
-  timed code (the stored files do not carry these hashes), and `check_machine.sh` checks the machine before a run.
+  paper reports. `run_timings.sh` records the CPU, governor and load with every result and, for a new run, the
+  SHA-256 of the timed code (the stored files do not carry these hashes), and `check_machine.sh` checks the machine
+  before a run.
 - The data set of So et al. (2021) is not redistributed; `data/fetch_so2021.sh` checks the downloaded file against the
   SHA-256 every result was computed from.
 - Where a regenerated file is not byte-identical to the stored one, the table above or `speedcheck_sim/README.md`
   states the difference (floating-point digits of the risk-model CSV files, creation dates of the report PDFs, input
   paths and provenance records).
 
-## Licence
+## License
 
 Apache License 2.0 (`LICENSE`). Third-party components and their terms are listed in `NOTICE`: the QuaDRiGa patch in
 `speedcheck_sim/` stays under the QuaDRiGa Software License, and the data set stays under the terms of its authors.

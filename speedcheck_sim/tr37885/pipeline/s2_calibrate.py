@@ -150,7 +150,7 @@ def rho_devs(pb):
 
 def implied_speed(pk, k):
     """N12: the speed level the threshold corresponds to: v = k x rms_ref_med x lambda / |g| (|f| = v |g| / lambda)
-    at |g| = 1 and 2, summarised over the pool's site scales per (family, speed class): median, min, max (m/s), and as a
+    at |g| = 1 and 2, summarized over the pool's site scales per (family, speed class): median, min, max (m/s), and as a
     share of the speed class v0. Reported only."""
     out = {}
     for key, sc in site_scales(pk).items():

@@ -5,7 +5,7 @@ Measures, with the reference implementation (py_arkworks_bls12381, BLS12-381 G1)
               (ephemeral Schnorr signature) per second
     RSU       crossing acceptance (certificate verify + rolling-signature verifies + digest/freshness checks);
               Enc(B) evaluation for K beacons; entry signature (RSU group, BBS04)
-    TSP       entry-signature verification; shuffle re-randomisation per entry; partials with DLEQ proofs per entry
+    TSP       entry-signature verification; shuffle re-randomization per entry; partials with DLEQ proofs per entry
     Insurer   proof checks + threshold opening + threshold decryption + BSGS
     Setup     DKG proof of knowledge
 and the beacon / certificate / rolling-trailer / entry sizes. Run on an idle machine with the CPU governor set to
@@ -90,7 +90,7 @@ def main():
         rsu = mk_rsu(); ok, ct_s = rsu.accept(rec, t, window)
         res[f"rsu_evaluate_K{K}"] = timed(lambda: rsu.evaluate(ok, rec.cert, v, ct_s), max(reps // 4, 3))
         unsigned = rsu.evaluate(ok, rec.cert, v, ct_s)
-        # release: re-randomise every component, group-sign, forward, erase
+        # release: re-randomize every component, group-sign, forward, erase
         res[f"rsu_release_rerandomise_and_sign_K{K}"] = timed(lambda: rsu._finalize(unsigned), max(reps // 4, 3))
         entry = rsu._finalize(unsigned)
         air = K * rec.beacons[0].size() + sum(r.size() for r in rec.rollings) + (K // 10) * rec.cert.size()

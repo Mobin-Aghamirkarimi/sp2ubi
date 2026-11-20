@@ -11,9 +11,8 @@ Sub-channels:
   * 3GPP TS 36.213 V14.4.0 Table 8.6.1-1: I_MCS 11 -> I_TBS 10, I_MCS 8 -> I_TBS 8; Table 7.1.7.2.1-1 rows I_TBS 10 and
     I_TBS 8: TBS for N_PRB = 8, 18, 28, 38, 48;
   * n sub-channels carry N_PRB = 10 n - 2 PSSCH PRB (2 PRB of the adjacent PSCCH).
-Not modelled: MAC / RLC / PDCP and any lower-layer header bytes, packing of several messages into one transport block,
+Not modeled: MAC / RLC / PDCP and any lower-layer header bytes, packing of several messages into one transport block,
 retransmissions; the sub-channel count is therefore a payload-level figure, and the margin to the TBS is reported.
-Sizes only, no timing.
 
 Run (from the repository root):  python experiments/sizes/speed_beacon_emission.py
 Output: experiments/sizes/results/speed_beacon_emission.json

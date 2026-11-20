@@ -33,7 +33,7 @@ class ChannelConfig:
     fs_raw: float = 10e6                # receiver sample rate before decimation
     M: int = 128                        # decimated samples per packet
     snr_ref_db: float = 40.0            # per-sample SNR at 100 m range
-    cfo_random_hz: float = 590.0        # per-beacon randomised transmitter offset, uniform +-; cancels in FDOA
+    cfo_random_hz: float = 590.0        # per-beacon randomized transmitter offset, uniform +-; cancels in FDOA
     head_offset_hz: tuple = (0.03, -0.03)  # residual head-to-head reference offset (0.01 ppb ~ 0.06 Hz)
     head_drift_hz_s: tuple = (0.0, 0.0)    # linear drift of each head's reference offset during the pass (Hz/s)
     K_db_head: tuple | None = None      # per-head K-factor (overrides K_db per head)
@@ -79,7 +79,7 @@ def simulate_pass(rng, site: Site, traj: Trajectory, cfg: ChannelConfig, beacon_
     common, unknown per-beacon transmit-time offset (it cancels in TDOA = toa_A - toa_B).
     reflector: optional (p_r, theta_r) of a site-fixed specular reflector; drawn per pass when None.
     doppler_scale: frequency-only manipulation. Every path's Doppler is multiplied by doppler_scale while the
-    emitter's position follows the true trajectory -- the signature of a moving-phase-centre (commutated) array or a
+    emitter's position follows the true trajectory -- the signature of a moving-phase-center (commutated) array or a
     frequency-shifting surface on the vehicle, which mimics a different speed in the frequency domain only. A float
     (constant), ("ramp", beta_max): scale rises linearly from 1 to 1 + beta_max over the pass, or
     ("frontback", beta): offsets of beta * |v| / lambda with opposite signs towards the front and the back.
@@ -88,7 +88,7 @@ def simulate_pass(rng, site: Site, traj: Trajectory, cfg: ChannelConfig, beacon_
     t_b = np.arange(traj.t[0] + 0.05, traj.t[-1] - 0.05, 1.0 / beacon_hz)
     t_b = t_b + rng.uniform(0, 1.0 / beacon_hz)            # random phase of the beacon schedule
     t_b = t_b[t_b < traj.t[-1] - cfg.packet_s]
-    tau = (np.arange(cfg.M) + 0.5) / cfg.M * cfg.packet_s - cfg.packet_s / 2   # packet-centred time
+    tau = (np.arange(cfg.M) + 0.5) / cfg.M * cfg.packet_s - cfg.packet_s / 2   # packet-centered time
     x, y, vx, vy = traj.at(t_b)
     frontback = 0.0
     if isinstance(doppler_scale, tuple) and doppler_scale[0] == "frontback":
@@ -99,7 +99,7 @@ def simulate_pass(rng, site: Site, traj: Trajectory, cfg: ChannelConfig, beacon_
         ds = 1.0 + doppler_scale[1] * (t_b - t_b[0]) / max(t_b[-1] - t_b[0], 1e-9)
     else:
         ds = np.full(len(t_b), float(doppler_scale))
-    fD = doppler(site, x, y, vx, vy) * ds                     # (2, n_b) at packet centres
+    fD = doppler(site, x, y, vx, vy) * ds                     # (2, n_b) at packet centers
     if frontback:
         u_h, _ = unit_to_heads(site, x, y)
         fD = fD + frontback * np.abs(vx)[None, :] / LAMBDA * np.sign(u_h[:, :, 0])
@@ -150,7 +150,7 @@ def simulate_pass(rng, site: Site, traj: Trajectory, cfg: ChannelConfig, beacon_
         cfo = np.exp(2j * np.pi * (eps_tx + head_off)[:, None] * tau[None, :])
         out[h] = sig * cfo + noise
         if wideband:
-            # channel frequency response at packet centre; delays relative to (r_h/c + t_off), the common reference
+            # channel frequency response at packet center; delays relative to (r_h/c + t_off), the common reference
             ex = rng.exponential(cfg.diffuse_delay_ns * 1e-9, cfg.n_paths)
             amp_los = a_los * np.exp(-2j * np.pi * r[h] / LAMBDA)                  # (n_b)
             amp_d = g[None, :] * np.exp(1j * ph_k)                                  # (n_b, P)

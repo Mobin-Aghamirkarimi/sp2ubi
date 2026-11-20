@@ -386,7 +386,7 @@ C["evaluation_v5"] = {
     "timestamp": "the design record (SHA-256 of the constants and code) is timestamped with OpenTimestamps before the evaluation",
 }
 # Configured KF (mean, sd in dB) of every scenario used, read from QuaDRiGa's own config files (checked against the
-# TR, 302/302 values): the reference of the realised-K report.
+# TR, 302/302 values): the reference of the realized-K report.
 def _kf(cfg):
     vals = {}
     for line in open(os.path.join(QUADRIGA_PATCHED, "quadriga_src", "config", cfg + ".conf")):

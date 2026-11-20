@@ -19,7 +19,7 @@ NFFT = 1 << 13
 
 
 def foa(y, packet_s):
-    """Frequency (Hz) of the dominant tone in each row of y (decimated, packet-centred), by zero-padded
+    """Frequency (Hz) of the dominant tone in each row of y (decimated, packet-centered), by zero-padded
     periodogram peak plus parabolic interpolation on the log-magnitude."""
     M = y.shape[-1]
     fs = M / packet_s

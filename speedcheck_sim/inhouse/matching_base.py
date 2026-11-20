@@ -1,7 +1,7 @@
 """Base matching simulation: leakage of the disclosed per-pass values (sigma level, z) on the speed-verification path.
 
-matching.py uses linkage and tuple_ids of this module. main() is not used by the simulations of the paper; its input
-(results/consistency_first_full.json) is not part of the release. It quantifies:
+matching.py uses linkage and tuple_ids of this module. main() reads results/consistency_first_full.json, which is not
+stored here, and no simulation of the paper calls it. It quantifies:
   (1) insurer alone: per pass (policy, b_hat, level, z). Mutual information of the disclosed per-pass values with the
       speed class and with the site type.
   (2) insurer + colluding RSUs: the RSU computes level and z in plaintext and knows site, time and roadside speed of
@@ -10,7 +10,7 @@ matching.py uses linkage and tuple_ids of this module. main() is not used by the
       record in the epoch batch, and the number of candidate policies when colluding RSUs can group k records of one
       vehicle (e.g. consecutive sites of one trip).
   (3) cost of coarse z for the consistency test: epoch power and honest false-alarm rate of the mean-z rule with
-      quantised z, in a Gaussian model per consistency-simulation cell.
+      quantized z, in a Gaussian model per consistency-simulation cell.
 City model: N_VEH policies, 2-10 sites each, Poisson(lambda) passes per epoch, urban / suburban / highway speed
 profiles, site table from the base decision simulation. Honest z ~ N(mean, sd) of the matching
 consistency-simulation cell (nearest K).
@@ -39,7 +39,7 @@ def mutual_information(x, y):
     return sum(c / n * np.log2((c / n) / (cx[a] / n * cy[b] / n)) for (a, b), c in cxy.items())
 
 
-def quantise(z, q):
+def quantize(z, q):
     return np.round(np.clip(z, -CLIP, CLIP) / q).astype(int)
 
 
@@ -75,7 +75,7 @@ def city(A, rng, n_veh, lam, e3):
 def tuple_ids(lvl, z, q):
     if q is None:
         return lvl.copy()
-    zq = quantise(z, q)
+    zq = quantize(z, q)
     zq -= zq.min()
     return lvl * (zq.max() + 1) + zq
 
@@ -110,7 +110,7 @@ def linkage(pol, tid, n_veh, rng, n_targets=3000):
     return out
 
 
-def power_under_quantisation(e3, reps=20_000, alpha=1e-3 / 12 / 5, seed=7):
+def power_under_quantization(e3, reps=20_000, alpha=1e-3 / 12 / 5, seed=7):
     """Mean-z epoch rule of the consistency test with z disclosed at resolution q (Gaussian model per cell)."""
     rng = np.random.default_rng(seed)
     base = rng.standard_normal(2_000_000)
@@ -118,7 +118,7 @@ def power_under_quantisation(e3, reps=20_000, alpha=1e-3 / 12 / 5, seed=7):
     for name, q in Z_OPTIONS.items():
         if q is None:
             continue
-        null = np.clip(base, -CLIP, CLIP) if q < 0.05 else quantise(base, q) * q
+        null = np.clip(base, -CLIP, CLIP) if q < 0.05 else quantize(base, q) * q
         sd0 = float(null.std())
         rows = []
         for c in e3.values():
@@ -127,7 +127,7 @@ def power_under_quantisation(e3, reps=20_000, alpha=1e-3 / 12 / 5, seed=7):
                     thr = stats.norm.ppf(alpha) * sd0 / np.sqrt(M)
                     def ep(mu):
                         z = mu + c["honest_sd"] * rng.standard_normal((reps, M))
-                        zz = np.clip(z, -CLIP, CLIP) if q < 0.05 else quantise(z, q) * q
+                        zz = np.clip(z, -CLIP, CLIP) if q < 0.05 else quantize(z, q) * q
                         return float(np.mean(zz.mean(1) < thr))
                     rows.append(dict(v=c["v0"], K=c["K_db"], sc=c["scattering"], sp=c["specular_db"], beta=beta, M=M,
                                      pd=ep(c[key]), fa=ep(c["honest_mean"]) if beta == -0.03 else None))
@@ -166,7 +166,7 @@ def main():
     rep["insurer_alone"]["H_speed_bits"] = float(stats.entropy(np.bincount(spd), base=2))
     for name, q in Z_OPTIONS.items():
         if q is not None:
-            zq = quantise(z, q).tolist()
+            zq = quantize(z, q).tolist()
             rep["insurer_alone"][f"mi_{name}_speed_bits"] = float(mutual_information(zq, spd.tolist()))
             rep["insurer_alone"][f"mi_{name}_specular_bits"] = float(mutual_information(zq, spec.tolist()))
             # plug-in MI is biased upward for many values: same estimate with the speed class permuted
@@ -178,7 +178,7 @@ def main():
         print(f"{name:26s}: values {r['distinct_values']:5d} anon median {r['anon_median']:.0f} min {r['anon_min']} | " +
               " | ".join(f"k={k}: cand median {r[f'k{k}']['median_candidates']:.0f} P(unique) {r[f'k{k}']['p_unique']:.2f}"
                          for k in K_LINK), flush=True)
-    summ, rows = power_under_quantisation(e3)
+    summ, rows = power_under_quantization(e3)
     rep["z_quantisation"] = summ
     for name, s in summ.items():
         print(f"{name:26s}: " + " ".join(f"{k}={v:.3g}" for k, v in s.items()), flush=True)

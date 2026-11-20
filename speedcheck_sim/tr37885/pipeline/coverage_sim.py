@@ -5,7 +5,7 @@ hash; the stage-3 part (scaling, bootstrap, size, calibration) is in coverage_ch
   * one_pass: one pass of site s, copy c, track k (kinematics of the in-house site-accuracy simulation at 15 m/s, pole
     offset U(6, 12) m, the site K, the SNR mapping and statistics of that simulation, nominal impairments, window rule);
   * pool: the sites of one replicate, reused from the cache only with the same (stage-2) provenance;
-  * POPS: the two site-K populations (a: the site-accuracy simulation, N(9, 5^2) floored at 5 dB; b: urban LOS realised
+  * POPS: the two site-K populations (a: the site-accuracy simulation, N(9, 5^2) floored at 5 dB; b: urban LOS realized
     in-band K, N(4.5, 1.5^2) floored at 1 dB; disjoint seeds)."""
 import copy
 import json
@@ -30,7 +30,7 @@ CC = C["criteria"]["C1"]["coverage_check"]
 V0, BURST_S, WIN_ARC = 15.0, C["window_rule"]["burst_s"], C["window_rule"]["arc_L"]
 V5K7 = C.get("evaluation_v5", {}).get("k7", {"min_runnable_replicates": 20, "c_max": 10.0})
 POPS = {"a": dict(mean=9.0, sd=5.0, floor=5.0, seed=[]),          # the site-accuracy simulation site population
-        "b": dict(mean=4.5, sd=1.5, floor=1.0, seed=[1])}         # urban-LOS realised in-band K, disjoint seeds
+        "b": dict(mean=4.5, sd=1.5, floor=1.0, seed=[1])}         # urban-LOS realized in-band K, disjoint seeds
 
 
 def one_pass(pop_seed, s, copy_, k, geo, K_db):

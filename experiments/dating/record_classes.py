@@ -12,8 +12,14 @@ determined; share of policies whose number of driving days is determined.
 Run (from the repository root):  python experiments/dating/record_classes.py [--policies 2000]
 Output: experiments/dating/results/record_classes.json
 """
-import argparse, json, os, random, sys
+import argparse
+import json
+import os
+import random
+import sys
+
 import numpy as np
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, ROOT)

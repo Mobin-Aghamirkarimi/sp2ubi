@@ -1,20 +1,22 @@
 """Numerical checks behind the HomMAC integrity theorem (acceptance rates against the bounds).
 
-Numeric checks only, no timing. Uses the reference implementation sp2ubi/hommac.py (the code the protocol tests run)
-and the parameters of sp2ubi/params.py.
+Uses the reference implementation sp2ubi/hommac.py (the code the protocol tests run) and the parameters of
+sp2ubi/params.py.
 
   A. p: the 41-bit prime, p = 1 (mod 2^16), and the bound q/(p-1)^2 in bits for several q.
   B. Decoding: the largest 31-day epoch score of the fitted integer model stays below p/2 (Params.check_bounds).
   C. Correctness: honest records with the intercept slot x_0 verify in both blocks.
-  D. An earlier tag construction (T_i = alpha_t x_i + u r_i with alpha_t, r_i fixed for the epoch; check
+  D. A per-epoch tag construction (T_i = alpha_t x_i + u r_i with alpha_t, r_i fixed for the epoch; check
      T_R == alpha_t R + u F(r)): (D1) an honest evaluation of a model with an intercept b added by the circuit fails;
      (D2) the sum of two records of the epoch verifies as a record with nonce u_1 + u_2 (a forgery that needs no key);
-     (D3) the same two attacks against the current scheme.
-  E. Small primes (p = 17, 13): the attack classes of the integrity game against the current scheme with an adversary
+     (D3) the same two cases against SP2UBI's per-record construction (result keys: 'earlier' = the per-epoch
+     construction, 'current' = the per-record construction).
+  E. Small primes (p = 17, 13): the attack classes of the integrity game against SP2UBI's construction with an adversary
      that sees x, T, T' and w in the clear, compared with the per-output bound 1/(p-1)^2 (and 1/p^2 for an untagged
-     label): (E1) altered score with guessed tag shifts, (E2) injected record under an untagged nonce, (E3) record of one
-     policy moved to another policy's key, (E4) adaptive attack on one record with q distinct guesses (bound q/(p-1)^2).
-     Each empirical rate is reported with a 99.9 % Wilson interval; the check fails if the interval lies above the bound.
+     label): (E1) altered score with guessed tag shifts, (E2) injected record under an untagged nonce, (E3) record of
+     one policy moved to another policy's key, (E4) adaptive attack on one record with q distinct guesses (bound
+     q/(p-1)^2). Each empirical rate is reported with a 99.9 % Wilson interval; the check fails if the interval lies
+     above the bound.
 
 Run (from the repository root):  python experiments/hommac_checks/hommac_checks.py
 Writes results/hommac_checks.json next to this file.
@@ -95,44 +97,44 @@ if n_ok != N_C:
     fail.append("C: honest records rejected")
 
 
-# ------------------------------------------------------------------------------------------------ D. earlier tag construction
-def old_keys(K, t, m, p):
+# ------------------------------------------------------------------------------------------------ D. per-epoch tag construction
+def epoch_keys(K, t, m, p):
     alpha = hommac.prf(K, p - 1, "old", t, 0) + 1
     return alpha, [hommac.prf(K, p, "old", t, i + 1) for i in range(m)]
 
 
-def old_tags(x, K, t, u, p):
-    a, r = old_keys(K, t, len(x), p)
+def epoch_tags(x, K, t, u, p):
+    a, r = epoch_keys(K, t, len(x), p)
     return [(a * xi + u * ri) % p for xi, ri in zip(x, r)]
 
 
-def old_verify(R, TR, u, w, K, t, p, b=0):
-    """Verification of the earlier tag construction with r_total = F(r); F has the intercept b (added by the circuit)
+def epoch_verify(R, TR, u, w, K, t, p, b=0):
+    """Verification of the per-epoch tag construction with r_total = F(r); F has the intercept b (added by the circuit)
     when b != 0."""
-    a, r = old_keys(K, t, len(w), p)
+    a, r = epoch_keys(K, t, len(w), p)
     return TR % p == (a * R + u * ((lin(w, r, p) + b) % p)) % p
 
 
 N_D = 2000
-w5 = w_fit[1:]                       # earlier layout: five features, intercept b added by the circuit
+w5 = w_fit[1:]                       # per-epoch layout: five features, intercept b added by the circuit
 b = w_fit[0]
-d1_fail = d2_ok = d3_old_int = d3_comb = 0
+d1_fail = d2_ok = d3_intercept = d3_comb = 0
 for _ in range(N_D):
     x1 = [rng.randrange(1 << 14) for _ in range(5)]
     x2 = [rng.randrange(1 << 14) for _ in range(5)]
     u1, u2 = rng.randrange(1, p), rng.randrange(1, p)
-    T1, T2o = old_tags(x1, K, 3, u1, p), old_tags(x2, K, 3, u2, p)
+    T1, T2o = epoch_tags(x1, K, 3, u1, p), epoch_tags(x2, K, 3, u2, p)
     # D1: honest evaluation with intercept: R = b + w.x, T_R = b + w.T (the circuit adds b to both)
-    d1_fail += not old_verify((b + lin(w5, x1, p)) % p, (b + lin(w5, T1, p)) % p, u1, w5, K, 3, p, b)
+    d1_fail += not epoch_verify((b + lin(w5, x1, p)) % p, (b + lin(w5, T1, p)) % p, u1, w5, K, 3, p, b)
     # D2: sum of two records, claimed with nonce u1 + u2 (no intercept, so that D1 does not interfere)
     xs = [(a + c) for a, c in zip(x1, x2)]
     Ts = [(a + c) % p for a, c in zip(T1, T2o)]
-    d2_ok += old_verify(lin(w5, xs, p), lin(w5, Ts, p), (u1 + u2) % p, w5, K, 3, p)
-    # D3: the same against the current scheme (x_0 = 1 slot carries the intercept; sum claimed under u1 + u2)
+    d2_ok += epoch_verify(lin(w5, xs, p), lin(w5, Ts, p), (u1 + u2) % p, w5, K, 3, p)
+    # D3: the same against the per-record construction (x_0 = 1 slot carries the intercept; sum claimed under u1 + u2)
     y1, y2 = [1] + x1, [1] + x2
     A1, A1b = hommac.tag_blocks(y1, K, 3, u1, p)
     A2, A2b = hommac.tag_blocks(y2, K, 3, u2, p)
-    d3_old_int += hommac.verify_record(lin(w_fit, y1, p), lin(w_fit, A1, p), lin(w_fit, A1b, p), u1, w_fit, K, 3, p)
+    d3_intercept += hommac.verify_record(lin(w_fit, y1, p), lin(w_fit, A1, p), lin(w_fit, A1b, p), u1, w_fit, K, 3, p)
     ys = [a + c for a, c in zip(y1, y2)]
     us = (u1 + u2) % p or 1
     d3_comb += hommac.verify_record(lin(w_fit, ys, p), lin(w_fit, [(a + c) % p for a, c in zip(A1, A2)], p),
@@ -140,10 +142,10 @@ for _ in range(N_D):
 out["D"] = {"trials": N_D,
             "D1_earlier_honest_with_intercept_rejected": d1_fail,
             "D2_earlier_sum_of_two_records_accepted": d2_ok,
-            "D3_current_honest_with_intercept_accepted": d3_old_int,
+            "D3_current_honest_with_intercept_accepted": d3_intercept,
             "D3_current_sum_of_two_records_accepted": d3_comb}
-if d2_ok != N_D or d3_old_int != N_D or d3_comb != 0 or d1_fail < N_D - 2:
-    fail.append("D: earlier vs current construction")
+if d2_ok != N_D or d3_intercept != N_D or d3_comb != 0 or d1_fail < N_D - 2:
+    fail.append("D: per-epoch vs per-record construction")
 
 
 # ------------------------------------------------------------------------------------------------ E. small primes

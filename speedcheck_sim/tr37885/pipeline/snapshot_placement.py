@@ -7,14 +7,13 @@ Design (fixed before any S-place data):
   * three QuaDRiGa calls per site with the same seed: B beacon-only (production), A beacon + uniform lambda / 2.4, N
     beacon-only + one dummy pass (environment-change null); term off, PRB 10, both SNR mappings, nominal impairments,
     common random numbers (identical offsets, noise and impairments in the three calls);
-  * statistic: sigma_w = sd of the within-site-centred, +-25 % clipped select statistic (select = matched or profile,
+  * statistic: sigma_w = sd of the within-site-centered, +-25 % clipped select statistic (select = matched or profile,
     whichever has the smaller variance over the site's B passes, the same choice for A and N), over included passes
     (window rule, finite); rho = sigma_w(A) / sigma_w(B), rho_N = sigma_w(N) / sigma_w(B), site-bootstrap 95 % CIs;
   * rule (constants sensitivities.S_place.rule_v4): rho_hat > 1.10 in either mapping -> correction by the larger
-    such rho_hat, whatever the CI (point estimate; the CI is reported); the original rule also required CI lower limit
-    > 1. A correction means: every generator sigma of the stratum in headline_final and in C1 (sigma_gen, R and its CI)
-    is multiplied by rho_hat, the C1 verdicts are re-evaluated and the worse governs, and the paper states that the
-    result depends on QuaDRiGa's snapshot placement. Urban rho applies to P1 (incl. P1d09) and P3, highway rho to P2,
+    such rho_hat, whatever the CI (point estimate; the CI is reported). A correction means: every generator sigma of the stratum in headline_final and in C1 (sigma_gen, R and its CI)
+    is multiplied by rho_hat, the C1 verdicts are re-evaluated and the worse governs, and the result is reported as
+    dependent on QuaDRiGa's snapshot placement. Urban rho applies to P1 (incl. P1d09) and P3, highway rho to P2,
     P4 takes the larger.
 Outputs: runs/s_place_<tag>/<cell>_site<k>.json (resumable per site), results/s_place_<tag>.json.
 Usage: python pipeline/snapshot_placement.py --tag sens_place [--sites 0 5] [--cells P1 P2]"""
@@ -141,7 +140,7 @@ def run_site_triple(cell, site, out_dir, tag, n_pass=None):
 
 
 def sigma_w(per_site, sites, key_of, ok_of):
-    """sd of the within-site-centred, +-25 % clipped select statistic over the passes in ok_of[s] (the passes included
+    """sd of the within-site-centered, +-25 % clipped select statistic over the passes in ok_of[s] (the passes included
     in all three calls)."""
     e = []
     for s in sites:
@@ -150,7 +149,7 @@ def sigma_w(per_site, sites, key_of, ok_of):
     return float(np.std(np.concatenate(e))) if e else np.nan
 
 
-def summarise(out_dir, tag):
+def summarize(out_dir, tag):
     res = dict(tag=tag, provenance=provenance(tag, stage=2), rule=SP["rule_v4"], statistic=STAT, cells={})
     for cell in CELLS:
         recs = {}
@@ -219,7 +218,7 @@ def main():
     for cell in a.cells:
         for s in range(*a.sites):
             print(run_site_triple(cell, s, out_dir, a.tag, a.n_passes), flush=True)
-    print(summarise(out_dir, a.tag))
+    print(summarize(out_dir, a.tag))
 
 
 if __name__ == "__main__":

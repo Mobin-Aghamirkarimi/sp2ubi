@@ -1,5 +1,5 @@
 """The speed-check simulation, C4 report (constants criteria.C4): from the P5 z files written by the
-adapter (traffic standardisation 'trf'):
+adapter (traffic standardization 'trf'):
   * per site p- = P(z < -1.5) and p+ = P(z > 1.5) over its 100 evaluated honest passes, Clopper-Pearson 95 %;
   * the ladder criterion of the consistency simulation (z_q with q = 3; pooled threshold per M in {5; 15; 12 epochs; 2 of 3) per
     site with the plug-in pmf and with each site's upper bound of p- (p0 reduced accordingly): worst site <= 1e-3 per

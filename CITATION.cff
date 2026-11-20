@@ -4,7 +4,7 @@ title: "SP2UBI: Secure and Privacy-Preserving Usage-Based Insurance (reference i
 type: software
 license: Apache-2.0
 repository-code: "https://github.com/mobin-aghamirkarimi/sp2ubi"
-version: "1.1.0"
+version: "1.2.0"
 authors:
   - given-names: Mobin
     family-names: Aghamirkarimi

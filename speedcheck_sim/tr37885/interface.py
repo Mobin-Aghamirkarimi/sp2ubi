@@ -3,7 +3,7 @@ that the site-accuracy pipeline consumes (fdoa_from_samples -> fit_pass_offset -
 channel so that both arms get identical post-processing with common random numbers: transmitter offset per beacon
 (common to both heads), head-to-head offset, thermal noise, receiver impairments (section below).
 Conventions: coefficients carry the carrier phase exp(-j 2 pi d / lambda); the LoS Doppler is positive when the path
-shortens (as in fdoa.channel); packet-centred time tau in [-0.5, 0.5) ms; M samples per beacon."""
+shortens (as in fdoa.channel); packet-centered time tau in [-0.5, 0.5) ms; M samples per beacon."""
 import dataclasses
 import json
 import os
@@ -25,11 +25,11 @@ def tau_grid(M=128, packet_s=1e-3):
 
 
 def band_weights(delay_rel, prb):
-    """Average of exp(-j 2 pi f_k tau) over the occupied subcarriers (12 * prb, centred): the beacon's narrowband
+    """Average of exp(-j 2 pi f_k tau) over the occupied subcarriers (12 * prb, centered): the beacon's narrowband
     view of a path with relative delay tau (s). delay_rel: array (...)."""
     n = 12 * int(prb)
     # closed form of mean_k exp(-j 2 pi (k - (n-1)/2) SCS tau), k = 0..n-1 (Dirichlet kernel; real because the grid is
-    # centred): no [..., n] array, so the stage-1 memory does not grow with the band; equal to
+    # centered): no [..., n] array, so the stage-1 memory does not grow with the band; equal to
     # the explicit mean within 1e-12 (tests/test_band_weights.py)
     x = np.pi * SCS * np.asarray(delay_rel, float)
     s = np.sin(x)
@@ -40,9 +40,9 @@ def band_weights(delay_rel, prb):
 
 
 def band_avg_q(coeff, delay, Q, prb):
-    """coeff, delay: [paths, n_beacon * Q] at the Q snapshot instants per beacon (beacon-major, centred in the
+    """coeff, delay: [paths, n_beacon * Q] at the Q snapshot instants per beacon (beacon-major, centered in the
     packet). Returns h [n_beacon, Q]: band average over the occupied subcarriers of the sum over paths, delays relative
-    to path 0 (the LoS, i.e. timing synchronised to the first arrival). This is the stored canonical channel."""
+    to path 0 (the LoS, i.e. timing synchronized to the first arrival). This is the stored canonical channel."""
     P, S = coeff.shape
     nb = S // Q
     c = coeff.reshape(P, nb, Q)
@@ -52,7 +52,7 @@ def band_avg_q(coeff, delay, Q, prb):
 
 
 def interp_q(h, M=128, packet_s=1e-3, time_scale=1.0):
-    """Complex cubic interpolation of h [n_beacon, Q] (Q centred snapshots per beacon) to M samples per beacon.
+    """Complex cubic interpolation of h [n_beacon, Q] (Q centered snapshots per beacon) to M samples per beacon.
     time_scale = 1 + beta evaluates h((1 + beta) tau): with each path's phase linear in tau inside the 1 ms beacon this
     is the channel with every path's Doppler (LoS, clusters, scatterer-mobility term) scaled by (1 + beta) and geometry
     and delays unchanged (frequency-only manipulation; doppler_scale in fdoa.channel)."""
@@ -141,8 +141,8 @@ PN_PROFILE = {1.0: -19.6, 10.0: -54.6, 100.0: -76.6, 1e3: -86.6, 1e4: -89.6, 1e5
 
 
 def phase_noise(rng, n_beacon, M=128, packet_s=1e-3, profile=None, extra_db=0.0, block=16):
-    """Independent LO phase-noise realisations per beacon, [n_beacon, M] (rad): Gaussian process with one-sided phase
-    PSD S_phi(f) = 2 * 10^(L(f)/10) rad^2/Hz, L(f) log-log interpolated from the profile (+ extra_db), synthesised on a
+    """Independent LO phase-noise realizations per beacon, [n_beacon, M] (rad): Gaussian process with one-sided phase
+    PSD S_phi(f) = 2 * 10^(L(f)/10) rad^2/Hz, L(f) log-log interpolated from the profile (+ extra_db), synthesized on a
     block of `block` beacon durations at fs = M / packet_s and cut to the central beacon (components below
     1 / (block * packet_s) are not represented; slower drift is covered by the head-offset drift)."""
     prof = PN_PROFILE if profile is None else profile
@@ -167,7 +167,7 @@ def iq_imbalance(y, image_dbc=-40.0, phase=0.0):
 
 
 def adc(y, bits=12, agc_step_db=1.0, headroom_db=3.0):
-    """Per-beacon AGC (gain quantised to agc_step_db, peak at -headroom_db full scale) and uniform quantisation of I and
+    """Per-beacon AGC (gain quantized to agc_step_db, peak at -headroom_db full scale) and uniform quantization of I and
     Q to `bits`; returns the de-scaled samples. y: [n_b, M]."""
     peak = np.maximum(np.max(np.abs(np.concatenate([y.real, y.imag], axis=1)), axis=1), 1e-30)
     g_db = -20 * np.log10(peak) - headroom_db

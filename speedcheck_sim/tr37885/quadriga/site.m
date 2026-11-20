@@ -13,7 +13,7 @@ function site( in_file, out_file, ckpt_dir )
 % Output (.mat): for pass p and transmitter h (h = 1 .. Ntx): off_{p}_{h}, on_{p}_{h} [paths x S] complex,
 %   dl_{p}_{h} [paths x S] (s, term off), dlon_{p}_{h} (s, term on), kf_{p}_{h} [1 x Ns] (dB, builder K per segment),
 %   pf_{p}_{h} [Ns x Cmax] (term-on / term-off power before rescaling), nray_{p}_{h}, ls_{p}_{h} [1 x S] (large-scale
-%   gain, linear: sum of ray powers incl. both antenna patterns; the per-beacon normaliser of the interface and the
+%   gain, linear: sum of ray powers incl. both antenna patterns; the per-beacon normalizer of the interface and the
 %   path gain of the TR 37.885 link budget).
 % ckpt_dir (optional): per-builder checkpoint folder (quadriga/checkpoint.m) outside the run's TMPDIR:
 %   the fields each builder adds are stored after its reduce_builder; a restart rebuilds hb, loads the valid

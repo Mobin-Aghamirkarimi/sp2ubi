@@ -55,9 +55,9 @@ def test_monthly_configuration():
 
 
 def test_uu_outage_until_the_deadline_leaves_records_missing():
-    """With the cellular link down from day 2 until after the settlement deadline, the
-    records whose drawn upload time falls inside the outage never reach the TSP; their policies are 'missing',
-    nothing is rejected, and records sent before the outage are accepted."""
+    """With the cellular link down from day 2 until after the settlement deadline, the records whose drawn upload time
+    falls inside the outage never reach the TSP; their policies are 'missing', nothing is rejected, and records sent
+    before the outage are accepted."""
     from sp2ubi.params import DEFAULT
     deadline = DEFAULT.settlement_deadline_s(3)
     res = run_epoch(n_policies=2, days=3, seed=5, outages=[(2 * 86400, deadline + 1)])

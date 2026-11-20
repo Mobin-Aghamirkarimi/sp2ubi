@@ -114,7 +114,7 @@ def core_statistics(t_b, fd, vx, p, tm, delta, D, arc):
 def stop_scores(t_b, fd, delta, rms, xhat, D, run_s=S2.N12_STOP_RUN_S, inside=None):
     """Per start beacon i: the max of |FDOA - delta_hat| / RMS over the run [i, j(i)] if the whole run lies inside the
     head bracket (default: x_hat in [0, D]), else +inf. The detector fires at k if some score < k. rms = 1 gives the
-    score in Hz (normalised at stage 3 by the site scale rms_ref_med)."""
+    score in Hz (normalized at stage 3 by the site scale rms_ref_med)."""
     n = t_b.size
     sc = np.full(n, np.inf)
     if n == 0 or not np.isfinite(rms) or rms <= 0:

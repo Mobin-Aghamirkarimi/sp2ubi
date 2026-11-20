@@ -1,7 +1,7 @@
-"""LaTeX number macros for the speed path: every speed-path number in the manuscript and the supplement is written
+"""LaTeX number macros for the speed path: every speed-path number in the paper and the supplement is written
 as \\spn{<key>} and filled from results/reports/<tag>/numbers_<tag>.json. Formatting is fixed by the key's last field
 (below), so a number is never rounded by hand. An undefined key prints a bold ??key?? and a LaTeX warning.
-With --placeholder, every key of the numbers file gets the text [key] (for drafting before the data exist).
+With --placeholder, every key of the numbers file gets the text [key] instead of its value.
 Usage: python reports/number_macros.py --tag primary [--out FILE] [--placeholder]"""
 import argparse
 import json
@@ -21,13 +21,13 @@ INT = ("k", "n", "n_kept", "n_sites",
        "k_min", "k_max", "k_inhouse", "over_governing_k", "qualified_over_margin_k", "n_blocked_majority", "n_eval",
        "rows", "rows_below_min_eval")
 SCI = ("punitive_per_year", "punitive_ub95", "notice_per_year", "p_holm",
-       # per-vehicle-year rates and their bounds (T5, T5-esc, abstract)
+       # per-vehicle-year rates and their bounds (T5, T5-esc)
        "r2_punitive_per_year", "r2_punitive_ub95", "union_punitive_per_year", "union_punitive_ub95",
        "punitive_union_per_year", "punitive_union_ub95", "all_union_ub95", "escalation_per_year", "inspections_per_year")
 # the type of a key whose last field alone does not fix it
 PCT_PREFIX = ()
 SCI_PREFIX = ("B|honest|r3_inhouse|",)       # R3 honest per-vehicle-year rate (a rate, not a share)
-DB_PREFIX = ("K|",)                          # realised Ricean K in dB (K-anchor sentence), never x 100
+DB_PREFIX = ("K|",)                          # realized Ricean K in dB (K-anchor sentence), never x 100
 DEC3 = ("p_unique", "share")                 # matching-simulation P(unique) (reference 0.014 / 0.163, matching numbers of the paper's coalition table) and
                                              # B|zq_minus1|share against alpha_pow_1_5 = 0.11 (T5-m5): three decimals
 COUNT_LIKE = ("median_candidates",)          # matching-simulation median number of candidates (reference 192 / 6): no decimals

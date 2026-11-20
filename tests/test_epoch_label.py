@@ -3,13 +3,13 @@ a membership, and the settlement of a dropped or altered record by the dispute p
 
 A record of epoch t may reach the TSP during epoch t+1 (upload delay in [0, W_u) plus re-sends), so the group-signed
 message carries the epoch index t in clear, the TSP pools each record by its signed t and its receipt signs t. Without
-the label a record of epoch t pooled with epoch t+1 would fail the HomMAC under (ID, t+1, u) and look like a deviation of
-the TSP. The TSP gives no receipt for a record of an epoch whose batch it has published, so a receipted record that is
-not accepted is always a deviation of the TSP. The dispute procedure opens a receipted record only if its nonce was
-neither accepted nor opened before, and the opening carries no date. The
-receipt signs cm_r as well, the OBU keeps no ciphertext, the dispute opens cm_r against the receipt, a conflict epoch of
-a full month settles without evidence, and a record of an ended policy is verified before it is discarded. The
-settlement messages carry no padding (the TSP holds no policy). Each test uses its own TSP, so its epochs are its own."""
+the label a record of epoch t pooled with epoch t+1 would fail the HomMAC under (ID, t+1, u) and look like a deviation
+of the TSP. The TSP gives no receipt for a record of an epoch whose batch it has published, so a receipted record that
+is not accepted is always a deviation of the TSP. The dispute procedure opens a receipted record only if its nonce was
+neither accepted nor opened before, and the opening carries no date. The receipt signs cm_r as well, the OBU keeps no
+ciphertext, the dispute opens cm_r against the receipt, a conflict epoch of a full month settles without evidence, and a
+record of an ended policy is verified before it is discarded. The settlement messages carry no padding (the TSP holds no
+policy). Each test uses its own TSP, so its epochs are its own."""
 import copy
 import random
 
@@ -102,7 +102,7 @@ def test_epoch_label_is_signed_and_receipted(world):
     obu, gkey = obu_for(world, ident, K, 1, seed=30)
     msg = obu.epoch_message(31)
     moved = copy.copy(msg)
-    moved.epoch = 2                                                  # relabelled on the link: signature fails
+    moved.epoch = 2                                                  # relabeled on the link: signature fails
     assert tsp.receive(moved) is None
     outside = obu.resend()
     outside.epoch = 13                                               # outside the key bundle's epoch range
@@ -214,7 +214,7 @@ def test_records_of_an_ended_policy_are_discarded_not_a_deviation(world):
     assert res.discarded == 1 and res.rejected == 0 and b not in res.reports and res.reports[a].accepted
     assert sorted(res.verdicts) == sorted(["accepted", DISCARDED])
     assert Insurer.deviation_notice(res) is False
-    # deviating TSP: the live record of a relabelled to the ended identity b
+    # deviating TSP: the live record of a relabeled to the ended identity b
     tsp2 = new_tsp(world)
     obu_a2 = obu_for(world, a, Ka, 1, seed=52)[0]
     m = obu_a2.epoch_message(31)
@@ -272,9 +272,9 @@ def _settled_run(world, ident, K, seed, handling, days):
 
 @pytest.mark.parametrize("cfg", ["monthly", "daily"])
 def test_dispute_settles_an_altered_or_dropped_record_at_its_score(cfg, world, daily):
-    """A receipted record that the TSP alters (rejected) or drops is disputed by the OBU
-    and enters with the score of its features, as if it had been accepted; the TSP's deviation is detected (one bit for
-    the epoch). An honest epoch needs no settlement item."""
+    """A receipted record that the TSP alters (rejected) or drops is disputed by the OBU and enters with the score of
+    its features, as if it had been accepted; the TSP's deviation is detected (one bit for the epoch). An honest epoch
+    needs no settlement item."""
     w, days = (world, 31) if cfg == "monthly" else (daily, 4)
     ident, K = w["ins"].enroll(days)
     runs = {h: _settled_run(w, ident, K, 60, h, days) for h in ("accept", "alter", "drop")}

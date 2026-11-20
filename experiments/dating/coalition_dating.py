@@ -7,7 +7,7 @@ upload rule of the risk path (independent delay U[0, W) after the day ends)?
     the band covers the whole epoch and the exact posterior is not computed;
   * for every W, the exact support of each record's date given the matching constraint (the days d such that some
     complete assignment of the epoch's records to its days, consistent with every record's class and upload time,
-    gives this record day d), from the Dulmage-Mendelsohn / SCC characterisation of the edges of a bipartite graph
+    gives this record day d), from the Dulmage-Mendelsohn / SCC characterization of the edges of a bipartite graph
     that lie in some perfect matching. Support size 1 = date determined (exact); log2(support) bounds the entropy
     from above;
   * the insurer alone: per-record dating probability under a uniform-within-class prior, with the classes the insurer
@@ -165,7 +165,7 @@ def support(feas):
     return [{d for d in feas[j] if d == mr[j] or comp[j] == comp[n + d]} for j in range(n)]
 
 
-def summarise(rows, exact):
+def summarize(rows, exact):
     out = {}
     for cls, v in rows.items():
         if not v:
@@ -215,7 +215,7 @@ def coalition(policies, seed, Ws):
                     r["max_post"] = max(p.values())
                     r["H"] = -sum(v * math.log2(v) for v in p.values() if v > 0)
                 res[W][items[j][1]].append(r)
-    return {f"W_{W:g}_days": dict(summarise(res[W], W <= EXACT_POSTERIOR_MAX_W), W_days=W,
+    return {f"W_{W:g}_days": dict(summarize(res[W], W <= EXACT_POSTERIOR_MAX_W), W_days=W,
                                   naive_entropy_bits_uniform_W=math.log2(W),
                                   exact_posterior=W <= EXACT_POSTERIOR_MAX_W) for W in Ws}
 

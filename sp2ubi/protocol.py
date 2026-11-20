@@ -5,8 +5,8 @@ over the vehicle's cellular (Uu) link to the TSP, a fresh connection per attempt
 until the TSP's receipt or the settlement deadline; RSUs do not relay risk records. BFV under one insurer key, slot
 fill at the TSP, decryption by the insurer.
 
-Group signatures: BBS04 over BLS12-381 (groupsig_bbs04.py); the insurer is the issuer; the insurer and the TSP generate the
-opening key without a dealer (opening_dkg.py) and an opening needs both shares (as in speedcheck.py).
+Group signatures: BBS04 over BLS12-381 (groupsig_bbs04.py); the insurer is the issuer; the insurer and the TSP generate
+the opening key without a dealer (opening_dkg.py) and an opening needs both shares (as in speedcheck.py).
 Risk model: the integer additive Poisson model (risk_model.py). Daily features: simulated from So et al. (2021)
 policies (workload.py) and summed inside the OBU.
 """

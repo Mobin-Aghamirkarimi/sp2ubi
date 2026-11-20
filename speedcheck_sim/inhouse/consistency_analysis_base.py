@@ -1,7 +1,7 @@
 """Base consistency analysis: the consistency rule with exact tail probabilities.
 
-consistency_analysis.py uses ALPHA, pmf, sum_cdf and ladder_year of this module. main() is not used by the simulations
-of the paper; its inputs (results/consistency_base_*.json, *.npz) are not part of the release.
+consistency_analysis.py uses ALPHA, pmf, sum_cdf and ladder_year of this module. main() reads
+results/consistency_base_*.json and *.npz, which are not stored here, and no simulation of the paper calls it.
 
 The RSU discloses z_q = round(clip(z, -3, 3) / q) (q = 1.0: 7 values; q = 3.0: 3 values) when the consistency test is
 enabled at the (site, speed class), z_q = 0 when the fit fails, and a distinct value NA ("not tested") when the test is

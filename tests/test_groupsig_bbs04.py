@@ -101,7 +101,7 @@ def test_jointly_generated_tracing_key_with_random_generators():
     assert combine_opening(s.T3, s_i.partial(s.T1, s.T2), s_t.partial(s.T1, s.T2)) == mk.A
 
 
-def test_group_public_key_serialisation_round_trip_and_sizes():
+def test_group_public_key_serialization_round_trip_and_sizes():
     from sp2ubi.groupsig_bbs04 import G1, GPK_BYTES, GroupPublicKey
     issuer, _, members, gs = _setup(1)
     b = issuer.gpk.to_bytes()

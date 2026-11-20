@@ -2,7 +2,7 @@
 rule, input and seed is that of the monitor variant.
 
 Escalation:
-  * per epoch, flag_e = M >= M_MIN and m < thr - z_0.999 * SE_eff, with m, SE the winsorised inverse-variance mean of
+  * per epoch, flag_e = M >= M_MIN and m < thr - z_0.999 * SE_eff, with m, SE the winsorized inverse-variance mean of
     the level variant (same code path), SE_eff = sqrt(SE^2 + SE_cal^2) and SE_cal = sum w_i sigma_level,i /
     (sqrt(N_REF) sum w_i) (the survey calibration error treated as common-mode);
   * thr starts at S_RULE = -4 % (= the honest band edge -3 % minus 1 %); flags in ESC_K = 3 consecutive epochs escalate:
@@ -15,7 +15,7 @@ Escalation:
     (R3, the consistency rule, is not simulated here.)
 Added outputs per row: escalation_per_year (share of vehicle-years with >= 1 escalation), escalation_ub95,
 inspections_per_year (mean number of escalations), punitive_union_per_year, punitive_union_ub95. Added section
-sens_tyre: honest vehicles with s = -5 % exactly (an oversized tyre), reported separately, not part of the honest rows.
+sens_tyre: honest vehicles with s = -5 % exactly (an oversized tire), reported separately, not part of the honest rows.
 Usage: python inhouse/decisions.py --levels 8 [--vehicles 20000] [--smoke]
 """
 import argparse
@@ -43,7 +43,7 @@ TYRE_S = -0.05                                       # sens_tyre stratum
 
 
 def epoch_stats(sim, b):
-    """m, SE (winsorised at C_WIN se_i) and SE_cal per vehicle-epoch."""
+    """m, SE (winsorized at C_WIN se_i) and SE_cal per vehicle-epoch."""
     key, se_i, n_veh = sim["key"], sim["se_i"], sim["n_veh"]
     nE = n_veh * EPOCHS
     oow = np.abs(b) > B_WINDOW

@@ -1,6 +1,6 @@
 """Huber pass fit (constants evaluation_v4.lever_d), one fixed variant.
 
-Iteratively reweighted least squares with Huber psi (c = 1.345) on the per-beacon FDOA residuals, standardised by
+Iteratively reweighted least squares with Huber psi (c = 1.345) on the per-beacon FDOA residuals, standardized by
 1.4826 * MAD of the pass's residuals (re-estimated each iteration), started at the plain LS solution, at most 20
 iterations (stop when the largest relative parameter change is < 1e-6), no other per-beacon quality weight. The final
 Huber weights r_i enter both statistics b_hat of the speed check and the free fit of the consistency test:
@@ -24,7 +24,7 @@ _LO_OFF, _HI_OFF = [-np.inf, 0.5, -10.0, 0.5, -5000.0], [np.inf, 80.0, 10.0, 40.
 
 
 def huber_weights(r, c=C_HUBER):
-    """Huber IRLS weights for residuals r standardised by 1.4826 * MAD."""
+    """Huber IRLS weights for residuals r standardized by 1.4826 * MAD."""
     r = np.asarray(r, float)
     s = 1.4826 * np.median(np.abs(r - np.median(r)))
     if not np.isfinite(s) or s <= 0:

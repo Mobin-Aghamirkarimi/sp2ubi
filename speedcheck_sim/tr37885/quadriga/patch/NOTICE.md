@@ -8,6 +8,6 @@ coefficients with the per-cluster factors applied) and `par.ray_cluster` (cluste
 the function is unchanged: every addition is inside an `if ray_out` block (see `get_channels.diff`). Purpose: the
 per-ray scatterer-mobility term of 3GPP TR 37.885 V15.3.0, clause 6.2.3.
 
-QuaDRiGa is used under its Software License (non-commercial scientific use). The licence text is reproduced in
+QuaDRiGa is used under its Software License (non-commercial scientific use). The license text is reproduced in
 `QuaDRiGa_License.txt` next to this notice. This repository does not contain QuaDRiGa itself: `build_patched_tree.sh`
 copies an unmodified QuaDRiGa checkout and applies `get_channels.diff` to the copy.

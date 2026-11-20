@@ -1,5 +1,5 @@
 """Study 3: evaluation of the base estimator and of the urban estimator (or a comparison variant) on the same crossings
-of one site family. Per speed and estimator, each quantity is the least favourable value over the six mapping x PRB
+of one site family. Per speed and estimator, each quantity is the least favorable value over the six mapping x PRB
 variants (k: the smallest count); the mean errors and the entry yield are those of the variant with the largest sigma
 of the qualified sites. Intervals: Clopper-Pearson for k/n; site bootstrap (BOOT draws, the same site draws for every
 estimator) for sigma, the mean error after calibration, the out-of-window share and the ratio of sigma over all

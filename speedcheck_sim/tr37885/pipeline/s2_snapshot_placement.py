@@ -1,6 +1,6 @@
 """Study 2 S-place light (N5): the fixed study-1 sensitivity
 pipeline/snapshot_placement.py run on the study-2 sites 20-24, cell P1-15, 20 passes per site, through its own
-functions (run_site_triple, summarise), with two inputs replaced for the duration of the call:
+functions (run_site_triple, summarize), with two inputs replaced for the duration of the call:
   * its site seed base: snapshot_placement.py draws every site from [SP.seed, cell idx, site]; here [the study-2
     G1_site_base (evaluation_v6.seeds), the U2 family index, site], i.e. the study-2 site stream of
     stage1_channels.seeds("U2", site); the QuaDRiGa seed follows from it as in snapshot_placement.py;
@@ -64,7 +64,7 @@ def check_sites(sites, sp):
         raise ValueError(f"S-place light sites {lo}-{hi - 1} outside the pre-specified {sp['sites'][0]}-{sp['sites'][1] - 1}")
 
 
-def run(sites=None, tag=HO.PLACE_TAG, C=None, out_dir=None, summarise=True):
+def run(sites=None, tag=HO.PLACE_TAG, C=None, out_dir=None, summarize=True):
     """Run the pre-specified sites (resumable per site, as snapshot_placement.py) and write the summary; returns the
     summary path."""
     sp = spec(C)
@@ -75,10 +75,10 @@ def run(sites=None, tag=HO.PLACE_TAG, C=None, out_dir=None, summarise=True):
     with patched(sp) as M:
         for s in range(*sites):
             print(M.run_site_triple(sp["cell"], s, out_dir, tag), flush=True)
-        if not summarise:
+        if not summarize:
             return None
         with HO.s2_bootstrap(C):
-            return M.summarise(out_dir, tag)
+            return M.summarize(out_dir, tag)
 
 
 def main():
@@ -88,7 +88,7 @@ def main():
     HO.guard()
     from pipeline.provenance import check_tag
     check_tag(HO.PLACE_TAG, stage=2)
-    print(run(a.sites, summarise=a.sites is None))
+    print(run(a.sites, summarize=a.sites is None))
 
 
 if __name__ == "__main__":

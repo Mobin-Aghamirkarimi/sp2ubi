@@ -26,7 +26,7 @@ Also, as stage3_criteria.main / stage3_extra_checks.add_v5 compute them for stud
 study-1 result coverage_check_sens_coverage.json, pinned by SHA-256: c_K7 and the sigma-CI widening; K7 is not re-run),
 the optimism check with the study-2 Holm family (m = 3, N4; s2_criteria.optimism_s2), its
 S-place-corrected re-evaluation (the worse verdict governs), the bridge, the model-diversity C1 quantities
-(descriptive), per-beacon N, realised K and the K report, realised speed, the P3 blocked shares, C4-light, and the
+(descriptive), per-beacon N, realized K and the K report, realized speed, the P3 blocked shares, C4-light, and the
 study-1 keys of stage3_extra_checks.add_v5 (R8 (i)-(iii), threshold sensitivities without the SNR offset rows, the V2V
 reading, qualification vs K, R8 (iv), per-beacon at the governing variant); Table A2 = reports/make_reports.table_a on
 these quantities, keys re-prefixed A2|...

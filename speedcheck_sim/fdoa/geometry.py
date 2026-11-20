@@ -1,7 +1,7 @@
 """Site layout, vehicle trajectories and per-head Doppler.
 
 Coordinates: the road runs along +x. The vehicle antenna moves in the plane z = 0 at lateral position y(t)
-(y = 0 is the nominal lane centre). Both receive heads stand on the roadside line y = pole_offset at height dh
+(y = 0 is the nominal lane center). Both receive heads stand on the roadside line y = pole_offset at height dh
 above the vehicle antenna, at x = 0 (head A) and x = D (head B).
 """
 from dataclasses import dataclass
@@ -16,7 +16,7 @@ LAMBDA = C / FC
 @dataclass(frozen=True)
 class Site:
     D: float = 100.0            # head spacing along the road (m)
-    pole_offset: float = 8.0    # lateral distance from the nominal lane centre to the head line (m)
+    pole_offset: float = 8.0    # lateral distance from the nominal lane center to the head line (m)
     dh: float = 5.5             # head height above the vehicle antenna (m)
 
     def heads(self) -> np.ndarray:

@@ -1,7 +1,7 @@
 """TR 37.885 driver: builds the inputs of one site for quadriga/site.m (geometry, trajectories, snapshot times, segment
 starts, scatterer-mobility draws), runs QuaDRiGa (patched tree) in Octave and returns the per-pass, per-head merged
 cluster coefficients (term off and term on) at the snapshot instants. Constants: config/study1_constants.json.
-Snapshots: Q per beacon, centred in the 1 ms beacon (the interface interpolates to M = 128 samples)."""
+Snapshots: Q per beacon, centered in the 1 ms beacon (the interface interpolates to M = 128 samples)."""
 import json
 import os
 import shutil
@@ -28,7 +28,7 @@ C_MAX, RAYS = 64, 20                  # cluster bound incl. QuaDRiGa sub-cluster
 @dataclass
 class PassInput:
     traj: object
-    t_beacon: np.ndarray        # beacon centre times (s)
+    t_beacon: np.ndarray        # beacon center times (s)
     t_snap: np.ndarray          # snapshot times (s), Q per beacon
     seg_start: np.ndarray       # 1-based snapshot index of each segment start
     nu: np.ndarray              # [n_tx, n_seg, C_MAX, RAYS] extra Doppler (Hz), independent per link (head)

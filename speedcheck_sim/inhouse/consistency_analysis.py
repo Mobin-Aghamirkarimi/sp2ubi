@@ -1,4 +1,4 @@
-"""Consistency analysis: per-site consistency rule with survey-only vs traffic standardisation, exact rates.
+"""Consistency analysis: per-site consistency rule with survey-only vs traffic standardization, exact rates.
 
 Unit = one site (a vehicle whose M passes all come from that site: the worst case for a frequent user). z_q =
 round(clip(z, -3, 3) / q); the insurer's threshold t_M is the largest integer with P_pop(sum of M <= t_M) <= ALPHA under
@@ -9,7 +9,7 @@ by the K population and the speed profiles. A small-sample check: the per-site r
 the single most negative evaluated value (sensitivity of the tail estimate to one pass).
 Thresholds: "pooled" (one population threshold per M) and "level" (the insurer conditions on the disclosed sigma
 level; qualification sigma_hat <= 6 % -- assigned by quantile within the cell; levels with < 12 sites are merged
-with a neighbour; one threshold per level group and M).
+with a neighbor; one threshold per level group and M).
 Usage: python inhouse/consistency_analysis.py
 """
 import json
@@ -43,7 +43,7 @@ def level_map():
 
 
 def level_groups(levels, min_units=12):
-    """Merge sparse levels with a neighbour: returns {level: group id}."""
+    """Merge sparse levels with a neighbor: returns {level: group id}."""
     counts = {l: levels.count(l) for l in sorted(set(levels))}
     groups, cur, n = {}, 0, 0
     for l in sorted(counts):

@@ -1,11 +1,11 @@
 """Stage 3: pre-specified criteria from the stage-2 records (constants `criteria`, `conventions`, `window_rule`,
 `e1_reference`). Implemented here: C1 (paired accuracy ratio, three-way verdict, Holm m = 6, worst variant governs), the
 headline rule incl. the comparison with the in-house site-accuracy simulation and the governing SNR mapping / PRB per
-stratum, C2 (i) TOST with Holm, C2 (ii) excess between-site variance (centred) with the tau_hat^2 estimator, C2 (iii)
+stratum, C2 (i) TOST with Holm, C2 (ii) excess between-site variance (centered) with the tau_hat^2 estimator, C2 (iii)
 transfer to type 3 (P6) and the per-lane description, C3 (qualified share and gate false-discard rate with CIs), C5 (SUMO vs quadratic,
 select statistic, test passes, Holm, consequence list), C7 (P6 gate, monitor margin, false raise and false stop),
 the window-rule yield loss, the stop subset (reporting only), the variance decomposition, per-beacon effective number
-of beacons and FDOA error against SNR and K, realised K, P3 blocked shares, non-finite shares. C4 runs in
+of beacons and FDOA error against SNR and K, realized K, P3 blocked shares, non-finite shares. C4 runs in
 pipeline/consistency_report.py.
 
 Definitions:
@@ -71,8 +71,8 @@ PRIMARY_FAMILIES = list(EV4["p2_order"])                     # H, U, N
 VERDICT_ORDER = {"not run": -1, "contradicted": 0, "undetermined": 1, "not contradicted": 2}
 COMPLETED = {}                                              # family -> completed sites under --incomplete-run
 # Site types and the P3 traffic condition: P3 is not a site type; its survey
-# crossings are free-road LOS and NLOSv blockage of head A affects the traffic crossings only. The abstract, the footnote
-# of the comparison table and the conclusion name site types from U and H only (site_type True).
+# crossings are free-road LOS and NLOSv blockage of head A affects the traffic crossings only. Texts that name site
+# types take them from U and H only (site_type True).
 TYPES = {"urban LOS": dict(cells=["P1-10", "P1-15"], site_type=True),
          "highway LOS": dict(cells=["P2-20", "P2-30", "P2-38"], site_type=True),
          "urban, blocked crossings (NLOSv)": dict(cells=["P3-15"], site_type=False)}
@@ -748,7 +748,7 @@ def headline_and_c3(recs, cells, sp_factor=None, ls_rows=None):
         h["worst_gate_false_discard_ci_upper"] = worst(rows, ("gate_false_discard_ci", 1))
         h["worst_window_yield_loss"] = worst(rows, ("window_yield_loss",))
         h["worst_q99_qualified_gated"] = worst(rows, ("qualified_gated", "q99"))
-        # the paired in-house arm at the same sites (equal realised K)
+        # the paired in-house arm at the same sites (equal realized K)
         rin = [x for x in (cell_quantities(recs, cell, v0, mp, prb, arm="inhouse") for mp, prb in COMBOS) if x]
         h["inhouse_equalK"] = dict(variants=rin, worst_sigma=worst(rin, ("qualified_gated", "sigma")),
                                    worst_sigma_ci_upper=worst(rin, ("qualified_gated", "ci", 1)),
@@ -828,7 +828,7 @@ def c2_cell(recs, cell, v0, mapping, prb):
     mb = [np.mean(pooled(T, [sites[i] for i in idx])) for idx in D]
     e = pooled(T, sites)
     p_tost = max(pval(mb, lambda b: b >= D_MAX), pval(mb, lambda b: b <= -D_MAX))
-    # (ii) excess between-site variance, centred at the pooled shift
+    # (ii) excess between-site variance, centered at the pooled shift
     shift = float(np.mean([np.mean(T[s]["e"]) for s in sites]))
     se2 = lambda s: T[s]["sd_ref"] ** 2 / T[s]["n_ref"] + np.var(T[s]["e"], ddof=1) / T[s]["e"].size
     S = float(np.sum([(np.mean(T[s]["e"]) - shift) ** 2 / se2(s) for s in sites]))
@@ -1001,11 +1001,11 @@ def realised_k(recs, cells):
 
 
 def k_report(tag, families):
-    """Fixed K report from the stage-1 records. Per (cell, v0, scenario): realised broadband K (ls-based, the paired
+    """Fixed K report from the stage-1 records. Per (cell, v0, scenario): realized broadband K (ls-based, the paired
     arm's basis) and in-band K per PRB (median, IQR and a site-bootstrap 95 % CI of the mean); per cell Delta K =
     K_on - K_off from the merged coefficients, broadband and in-band (signed mean with site-bootstrap CI and median
-    |Delta K|, plus 'unbiased' = CI inside +-0.1 dB); per segment the realised K (term off) minus the builder's K
-    (median, q10, q90); the per-beacon-normalised in-band K (diagnostic);
+    |Delta K|, plus 'unbiased' = CI inside +-0.1 dB); per segment the realized K (term off) minus the builder's K
+    (median, q10, q90); the per-beacon-normalized in-band K (diagnostic);
     the configured KF (mean, sd) from QuaDRiGa's config (constants quadriga.kf_reference_db). Descriptive only."""
     from pipeline.stage1_channels import FAMILIES
     ref = C["quadriga"]["kf_reference_db"]
@@ -1071,7 +1071,7 @@ def k_report(tag, families):
 
 
 def realised_speed(recs, cells):
-    """Realised mean speed per cell (test passes, sumo)."""
+    """Realized mean speed per cell (test passes, sumo)."""
     out = {}
     for c, v in cells:
         vm = np.array([r["v_mean"] for r in recs if r["cell"] == c and r["v0"] == v and r["arm"] == "gen_on"

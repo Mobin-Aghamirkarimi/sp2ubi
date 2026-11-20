@@ -58,15 +58,16 @@ class Params:
     upload_window_s: int = 7 * 86400   # W: independent random upload delay per record
     settlement_grace_s: int = 7 * 86400  # contract parameter: settlement deadline = epoch end + W + grace (default 7 d);
     # the grace only extends re-sends after the drawn upload times, so the upload delays (W) are unchanged
+    max_epoch_days: int = 31
+    daily_mile_cap: int = (1 << 14) - 1   # per mileage feature and day, 0.1-mile units (1,638.3 miles)
+    daily_event_cap: int = 4095           # hard brakes / hard accelerations per day
+    nonce_bits: int = 40           # width of u in the size estimates; u is drawn uniformly in [1, p) per record and
+    # sealed (p = 2^40 + 1310721, so u >= 2^40 with probability about 1.2e-6) and redrawn if already sealed in the epoch
+    retry_window_s: int = 3600     # Uu re-send: next attempt uniform in [now, now + retry_window_s)
 
     def settlement_deadline_s(self, epoch_len_days: int) -> int:
         """Seconds from the epoch start after which the TSP closes, shuffles and publishes the epoch's records."""
         return epoch_len_days * 86400 + self.upload_window_s + self.settlement_grace_s
-    max_epoch_days: int = 31
-    daily_mile_cap: int = (1 << 14) - 1   # per mileage feature and day, 0.1-mile units (1,638.3 miles)
-    daily_event_cap: int = 4095           # hard brakes / hard accelerations per day
-    nonce_bits: int = 40           # u: drawn uniformly in [1, p) per record and sealed; redrawn if already sealed in the epoch
-    retry_window_s: int = 3600     # Uu re-send: next attempt uniform in [now, now + retry_window_s)
 
     @property
     def m(self) -> int:

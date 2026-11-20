@@ -1,5 +1,5 @@
 """Sizes in bytes of the risk path's settlement traffic and of the OBU's dispute state per receipted record, computed
-by the implementation itself (no timing). The OBU keeps no ciphertext of a receipted record; settlement messages and
+by the implementation itself. The OBU keeps no ciphertext of a receipted record; settlement messages and
 uploads carry no padding (the TSP holds no policy).
 
 * insurer -> OBU settlement message: 8 B per accepted nonce (`Insurer.settlement_message`; at most one per possible

@@ -305,11 +305,10 @@ def _sig_ok(vk, session: bytes, sender: bytes, step: bytes, th: bytes, m: Signed
 class AuthenticatedParty:
     """A party of the opening-key generation whose messages are signed with its long-term signing key (sk, vk) and
     whose received messages must carry a valid signature under the peer's long-term key peer_vk, bound to the
-    transcript of the earlier steps.
-    `blame` is None while no check failed; after a failed check it is the peer's name if a validly signed peer message
-    failed a check on its commitment or on one of its proofs (`evidence` is then the run's signed messages,
-    `transcript()`), and b"" if the message was a second message for the same step or out of order, its signature
-    failed, or the key was degenerate (nobody identified)."""
+    transcript of the earlier steps. `blame` is None while no check failed; after a failed check it is the peer's name
+    if a validly signed peer message failed a check on its commitment or on one of its proofs (`evidence` is then the
+    run's signed messages, `transcript()`), and b"" if the message was a second message for the same step or out of
+    order, its signature failed, or the key was degenerate (nobody identified)."""
 
     def __init__(self, party: OpeningKeyParty, sk, vk, peer_vk):
         self.party, self._sk, self.vk, self.peer_vk = party, sk, vk, peer_vk

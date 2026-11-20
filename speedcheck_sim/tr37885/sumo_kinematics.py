@@ -7,7 +7,7 @@ Test vehicles are inserted one after another (one pass each) and their FCD is cu
 x in [-0.35 D, 1.35 D] (as build_pass of quadriga/driver.py), resampled to 0.01 s with SUMO's ballistic kinematics
 (speed linear per step, position its integral, checked against SUMO's positions to 5 cm) and returned as
 `fdoa.geometry.Trajectory` in the in-house frame (x along the road with head A at 0, y to the right of travel from the
-centre of the outer lane, heads at y = pole offset).
+center of the outer lane, heads at y = pole offset).
 Plausibility: |a| <= 4.5 m/s^2 (SUMO's default passenger-car decel, an assumption, not a TR value) is checked and
 the number of violating samples is returned."""
 import os
@@ -179,7 +179,7 @@ def site_passes(rng, site: Site, v0, n_pass, scenario: Scenario = URBAN, model="
     if r.returncode:
         raise RuntimeError(r.stderr[-2000:])
     fcd = _read_fcd(os.path.join(wd, "fcd.xml"))
-    y_outer = _lane_y(os.path.join(wd, "net.xml"), route.split()[0] + "_0")   # SUMO y of the outer lane centre
+    y_outer = _lane_y(os.path.join(wd, "net.xml"), route.split()[0] + "_0")   # SUMO y of the outer lane center
     trajs, n_acc, stopped, lc, dropped = [], 0, 0, 0, 0
     for i in range(n_pass + 4):
         a = fcd.get(f"test{i}")

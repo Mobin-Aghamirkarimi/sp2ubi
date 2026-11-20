@@ -1,6 +1,6 @@
-"""Dealer-free two-party generation of the BBS04 opening key (opening_dkg.py): key
-relation, joint opening, no single party opens, every malformed contribution aborts the setup before any key is output,
-and a party refuses a session identifier it has used before."""
+"""Dealer-free two-party generation of the BBS04 opening key (opening_dkg.py): key relation, joint opening, no single
+party opens, every malformed contribution aborts the setup before any key is output, and a party refuses a session
+identifier it has used before."""
 import dataclasses
 
 import pytest

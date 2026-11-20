@@ -1,7 +1,7 @@
-"""Non-interactive zero-knowledge proofs (Fiat-Shamir, SHA-512) used on the speed-verification key path: Schnorr proof of
-knowledge of a key share (two-party DKG), Chaum-Pedersen DLEQ for partial decryptions, a two-base representation proof
-for partial openings of the BBS04 tracing ciphertext, and the public consistency check of the opening-key shares
-(generated without a dealer, opening_dkg.py).
+"""Non-interactive zero-knowledge proofs and signatures (Fiat-Shamir, SHA-512): Schnorr proof of knowledge of a key
+share (two-party DKG), Chaum-Pedersen DLEQ proofs for partial decryptions and for partial openings of the BBS04 tracing
+ciphertext, Schnorr signatures (risk path and speed-verification path), and the public consistency check of the
+opening-key shares (generated without a dealer, opening_dkg.py).
 """
 import hashlib
 from dataclasses import dataclass
@@ -54,7 +54,7 @@ def verify_dleq(ctx: bytes, G, X, C, D, pi: Proof) -> bool:
 
 
 def schnorr_sign(e, E, msg: bytes) -> Proof:
-    """Schnorr signature with an ephemeral per-burst key (E = e*G): proof of knowledge of e bound to msg."""
+    """Schnorr signature under the key E = e*G (Fiat-Shamir proof of knowledge of e bound to msg)."""
     G = G1()
     r = rand_scalar()
     c = fs_challenge(b"esig|" + msg, G, E, G * r)

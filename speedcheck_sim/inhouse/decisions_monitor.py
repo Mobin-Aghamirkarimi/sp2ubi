@@ -150,7 +150,7 @@ def _sim_view(sim, attacked):
 
 
 def decide_popcal(sim, b, qtab, n_levels, f=None):
-    """Rules of the level variant with R2 standardised by the per-level population scale f (estimated on the honest
+    """Rules of the level variant with R2 standardized by the per-level population scale f (estimated on the honest
     population)."""
     if f is None:
         f = population_scale(sim, b, n_levels)

@@ -1,19 +1,19 @@
 """Error standard deviation of the OpenFHE key-switching keys versus the public key (risk-path context).
 
 Claim checked: in OpenFHE v1.5.1 (pip openfhe==1.5.1.0.24.4) the public key and the encryptions use the context's
-discrete-Gaussian sigma = 3.19, whereas the errors of the BV key-switching keys (relinearisation key, rotation keys) are
+discrete-Gaussian sigma = 3.19, whereas the errors of the BV key-switching keys (relinearization key, rotation keys) are
 sampled with sigma = 1.0 (the sampling loop of KeySwitchBV::KeySwitchGenInternal runs under OpenMP private(dgg), which
 default-constructs the generator with std = 1.0).
 
 Method. The script builds the context of sp2ubi.fhe.RiskContext (imported unchanged), generates the key pair, the
-relinearisation key and the rotation keys (1, 2, 4), serialises them to JSON and recovers each error polynomial from the
-secret key. All polynomials are serialised in evaluation (NTT) form, one tower per RNS modulus q_i, with the primitive
-2N-th root of unity psi_i stored in the serialised context.
+relinearization key and the rotation keys (1, 2, 4), serializes them to JSON and recovers each error polynomial from the
+secret key. All polynomials are serialized in evaluation (NTT) form, one tower per RNS modulus q_i, with the primitive
+2N-th root of unity psi_i stored in the serialized context.
   * Public key (h[0], h[1]) = (b, a):  b = e - a*s, hence  e = b + a*s  (mod q_i).
   * Key-switching key for the key pair (old, new) with digits j = 0..d-1 (one digit per RNS tower, digitSize 0):
         bk_j = g_j*old - a_j*new + e_j,  with  a_j = ak_j,  g_j = CRT idempotent (1 mod q_j, 0 mod q_i for i != j)
     hence  e_j = bk_j + ak_j*new - g_j*old  (mod q_i), where
-        relinearisation key:  old = s^2, new = s;
+        relinearization key:  old = s^2, new = s;
         rotation key for the stored automorphism index k (5^r mod 2N for the slot rotation r):
                            old = s, new = s(X^(k^-1 mod 2N))  (the pairing was fixed by testing the four
                            combinations of old/new and k/k^-1; only this one gives a small error)
@@ -21,7 +21,7 @@ secret key. All polynomials are serialised in evaluation (NTT) form, one tower p
     maximum over all digits and towers; a wrong relation would give uniformly distributed values near q/2.
   * Inverse NTT: Gentleman-Sande, bit-reversed ordering of the evaluation points psi^(2*brv(i)+1). The ordering is
     validated by checking that the recovered secret key is ternary.
-Values are centred modulo q_i. Output: results/check_evalkey_sigma.json next to this script. No timing is measured.
+Values are centered modulo q_i. Output: results/check_evalkey_sigma.json next to this script.
 The key generation is not seeded, so the digits of the statistics differ between runs; the rms values do not.
 
 Usage (from the repository root):  python experiments/lattice_security/check_evalkey_sigma.py
@@ -83,7 +83,7 @@ class Ntt:
         return (a * self.ninv) % q
 
 
-def centred(a, q):
+def centered(a, q):
     return np.array([int(x) - q if int(x) > q // 2 else int(x) for x in a], dtype=object)
 
 
@@ -108,7 +108,7 @@ def find(x, key):
 
 
 def towers(poly):
-    """Evaluation-form towers of a serialised DCRTPoly: list of coefficient lists, one per RNS modulus (N values each)."""
+    """Evaluation-form towers of a serialized DCRTPoly: list of coefficient lists, one per RNS modulus (N values each)."""
     return [x for x in find(poly, "v") if isinstance(x, list) and len(x) > 64 and isinstance(x[0], int)]
 
 
@@ -136,7 +136,7 @@ def main():
                "p": P.p}
 
     # secret key must be ternary in coefficient form (validates the NTT ordering)
-    sk_coef = [centred(ntts[i].inverse(s_ev[i]), moduli[i]) for i in range(len(moduli))]
+    sk_coef = [centered(ntts[i].inverse(s_ev[i]), moduli[i]) for i in range(len(moduli))]
     results["secret_key_ternary"] = all(set(int(x) for x in c) <= {-1, 0, 1} for c in sk_coef)
     if not results["secret_key_ternary"]:
         sys.exit("NTT ordering not validated: the recovered secret key is not ternary")
@@ -145,10 +145,10 @@ def main():
     pk_err = []
     for i, q in enumerate(moduli):
         ev = [(int(b) + int(x)) % q for b, x in zip(h[0][i], mul(h[1][i], s_ev[i], q))]
-        pk_err.append(centred(ntts[i].inverse(ev), q))
+        pk_err.append(centered(ntts[i].inverse(ev), q))
     results["public_key_error"] = stats(np.concatenate(pk_err))
 
-    # relinearisation key: old = s^2
+    # relinearization key: old = s^2
     s2 = [mul(s_ev[i], s_ev[i], moduli[i]) for i in range(len(moduli))]
     em = json.loads(o.SerializeEvalMultKeyString(o.JSON, tag))
     results["relinearisation_key_error"] = ks_error(em, s2, s_ev, moduli, ntts)
@@ -206,7 +206,7 @@ def ks_error_one(val, old, new, moduli, ntts):
                 if i == j:
                     v -= int(old[i][x])
                 ev.append(v % q)
-            dv.append(centred(ntts[i].inverse(ev), q))
+            dv.append(centered(ntts[i].inverse(ev), q))
         dv = np.concatenate(dv)
         per_digit.append(stats(dv))
         allv.append(dv)

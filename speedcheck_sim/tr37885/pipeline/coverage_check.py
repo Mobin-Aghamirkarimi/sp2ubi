@@ -17,7 +17,7 @@ In-house against in-house with independent seeds, so the true R is 1 and the tru
     c starts at 1.0 and is raised in steps of 0.05; in each replicate the widening applied is c_eff = max(c(n_rep), c),
     as stage 3 applies it; also P(not contradicted) at true R = 1 with that c.
 Populations: two site-K populations, each with its own fresh sites and seeds: 'a' = N(9, 5^2) dB floored at
-5 dB and 'b' = N(4.5, 1.5^2) dB floored at 1 dB (the realised in-band K of urban LOS).
+5 dB and 'b' = N(4.5, 1.5^2) dB floored at 1 dB (the realized in-band K of urban LOS).
 c_calibrated is the smallest such c with size <= 0.025 in every population, where the size of a population is taken
 over its runnable replicates if the check runs in >= 20 of them, and over all replicates otherwise (a check that rarely
 runs can only rarely say 'not contradicted'). If no c <= c_max meets this, c_calibrated is null and calibrated is false:

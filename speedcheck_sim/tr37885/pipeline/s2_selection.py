@@ -102,7 +102,7 @@ def worst(rows, field, mode="max", absval=False):
     return dict(value=float(r[field]), variant=[r["mapping"], r["prb"]], n=int(r["n_c" if field.endswith("_c") else "n_ls"]))
 
 
-def summarise(rows):
+def summarize(rows):
     """Worst variants taken separately for the candidate and LS; the per-variant rows (with the
     paired common-set values) are kept for the report."""
     out = {}
@@ -199,17 +199,17 @@ def candidate_entries(dev1, dev2, cand, cal, variant=None):
     d1u = dev1.get("P0U", [])
     for c in URBAN:
         for arm in ARMS:
-            out[("Dev-1", "F", key(c), arm)] = summarise(variant_rows(d1u, mF(d1u), c[0], c[1], arm))
+            out[("Dev-1", "F", key(c), arm)] = summarize(variant_rows(d1u, mF(d1u), c[0], c[1], arm))
     d1h = dev1.get("P0H", [])
     for c in HIGHWAY_P0H:
         for arm in ARMS:
-            out[("Dev-1/P0H", "F", key(c), arm)] = summarise(variant_rows(d1h, mF(d1h), c[0], c[1], arm))
+            out[("Dev-1/P0H", "F", key(c), arm)] = summarize(variant_rows(d1h, mF(d1h), c[0], c[1], arm))
     u = dev2.get("U", [])
     uF, uT = CS.reading_F(u, dev2=True), CS.reading_T(u)
     for c in URBAN:
         for arm in ARMS:
-            out[("Dev-2", "F", key(c), arm)] = summarise(variant_rows(uF, mF(uF), c[0], c[1], arm))
-            out[("Dev-2", "T", key(c), arm)] = summarise(variant_rows(uT, mT(uT), c[0], c[1], arm,
+            out[("Dev-2", "F", key(c), arm)] = summarize(variant_rows(uF, mF(uF), c[0], c[1], arm))
+            out[("Dev-2", "T", key(c), arm)] = summarize(variant_rows(uT, mT(uT), c[0], c[1], arm,
                                                                       R_ls_F=uF, R_c_F=mF(uF)))
     return out
 
@@ -368,9 +368,9 @@ def d0_r4_rule(dev1, dev2, cal, n2, arm_list=ARMS):
     entries = {}
     p0n = dev1.get("P0N", [])
     for arm in arm_list:
-        entries[("Dev-1", "F", "P3-15", arm)] = summarise(variant_rows(p0n, mF(p0n), "P3", 15.0, arm))
-        entries[("Dev-2", "F", "P3-15", arm)] = summarise(variant_rows(nF, mF(nF), "P3", 15.0, arm))
-        entries[("Dev-2", "T", "P3-15", arm)] = summarise(variant_rows(nT, mT(nT), "P3", 15.0, arm, R_ls_F=nF, R_c_F=mF(nF)))
+        entries[("Dev-1", "F", "P3-15", arm)] = summarize(variant_rows(p0n, mF(p0n), "P3", 15.0, arm))
+        entries[("Dev-2", "F", "P3-15", arm)] = summarize(variant_rows(nF, mF(nF), "P3", 15.0, arm))
+        entries[("Dev-2", "T", "P3-15", arm)] = summarize(variant_rows(nT, mT(nT), "P3", 15.0, arm, R_ls_F=nF, R_c_F=mF(nF)))
     why, ok, pairs = [], True, []
     for k, sm in entries.items():
         v = lambda f: sm[f]["value"]

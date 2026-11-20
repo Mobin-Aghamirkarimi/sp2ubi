@@ -2,20 +2,19 @@
 
 Risk path (one insurer BFV key, no threshold):
 * BFV with plaintext modulus t = p (the HomMAC field), depth 1, HEStd_128_classic, a single key pair that the
-  insurer generates (KeyGen), together with the relinearisation key and the rotation keys for (1, 2, 4). OpenFHE
+  insurer generates (KeyGen), together with the relinearization key and the rotation keys for (1, 2, 4). OpenFHE
   chooses the ring dimension and the modulus for this single-key context (see `info()`; recorded by
   experiments/sizes/risk_path_sizes.py). There is no TSP key share, no multiparty mode, no flooding and no erasure
   assumption on the risk path: the TSP holds only the public key and the public evaluation keys, and the insurer
   decrypts the shuffled outputs itself.
 * After the evaluation the TSP fills every non-output slot of all N slots (both rows) with fresh uniform values mod p;
   the insurer decodes only the output slots.
-Slot layout of an epoch record (block size 8):
+Slot layout of a record (block size 8):
     x_0..x_{m-1} -> slots 0..m-1,  T_0..T_{m-1} -> 8..8+m-1,  u -> 16,  ID -> 24,  T'_0..T'_{m-1} -> 32..32+m-1
-(T' is the second HomMAC tag block.)
-Enc(w) uses the same layout (w in the x block and in both tag blocks, 1 at slots 16 and 24): one ct x ct product
-followed by rotate-and-sum (1, 2, 4) yields S in slot 0, T_S in 8, u in 16, ID in 24 and T'_S in 32. In this
-single-process simulation the evaluation keys live in the shared CryptoContext; in a deployment they are serialized,
-insurer-signed (entities.KeyBundle) and installed at the TSP.
+(T' is the second HomMAC tag block.) Enc(w) uses the same layout (w in the x block and in both tag blocks, 1 at slots 16
+and 24): one ct x ct product followed by rotate-and-sum (1, 2, 4) yields S in slot 0, T_S in 8, u in 16, ID in 24 and
+T'_S in 32. In this single-process simulation the evaluation keys live in the shared CryptoContext; in a deployment they
+are serialized, insurer-signed (entities.KeyBundle) and installed at the TSP.
 
 The speed-verification path does not use BFV; it is in speedcheck.py (two-party exponential ElGamal on BLS12-381).
 """
@@ -55,7 +54,7 @@ class RiskContext:
 
     # --- insurer: one-off key generation
     def keygen(self):
-        """The insurer's key pair, relinearisation key and rotation keys (1, 2, 4). Returns the OpenFHE key pair; the
+        """The insurer's key pair, relinearization key and rotation keys (1, 2, 4). Returns the OpenFHE key pair; the
         evaluation keys are installed in the context under the key's tag (public: signed into the key bundle and
         installed at the TSP)."""
         kp = self.cc.KeyGen()

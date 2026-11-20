@@ -11,7 +11,7 @@ mapped here.
   2. the study-2 Holm family (N4): m = 3 over U2 P1-10, U2 P1-15, N2 P3-15 for every study-1 Holm family over
      cells (C2 TOST, optimism check): holm_family_s2 runs the stage3_criteria functions with that family.
 Also: readings F / T of the development records, gate G (N3), the ladder L0-L3 (N1, N2), the S-place rule (N5) and the
-outcome -> text map. The new thresholds are the NEW constants of pipeline/s2_constants.py."""
+outcome -> text map. The study-2 thresholds are NEW_THRESHOLDS of pipeline/s2_constants.py."""
 import os
 import sys
 from contextlib import contextmanager
@@ -326,8 +326,8 @@ def l3_holds(bstratum_urban_covered, adapter_covered_cells, rungs):
 def select_outcome(gate, rungs, l3, k_zero=None):
     """The complete outcome map. gate: 'holds' | 'fails' | 'not run'; rungs: {'P1-10': 'L0'|'L1'|'L2', 'P1-15': ...};
     l3: bool (stratum). Returns dict(template, named_cells, per_cell). G fails -> the G text whatever the rungs.
-    Otherwise the template of the highest rung reached by any U2 cell (L3 for the stratum); the abstract / conclusion
-    clause names only the cells that reach that rung; every other cell is printed in Section VI-D / Table A2 with its
+    Otherwise the template of the highest rung reached by any U2 cell (L3 for the stratum); the summary clause names
+    only the cells that reach that rung; every other cell is printed in Section VI-D / Table A2 with its
     own rung."""
     if gate not in ("holds", "fails", "not run"):
         raise ValueError(gate)

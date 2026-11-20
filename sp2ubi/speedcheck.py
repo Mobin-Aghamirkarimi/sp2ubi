@@ -1,31 +1,32 @@
 """Speed-verification path of SP2UBI.
 
-Entities are those of the paper (OBU, RSU, TSP, insurer); no additional party.
-  OBU (trusted TEE)  drives in consecutive, non-overlapping bursts of BURST_S seconds (random phase). A burst has an
-                     ephemeral Schnorr key E certified once by a BBS04 group signature (certificate repeated every
-                     second); beacon j = (burst nonce, j, transmit time t_ms stamped at air time, Enc_SV(v_sen,j));
-                     every second a rolling trailer signs the digests of the beacons sent since the previous one with
-                     the ephemeral key. The certificate's tracing ciphertext binds a result to the signer.
+  OBU (trusted TEE)  drives in consecutive, non-overlapping bursts of BURST_MS milliseconds (40 s; random phase). A
+                     burst has an ephemeral Schnorr key E certified once by a BBS04 group signature (certificate
+                     repeated every second); beacon j = (burst nonce, j, transmit time t_ms stamped at air time,
+                     Enc_SV(v_sen,j)); every second a rolling trailer signs the digests of the beacons sent since the
+                     previous one with the ephemeral key. The certificate's tracing ciphertext binds a result to the
+                     signer.
   RSU                one entry per crossing: from the burst whose certificate verifies and whose beacons cover the
                      crossing window given by the physical layer, it accepts the beacons in that window only if each is
                      fresh (|arrival - t_ms| <= FRESH_MS) and matches the digest signed by a verified rolling trailer
                      of that burst, the beacons span >= SPAN_MIN of the window and >= MIN_COVER of the indices between
                      the first and last one arrived; invalid or foreign trailers, contradicting beacons and stale copies
                      are ignored (their beacons count as missing) and of several fresh copies of a beacon the earliest
-                     is used, so an injected message cannot suppress a crossing; a
-                     burst gives at most one entry per RSU, and only crossings in the site's surveyed direction are used. It
-                     evaluates Enc(B) = sum c w_i Enc(v_sen,i) - Enc(c W') + Enc(e_s), W' = W (1 + site bias), with
-                     Enc(e_s) the smudging term of the signed trailer covering the first used beacon (drawn by the
-                     OBU's TEE, never known to an RSU; one-term form) and no entry if c > C_MAX; it attaches
-                     Enc(level), Enc(z_q). It stores the entry unsigned with only a release time drawn uniformly in
-                     [0, FORWARD_WINDOW_S) after the end of the billing epoch (no crossing time, no crossing order), and
-                     at the release time re-randomises every component, signs with the RSU group key (RSU identity
-                     hidden), forwards and erases it. It sends Enc(number of entries it formed and stored for the epoch;
-                     an entry lost from storage before its release therefore fails the count check),
-                     group-signed, at a time uniform in [FORWARD_WINDOW_S, FORWARD_WINDOW_S + COUNT_REPORT_SPREAD_S)
-                     after the epoch end, independent of its entries.
-  TSP                verifies RSU signatures, stores the epoch's entries, shuffles (re-randomise + permute), sends
-                     the shuffle output to the insurer and answers partial decryptions/openings only for exact members of it (membership check).
+                     is used, so an injected message cannot suppress a crossing; a burst gives at most one entry per
+                     RSU, and only crossings in the site's surveyed direction are used. It evaluates
+                     Enc(B) = sum c w_i Enc(v_sen,i) - Enc(c W') + Enc(e_s), W' = W (1 + site bias), with Enc(e_s) the
+                     smudging term of the signed trailer covering the first used beacon (drawn by the OBU's TEE, never
+                     known to an RSU; one-term form) and no entry if c > C_MAX; it attaches Enc(level), Enc(z_q). It
+                     stores the entry unsigned with only a release time drawn uniformly in [0, FORWARD_WINDOW_S) after
+                     the end of the billing epoch (no crossing time, no crossing order), and at the release time
+                     re-randomizes every component, signs with the RSU group key (RSU identity hidden), forwards and
+                     erases it. It sends Enc(number of entries it formed and stored for the epoch), group-signed, at a
+                     time uniform in [FORWARD_WINDOW_S, FORWARD_WINDOW_S + COUNT_REPORT_SPREAD_S) after the epoch end,
+                     independent of its entries; an entry lost from storage before its release therefore fails the
+                     count check.
+  TSP                verifies RSU signatures, stores the epoch's entries, shuffles (re-randomize + permute), sends
+                     the shuffle output to the insurer and answers partial decryptions/openings only for exact members
+                     of it (membership check).
   Insurer + TSP      2-of-2 shares of the speed-verification key (two-party DKG with proofs of knowledge) and of the
                      opening key (generated jointly without a dealer, opening_dkg.py; share commitments checked
                      against the group key); every partial carries a DLEQ proof, so a wrong partial is detected.
@@ -64,21 +65,21 @@ BSGS_BITS = 34
 N_LEVELS = 8             # disclosed sigma level (3 bits); 8 levels double the power of 4 levels
 Z_STEP, Z_CLIP = 3.0, 3.0  # consistency value z disclosed as -1 / 0 / +1 (z < -1.5, |z| <= 1.5, z > 1.5): the only
                            # option meeting the privacy target with 8 levels (matching simulation) and the epoch rule
-                           # least sensitive to site calibration error (consistency simulation); z is standardised by
+                           # least sensitive to site calibration error (consistency simulation); z is standardized by
                            # the RSU with the median and MAD of its recent traffic
 DIGEST_BYTES = 16
 NONCE_BYTES = 16
 BEACON_PERIOD_MS = 100   # 10 Hz
 BURST_MS = 40_000        # burst length (non-overlapping bursts; random phase)
 ROLL_PERIOD_MS = 1_000   # rolling trailer and certificate repetition
-FRESH_MS = 2             # |arrival - air-time stamp| per beacon (excludes stored replays and slow relays, not a fast
-                         # dedicated live relay; stated limitation)
+FRESH_MS = 2             # |arrival - air-time stamp| per beacon (excludes stored replays and slow relays; a fast
+                         # dedicated live relay is not excluded)
 MIN_COVER = 0.8          # received share of the beacon indices spanned inside the crossing window
 SPAN_MIN = 0.9           # beacons must span >= SPAN_MIN of the crossing window
 USED_HORIZON_MS = 2 * BURST_MS  # memory of bursts already used at this RSU (bounded)
 FORWARD_DELAY_S = 86_400  # release time of an entry: uniform in [0, FORWARD_DELAY_S) after the end of its billing epoch
                           # (copied by make_constants.py into the constants file; no simulation stage reads it)
-FORWARD_WINDOW_S = FORWARD_DELAY_S  # alias used by the forwarding code, so the two cannot diverge
+FORWARD_WINDOW_S = FORWARD_DELAY_S  # the same window under the name the forwarding code uses
 COUNT_REPORT_SPREAD_S = 3_600  # count report: uniform in [FORWARD_WINDOW_S, + this) after the end of the epoch
 
 W_MAX_WEIGHT = V_MAX      # largest plaintext weight (profile: v_fit <= V_MAX; matched: G g^2 <= 4 G, G = 64)
@@ -96,7 +97,7 @@ def speed_to_units(v_mps: float) -> int:
 
 
 def z_to_units(z: float) -> int:
-    """RSU-side disclosure of the standardised consistency value: clip to +-Z_CLIP, quantise to Z_STEP."""
+    """RSU-side disclosure of the standardized consistency value: clip to +-Z_CLIP, quantize to Z_STEP."""
     return round(max(-Z_CLIP, min(Z_CLIP, z)) / Z_STEP)
 
 
@@ -138,7 +139,7 @@ class Beacon:
 class Rolling:
     """Rolling trailer: digests of beacons j0 .. j0 + n - 1 and Enc(e_s), a fresh smudging term drawn in the TEE, all
     signed with the burst's ephemeral key. The ciphertext must be inside message(): pk_SV is public and ElGamal is
-    malleable, so an unsigned term could be replaced over the air (e.g. by Enc(+0.1 * 2^S), cancelling a -10 % VSS)."""
+    malleable, so an unsigned term could be replaced over the air (e.g. by Enc(+0.1 * 2^S), canceling a -10 % VSS)."""
     burst: bytes
     j0: int
     digests: Tuple[bytes, ...]
@@ -213,7 +214,7 @@ class OBU:
 # ---------------------------------------------------------------------------------------------------- RSU
 @dataclass(frozen=True)
 class Entry:
-    """RSU output for one crossing: re-randomised tracing ciphertext, Enc(B), Enc(sigma level), Enc(consistency z),
+    """RSU output for one crossing: re-randomized tracing ciphertext, Enc(B), Enc(sigma level), Enc(consistency z),
     the billing epoch of the crossing (signed, so an entry cannot be moved into another epoch), and the RSU's group
     signature over these (the signer is anonymous among RSUs)."""
     T1: "G1"
@@ -253,7 +254,7 @@ def _rerand_tracing(gs: BBS04, T1, T2, T3):
 
 class SensingRSU:
     """Roadside verifier: authenticates the crossing, evaluates the speed check homomorphically, stores the entry
-    unsigned with only its release time (after the end of the billing epoch) and at that time re-randomises, signs
+    unsigned with only its release time (after the end of the billing epoch) and at that time re-randomizes, signs
     with the RSU group key, forwards and erases it. `surveyed_direction` (+1 / -1) is the direction of travel for which
     the site's calibration was surveyed; crossings in the other direction yield no entry."""
 
@@ -275,14 +276,15 @@ class SensingRSU:
         """(beacons of one burst inside the crossing window [w0, w1], Enc(e_s) of the verified trailer covering the
         first of them), or ([], None). arrival_ms[i] is the arrival time of rec.beacons[i] (None: not received);
         `copies` are further received copies (beacon, arrival time), genuine, delayed or injected.
-        Invalid messages are ignored, never a reason to discard the crossing: a trailer that fails verification or names another burst is ignored and the beacons it would cover
-        count as missing; a copy that is foreign, unsigned, contradicts its signed digest or is not fresh is ignored; a
-        beacon received in several fresh copies is used once, from the copy that arrived first by the RSU's own clock
-        (a later copy can only be a re-radiation or a blind retransmission; a copy that matches the signed digest is
-        byte-identical, so the choice cannot change the entry). Only two
-        verified trailers of the burst that differ for one beacon (digest or term), or a signed beacon outside the
-        certificate's interval, reject the crossing: only the TEE holds e, so these indicate a fault, not an injection.
-        Every distinct heard trailer is verified; there is no cap that drops trailers (a cap would re-open suppression).
+        Invalid messages are ignored, never a reason to discard the crossing: a trailer that fails verification or names
+        another burst is ignored and the beacons it would cover count as missing; a copy that is foreign, unsigned,
+        contradicts its signed digest or is not fresh is ignored; a beacon received in several fresh copies is used
+        once, from the copy that arrived first by the RSU's own clock (a later copy can only be a re-radiation or a
+        blind retransmission; a copy that matches the signed digest is byte-identical, so the choice cannot change the
+        entry). Only two verified trailers of the burst that differ for one beacon (digest or term), or a signed beacon
+        outside the certificate's interval, reject the crossing: only the TEE holds e, so these indicate a fault, not an
+        injection. Every distinct heard trailer is verified; there is no cap that drops trailers (a cap would re-open
+        suppression).
         Then: span >= SPAN_MIN of the window, >= MIN_COVER of the index range, burst not used before, surveyed
         direction (from the sign of the FDOA, given by the physical layer with the window)."""
         if direction != self.surveyed_direction:
@@ -373,9 +375,9 @@ class SensingRSU:
         acc = Ciphertext(acc.C1, acc.C2 - self.pk.G * _scalar(c * Wc))
         s = Signature.from_bytes(cert.sig)
         T1, T2, T3 = _rerand_tracing(self.gs, s.T1, s.T2, s.T3)
-        # Re-randomisation is required: acc is a public linear combination of broadcast ciphertexts (the
+        # Re-randomization is required: acc is a public linear combination of broadcast ciphertexts (the
         # beacons and the trailer term); without it a recorder colluding with an RSU that knows (c, w_i) could
-        # recompute Enc(B) and find it among the TSP's input entries. release() re-randomises again.
+        # recompute Enc(B) and find it among the TSP's input entries. release() re-randomizes again.
         return Entry(T1, T2, T3, self.pk.rerandomize(acc), self.pk.encrypt(level), self.pk.encrypt(z_units),
                      epoch=self.epoch)
 
@@ -394,8 +396,8 @@ class SensingRSU:
         return [(t, e) for t, _, e in self._store]
 
     def _finalize(self, e: Entry) -> Entry:
-        """Re-randomise every component (as TSPShuffle does, public key only) and group-sign: the forwarded entry is
-        unlinkable to the stored one under DDH (the signature must be made after the re-randomisation)."""
+        """Re-randomize every component (as TSPShuffle does, public key only) and group-sign: the forwarded entry is
+        unlinkable to the stored one under DDH (the signature must be made after the re-randomization)."""
         T1, T2, T3 = _rerand_tracing(self.gs, e.T1, e.T2, e.T3)
         f = Entry(T1, T2, T3, self.pk.rerandomize(e.B), self.pk.rerandomize(e.level), self.pk.rerandomize(e.z),
                   epoch=e.epoch)
@@ -403,7 +405,7 @@ class SensingRSU:
                      rsu_sig=self.rsu_gs.sign(self.rsu_key, b"SP2UBI-entry|" + f.body()))
 
     def release(self, now_s: float) -> List[Entry]:
-        """Entries whose release time has come: re-randomised, signed, forwarded and erased from the store."""
+        """Entries whose release time has come: re-randomized, signed, forwarded and erased from the store."""
         k = bisect.bisect_right([t for t, _, _ in self._store], now_s)
         due, self._store = [e for _, _, e in self._store[:k]], self._store[k:]
         return [self._finalize(e) for e in due]
@@ -446,7 +448,7 @@ def aggregate_counts(rsu_gs: BBS04, reports: Sequence[CountReport], epoch: int, 
 
 # ---------------------------------------------------------------------------------------------------- TSP / insurer
 class TSPShuffle:
-    """End-of-epoch shuffle at the TSP: re-randomise every component and apply a secret permutation."""
+    """End-of-epoch shuffle at the TSP: re-randomize every component and apply a secret permutation."""
 
     def __init__(self, gs: BBS04, pk_sv: PublicKey):
         self.gs, self.pk = gs, pk_sv
@@ -493,8 +495,8 @@ class KeyHolder:
 
 class TSPKeyHolder(KeyHolder):
     """TSP side with a membership check: partials only for exact members of its own shuffle output, and a
-    partial decryption of the epoch's count total only for the total it registered. Without the check the two shares would
-    also open raw beacons, raw certificates or trailer terms (Enc(e_s)) that an RSU could hand to the insurer."""
+    partial decryption of the epoch's count total only for the total it registered. Without the check the two shares
+    would also open raw beacons, raw certificates or trailer terms (Enc(e_s)) that an RSU could hand to the insurer."""
 
     def __init__(self, sv_share: ThresholdKey, open_share: OpenerShare):
         super().__init__(sv_share, open_share)

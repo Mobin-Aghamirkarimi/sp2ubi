@@ -1,7 +1,7 @@
 """Sensitivity of the level variant: the R2 dispersion rule when the actual noise exceeds the disclosed sigma.
 Configuration: 8 levels (3 bits), site qualification sigma_hat <= 6 %. R2 variants:
-  * fixed allowance c: R2 standardises residuals with c * sigma_eff (c = 1.0 / 1.2 / 1.3); R1 unchanged;
-  * population calibration: per epoch and disclosed level, the insurer estimates the actual scale of standardised
+  * fixed allowance c: R2 standardizes residuals with c * sigma_eff (c = 1.0 / 1.2 / 1.3); R1 unchanged;
+  * population calibration: per epoch and disclosed level, the insurer estimates the actual scale of standardized
     residuals from all policies (1.4826 * MAD, corrected for the policy-mean fit) and uses max(1, scale_level) *
     sigma_eff in R2. The calibration population is honest (manipulators are a minority).
 Honest false punitive at actual noise = 1.0 / 1.2 / 1.5 x disclosed sigma_eff (per-cell multiplier), and power at

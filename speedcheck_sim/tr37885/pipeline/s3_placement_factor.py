@@ -8,8 +8,8 @@ for the same crossings).
 Per site, call and mapping, f_o and rho are the medians of the free fits (constant-acceleration model, pulse-pair
 series) of the call's crossings, i.e. the constants come from the same crossings and not from a separate survey; the
 urban estimator (fdoa/urban.py) then runs with these constants.
-Ratio as in snapshot_placement.summarise: common included set over B, A, N, statistic selected on the B call, sigma_w
-of the within-site-centred, clipped statistic, rho = sigma_w(A) / sigma_w(B), null rho_N = sigma_w(N) / sigma_w(B),
+Ratio as in snapshot_placement.summarize: common included set over B, A, N, statistic selected on the B call, sigma_w
+of the within-site-centered, clipped statistic, rho = sigma_w(A) / sigma_w(B), null rho_N = sigma_w(N) / sigma_w(B),
 site bootstrap.
 Output keys per mapping: "A" (urban estimator on the crossings that the base estimator includes and for which its own
 statistics are finite), "A_own_inclusion" (urban estimator, its own finite statistics only), "registered_recomputed"

@@ -162,7 +162,7 @@ def summarize(samples) -> dict:
 
 
 class Recorder:
-    """Times labelled operations; keeps raw samples (ms) per label."""
+    """Times labeled operations; keeps raw samples (ms) per label."""
 
     def __init__(self):
         self.samples = {}

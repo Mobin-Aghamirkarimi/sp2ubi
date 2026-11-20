@@ -28,7 +28,7 @@ Z_OPTIONS = {"z q1.0": 1.0, "z q3.0": 3.0, "level only": None}
 
 
 def load_consistency_z(path, kind="trf"):
-    """Honest per-pass z per cell of the consistency simulation; kind 'trf': traffic standardisation, 'ref': survey
+    """Honest per-pass z per cell of the consistency simulation; kind 'trf': traffic standardization, 'ref': survey
     passes."""
     meta = json.load(open(path.replace("_z_", "_").replace(".npz", ".json")))
     arr = np.load(path)
@@ -44,7 +44,7 @@ def main():
     ap.add_argument("--vehicles", type=int, default=20_000)
     ap.add_argument("--e3", default=os.path.join(HERE, "results", "consistency_z_full.npz"))
     ap.add_argument("--seed", type=int, default=17)
-    ap.add_argument("--kind", default="trf", help="trf (traffic standardisation) or ref (survey passes)")
+    ap.add_argument("--kind", default="trf", help="trf (traffic standardization) or ref (survey passes)")
     ap.add_argument("--out-tag", default="")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)

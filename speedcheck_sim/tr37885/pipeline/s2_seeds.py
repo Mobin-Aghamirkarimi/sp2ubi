@@ -1,5 +1,5 @@
 """Study 2 held-out seeds. They are fixed by the timestamped design-record bundle and by the Bitcoin block that holds its
-OpenTimestamps proof, so that the bundle's bytes cannot be varied in search of favourable sites (the block hash does not
+OpenTimestamps proof, so that the bundle's bytes cannot be varied in search of favorable sites (the block hash does not
 exist when the bundle is built).
 
   bundle SHA = SHA-256 of the bundle manifest (the manifest lists every bundle file with its SHA-256)
@@ -20,7 +20,7 @@ exist when the bundle is built).
   seed(name) = int(SHA-256(ascii(bundle SHA hex) + ascii(H hex) + "study2" + ascii(name)).hexdigest[:8], 16)
                for name in G1_site_base, G1_pass_base, sumo, impairments, bootstrap; the other seeds keep their
                study-1 values; a collision with any study-1 or pilot seed base is refused.
-The .ots parser below reads the OpenTimestamps serialisation (magic; version; file-hash op).
+The .ots parser below reads the OpenTimestamps serialization (magic; version; file-hash op).
 Usage: python make_constants.py --study2 ... --study2-seeds config/study2_seed_record.json"""
 import hashlib
 import json
@@ -82,7 +82,7 @@ def _apply(op, arg, msg):
 
 
 def _timestamp(r, msg, out):
-    """Walk one timestamp node (the serialisation of python-opentimestamps Timestamp.serialize): 0xff precedes every
+    """Walk one timestamp node (the serialization of python-opentimestamps Timestamp.serialize): 0xff precedes every
     entry but the last; an entry is an attestation (0x00, 8-byte tag, varbytes payload) or an operation followed by the
     child timestamp of the operation's result. Returns whether the node's subtree holds a Bitcoin attestation; a pending
     attestation is 'resolved' iff its own node does."""
