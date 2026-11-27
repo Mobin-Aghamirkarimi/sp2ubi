@@ -1,15 +1,15 @@
 # Speed check with a survey in traffic (study 2): full record
 
 This file is the full record of the variant of the speed check with a survey in traffic ("study 2" of the supplementary
-material of the SP2UBI paper). The paper reports the variant in Section VI-D, and Section S8.1 of the supplement
+material of the SP2UBI paper). The paper reports the variant in Section VI-D, and Section S4 of the supplement
 summarizes it. The variant was specified in advance, evaluated once on held-out simulated sites and did not meet its own
-criteria; the paper's urban results use the urban estimator instead (Section S8.2 of the supplement).
+criteria; the paper's urban results use the urban estimator instead (Section S4 of the supplement).
 
 Terms. Study 1 is the evaluation behind the per-cell table of the paper (Table 8). Cells are named by scenario and
 speed: P1 is an urban street site with line of sight (LOS), P2 a highway site with line of sight, P3 an urban street
 site where vehicles in the nearer lane block one head; the number is the speed in m/s. An evaluation variant combines a
 signal-to-noise mapping (e1, our own link model, or lb, the TR 37.885 link budget) with a beacon bandwidth of 10, 20 or
-50 physical resource blocks (PRBs). "Registered" refers to the timestamped design records (Section S2 of the
+50 physical resource blocks (PRBs). "Registered" refers to the timestamped design records (Table S19 of the
 supplement). The development data are development set 1 (the development-pilot records of study 1), development set 2
 (the urban and blocked-crossing records of study 1) and development set 3 (five study-1 urban sites simulated again with
 paired free-flow control crossings). Step 0 is the development step; the labels D0-R1 to D0-R4, D0.1 to D0.6, E-a to
@@ -23,9 +23,9 @@ Study 2 was designed after the results of study 1 had been seen. It replaces the
 by a survey in traffic. Its levers (estimator candidates and rules for blocked crossings) were chosen on development
 data by rules fixed before any lever statistic was computed (the section on step 0), and it was evaluated once, on
 held-out sites whose seeds are derived from the stamped freeze bundle of study 2 and the Bitcoin block that attests it
-(the table of timestamps in Section S2 of the supplement). The held-out evaluation was prescribed for every outcome of
+(Table S19 of the supplement). The held-out evaluation was prescribed for every outcome of
 step 0 and was run with that outcome known; how the development outputs were read and how the held-out run was carried
-out are stated in Section S2 of the supplement. The evaluation covers 10 held-out urban LOS sites at 10 and 15 m/s and
+out are stated in Table S19 of the supplement. The evaluation covers 10 held-out urban LOS sites at 10 and 15 m/s and
 10 held-out urban sites with blocked crossings at 15 m/s, under the coverage criteria of study 1; as there, each count
 $k$ of qualified sites is that of the least favorable of six evaluation variants (the section on the checks per
 evaluation variant).
@@ -47,7 +47,7 @@ speed sensor that reports the true speed, so a negative error means that the roa
 
 **Table 1.** Study 2: speed check under the TR 37.885 channel at the held-out urban sites (simulation). Columns named as
 in Table 8 of the paper have the same meaning; $v$ in m/s, all other values in %. Optimism, $R$: verdict and ratio of
-the channel-agreement check of Section S3 of the supplement, called the optimism check in this section. Bias, all sites:
+the channel-agreement check of Section S4 of the supplement, called the optimism check in this section. Bias, all sites:
 the calibrated bias of the validity rung (between-site check over all sites with a valid survey), largest in absolute
 value over the variants, with its 95 % site-bootstrap interval; bias, qual.: the calibrated bias at qualified sites with
 gated crossings; rating: coverage rating and rung (the blocked crossings are not rated on the ladder).

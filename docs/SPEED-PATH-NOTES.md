@@ -1,6 +1,6 @@
 # Notes on the speed path
 
-Notes on the speed-verification path of SP2UBI that complement Sections V-C to V-E of the paper and Section S11.2 of its
+Notes on the speed-verification path of SP2UBI that complement Sections V-C to V-E of the paper and Section S2 of its
 supplementary material (message encodings).
 
 ### Scope

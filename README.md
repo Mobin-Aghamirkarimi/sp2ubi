@@ -74,9 +74,9 @@ supplement.
 | Paper item | Command | Expected result | Runtime |
 |---|---|---|---|
 | Protocol tests, deviations of the TSP (Section VII-B) | `.venv/bin/python -m pytest -q tests` | all tests pass | short |
-| HomMAC numerical check (Section VII-B; Supplement S1, Table S1) | `.venv/bin/python experiments/hommac_checks/hommac_checks.py`, then `.venv/bin/python experiments/hommac_checks/verdict_channel.py` | `hommac_checks.json`, `verdict_channel.json`, byte-identical | medium |
+| HomMAC numerical check (Section VII-B; Supplement S3, Table S6) | `.venv/bin/python experiments/hommac_checks/hommac_checks.py`, then `.venv/bin/python experiments/hommac_checks/verdict_channel.py` | `hommac_checks.json`, `verdict_channel.json`, byte-identical | medium |
 | Dating of a single record (Table 11, Section VII-A) | `.venv/bin/python experiments/dating/record_classes.py`, then `insurer_alone_dating.py`, then `coalition_dating.py` (same folder) | the three result files, byte-identical | medium |
-| Risk model (Section VI, data and risk model; Supplement S11.3) | `.venv-riskmodel/bin/python experiments/risk_model/fit_risk_model.py` | `integer_model.json` and the integer weights byte-identical; the other CSV files equal up to the last floating-point digits (D² 0.136, Gini 0.495 as printed) | medium |
+| Risk model (Section VI, data and risk model; Supplement S2) | `.venv-riskmodel/bin/python experiments/risk_model/fit_risk_model.py` | `integer_model.json` and the integer weights byte-identical; the other CSV files equal up to the last floating-point digits (D² 0.136, Gini 0.495 as printed) | medium |
 | Parameters and sizes (Tables 5 and 7; Section VI-B) | `.venv/bin/python experiments/sizes/<script>.py` for `risk_path_sizes`, `simpler_designs_sizes`, `settlement_sizes`, `baseline_params`, `speed_beacon_emission`, `smudging_scale_range` (in this order) | the six files of `experiments/sizes/results/`, byte-identical; the paper compares the two simpler designs in words and prints no value of `simpler_designs_sizes.json` | short |
 | Lattice security (Table 5) | `SAGE=<sage> LATTICE_ESTIMATOR=<checkout> bash experiments/lattice_security/run_per_attack.sh`, then `.venv/bin/python experiments/lattice_security/summarize_per_attack.py` | `estimate_summary.json`, minimum 242.6 bits (dual hybrid); the Arora-GB job does not finish within the time limit | long |
 | Error of the evaluation keys (Table 5) | `.venv/bin/python experiments/lattice_security/check_evalkey_sigma.py` | rms about 3.19 (public key) and 1.0 (evaluation keys), `confirmed` true; key generation is not seeded, so the digits vary | short |
@@ -86,7 +86,7 @@ supplement.
 | New timings on your machine | `bash experiments/timings/setup_envs.sh`, then `bash experiments/timings/run_timings.sh --out <dir>` | timing files of your machine (not comparable with the stored ones on other hardware) | hardware-dependent |
 | Figs. 7 and 8, supplement Fig. S1 (Fisher bound) | `.venv-sim/bin/python paper_values/plot_fdoa_error.py`, `plot_separation.py`, `plot_fisher.py` (same folder) | the three figures, drawn from the stored speed-check results (the same file on every run) | short |
 | Fig. 6 (detection rates), every cell | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/detection_figure.py --check` | `speedcheck_sim/results/study3/detection_figure.csv`, byte-identical | short |
-| Table 9 and the other numbers of the urban estimator (study 3; Section VI-D, Supplement S8.2) | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/study3_values.py --check` | every key of `speedcheck_sim/results/study3/speedpath-s3.tex` | short |
+| Table 9 and the other numbers of the urban estimator (study 3; Section VI-D, Supplement S4) | `.venv-sim/bin/python speedcheck_sim/tr37885/reports/study3_values.py --check` | every key of `speedcheck_sim/results/study3/speedpath-s3.tex` | short |
 | Table 3, Table 8, Table 12 (matching), Section VI-D and Supplements S3 to S9 | see `speedcheck_sim/` below | stored report files, byte-identical | short (from stored outputs) to very long (full runs) |
 
 Baseline labels: the timing code and its result files label the baselines B1 to B4. B2 (SP2UBI context with clear
@@ -104,13 +104,13 @@ The figure scripts write `paper_values/figures/` (`timing_operations.pdf`, `timi
 base estimator in `estimator.py`, the urban estimator in `urban.py`), the simulations on our channel model
 (`inhouse/`) and the TR 37.885 pipeline with QuaDRiGa and SUMO (`tr37885/`), with the stored outputs that the paper
 and the supplement print (`results/`). The evaluation has three parts: study 1 (the speed check at highway-type and
-urban sites with the base estimator), study 2 (a second survey design for urban street sites; Supplement S8) and
+urban sites with the base estimator), study 2 (a second survey design for urban street sites; Supplement S4) and
 study 3 (the urban estimator on newly simulated urban LOS sites and the detection rules with it). Table 8, the
 highway cells of Fig. 6, the data of Figs. 7 and 8, the matching numbers of Table 12 and every study-1 number of
 Section VI-D and of the supplement regenerate in minutes from the stored stage-3 outputs. The erasure rows (Supplement
-Table S19) also need the stage-2 records in `speedcheck_sim/results/stage2/` (SHA-256 sums in
-`speedcheck_sim/SHA256SUMS`). The study-2 numbers and texts (Supplement S8) regenerate from
-`speedcheck_sim/results/study2/`, and the study-3 numbers (Table 9, Fig. 6, Supplement S8.2) from
+Table S4) also need the stage-2 records in `speedcheck_sim/results/stage2/` (SHA-256 sums in
+`speedcheck_sim/SHA256SUMS`). The study-2 numbers and texts (Supplement S4) regenerate from
+`speedcheck_sim/results/study2/`, and the study-3 numbers (Table 9, Fig. 6, Supplement S4) from
 `speedcheck_sim/results/study3/` (also listed in `speedcheck_sim/SHA256SUMS`). Full runs
 (`speedcheck_sim/tr37885/run_study1.sh`, then `run_study2.sh` and `run_study3.sh`) need Octave 8.4.0, QuaDRiGa v2.8.1
 patched by `speedcheck_sim/tr37885/quadriga/patch/build_patched_tree.sh` (QuaDRiGa has its own non-commercial license

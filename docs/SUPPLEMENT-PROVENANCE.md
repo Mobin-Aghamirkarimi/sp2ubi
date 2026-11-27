@@ -11,27 +11,24 @@ evaluation behind the per-cell table of the paper, "study 2" the variant with a 
 
 | Item | Data file | Keys and printing rule |
 |---|---|---|
-| Table S1 | risk path, hommac_checks.json | E[*].{E1..E4}.accepted, rate, wilson99.9, bound (rates and bounds to 5 decimals) |
-| Table S2 | study 1 and study 2, design records and timestamp proofs (stamps/) | record time, commit, Bitcoin block and block time of each bundle; bundle SHA-256 |
-| Table S3 | study 1, number file (speedpath-numbers.tex) | A\|<cell>\|k, n, k_inhouse, sigma_g1, sigma_inhouse_equalK (the paper's number formatter) |
-| Table S4 | study 1, number file (speedpath-numbers.tex) | A\|<cell>\|{sigma_g1, sigma_g1_ci_hi, sigma_unqualified, qualified_over_margin_k, k, qualified_over_margin_cp_lo, qualified_over_margin_cp_hi, spearman, q99_ratio, p_holm} (the paper's number formatter) |
-| Table S5 | study 1, branch file (speedpath-branches.tex); presentation_constants.json | T4\|<cell> (verdict), T3cell\|<cell> (rating); A\|<cell>\|R_splace (ratio, as stored) |
-| Table S6 | study 1, number file (speedpath-numbers.tex) | A\|<cell>\|{over_governing_k, k, over_governing_cp_lo, over_governing_cp_hi} |
-| Table S7 | decision simulation, decisions_levels.py | PROFILES (literal, read with ast) |
-| Table S8 | study 3, urban_rows.csv (detection rules with the urban estimator: every urban and suburban row); study 1, table_B.csv | urban_rows.csv: rows <row>\|urban\|<nu> and <row>\|suburban\|<nu> of sections power and honest, metric punitive_union_per_year, columns free_tr, free_inhouse, free_worse; table_B.csv: governing_punitive_union_per_year of <row>\|highway\|<nu> (highway profile) and <row>\|suburban\|<nu> (highway sites alone); last column: the worse of the three suburban values (lowest for manipulation rows, highest for honest rows); x 100, exact |
-| Table S9 | study 1, table_B.csv | rows of sections honest and badsites and the rows of section margin with a non-zero rate; columns governing_<metric> for punitive_per_year, punitive_ub95, punitive_union_per_year, punitive_union_ub95, escalation_per_year; <metric> and inhouse_<metric> for entries_per_epoch_mean, low_m_share (the paper's number formatter, key B\|<section>\|<row>\|[inhouse\|governing\|]<metric>) |
-| Table S10 | study 1, number file (speedpath-numbers.tex) | keys B\|sens_tyre\|tyre\|<profile>\|<nu>\|[inhouse\|]<metric>, printed as the paper prints them |
-| Table S11 | study 2, number file (speedpath-s2.tex); study 2, derived number file (speedpath-s2-derived.tex) | keys A2\|<cell>\|..., S2\|<cell>\|..., S2d\|<cell>\|... as named in the table |
-| Table S12 | study 3, heldout_ref.json (new sites, survey in traffic, TR 37.885); study 3, heldout_reff.json (new sites, free-road survey, TR 37.885) | <variant>\|<speed> with variant ls (base estimator) and h_pp_now_c20 (urban estimator): k, n, cp, sd_ref_med, sigma_qg, sigma_qg_ci, sigma_all, sigma_all_ratio, sigma_all_ratio_ci (2 decimals), q99, oow, gate, entry_yield, bias_uncal, bias_cal, bias_cal_ci, site_mean_sd (x 100, one decimal), worst_variant |
-| Table S13 | study 3, heldout_in_ref.json (new sites, survey in traffic, our channel model); study 3, heldout_in_reff.json (new sites, free-road survey, our channel model) | <variant>\|<speed> (variants as for tab_s3.tex): k, n, sigma_qg, sigma_qg_ci, sigma_all, sigma_all_ratio, sigma_all_ratio_ci (2 decimals), bias_cal, bias_cal_ci (x 100, one decimal) |
-| Table S14 | study 3, highway_A_sidecheck.json (highway LOS sites of study 1) | <variant>\|<speed> (variants as for tab_s3.tex): k, n, sigma_qg, sigma_all_ratio, sigma_all_ratio_ci (2 decimals), q99, gate, entry_yield, bias_cal (x 100, one decimal) |
-| Table S15 | study 3, detection_runs.json (detection rules with the urban estimator: the five runs) | runs.<run> with run = trfree, trtraf, ctl, infree, intraf (rows in this order): status_urban, qualified_combinations, qualified_share_per_class (x 10 sites), n_eval_urban.n_eval, n_eval_urban.rows_below_min_eval, q_urban_profile (x 100), excess_between_site_sd (x 100, one decimal) |
-| Table S16 | study 1, number file (speedpath-numbers.tex) | S\|<cell>\|{gate,sigma_q,window}\|<level>\|{k,n,sigma,q99,oow,gate_discard,n_kept} |
-| Table S17 | study 1, number file (speedpath-numbers.tex) | S\|<cell>\|snr_offset_db\|<offset>\|{k,n,sigma,oow} |
-| Table S18 | study 1, number file (speedpath-numbers.tex) | S\|<cell>\|z_cut\|<cut>\|{Z,p_zq_minus1_honest,p_zq_minus1_beta10} |
-| Table S19 | study 1, number file (speedpath-numbers.tex) | A\|erasure\|<model>\|<cell>\|{entry_yield,sigma} |
-| Table S20 | design_constants.json; presentation_constants.json; study1_constants.json | the rows of the paper's Table 3 (design_constants.json, presentation_constants.json, SIGMA_INFL of the decision code) |
-| Table S21 | study1_constants.json; decision simulation, decisions_base.py; study 1, evaluation code (stage2_evaluate.py) | sumo, sumo_implementation, impairments, HONEST, HEAD_PPB |
+| Table S1 | study 1, number file (speedpath-numbers.tex) | S\|<cell>\|{gate,sigma_q,window}\|<level>\|{k,n,sigma,q99,oow,gate_discard,n_kept} |
+| Table S2 | study 1, number file (speedpath-numbers.tex) | S\|<cell>\|snr_offset_db\|<offset>\|{k,n,sigma,oow} |
+| Table S3 | study 1, number file (speedpath-numbers.tex) | S\|<cell>\|z_cut\|<cut>\|{Z,p_zq_minus1_honest,p_zq_minus1_beta10} |
+| Table S4 | study 1, number file (speedpath-numbers.tex) | A\|erasure\|<model>\|<cell>\|{entry_yield,sigma} |
+| Table S5 | study1_constants.json; decision simulation, decisions_base.py; study 1, evaluation code (stage2_evaluate.py) | sumo, sumo_implementation, impairments, HONEST, HEAD_PPB |
+| Table S6 | risk path, hommac_checks.json | E[*].{E1..E4}.accepted, rate, wilson99.9, bound (rates and bounds to 5 decimals) |
+| Table S7 | study 1, number file (speedpath-numbers.tex) | A\|<cell>\|k, n, k_inhouse, sigma_g1, sigma_inhouse_equalK (the paper's number formatter) |
+| Table S8 | study 1, branch file (speedpath-branches.tex); presentation_constants.json | T4\|<cell> (verdict), T3cell\|<cell> (rating); A\|<cell>\|R_splace (ratio, as stored) |
+| Table S9 | study 1, number file (speedpath-numbers.tex) | A\|<cell>\|{sigma_g1, sigma_g1_ci_hi, sigma_unqualified, qualified_over_margin_k, k, qualified_over_margin_cp_lo, qualified_over_margin_cp_hi, spearman, q99_ratio, p_holm} (the paper's number formatter) |
+| Table S10 | study 2, number file (speedpath-s2.tex); study 2, derived number file (speedpath-s2-derived.tex) | keys A2\|<cell>\|..., S2\|<cell>\|..., S2d\|<cell>\|... as named in the table |
+| Table S11 | study 3, heldout_ref.json (new sites, survey in traffic, TR 37.885); study 3, heldout_reff.json (new sites, free-road survey, TR 37.885) | <variant>\|<speed> with variant ls (base estimator) and h_pp_now_c20 (urban estimator): k, n, cp, sd_ref_med, sigma_qg, sigma_qg_ci, sigma_all, sigma_all_ratio, sigma_all_ratio_ci (2 decimals), q99, oow, gate, entry_yield, bias_uncal, bias_cal, bias_cal_ci, site_mean_sd (x 100, one decimal), worst_variant |
+| Table S12 | study 3, heldout_in_ref.json (new sites, survey in traffic, our channel model); study 3, heldout_in_reff.json (new sites, free-road survey, our channel model) | <variant>\|<speed> (variants as for tab_s3.tex): k, n, sigma_qg, sigma_qg_ci, sigma_all, sigma_all_ratio, sigma_all_ratio_ci (2 decimals), bias_cal, bias_cal_ci (x 100, one decimal) |
+| Table S13 | study 3, highway_A_sidecheck.json (highway LOS sites of study 1) | <variant>\|<speed> (variants as for tab_s3.tex): k, n, sigma_qg, sigma_all_ratio, sigma_all_ratio_ci (2 decimals), q99, gate, entry_yield, bias_cal (x 100, one decimal) |
+| Table S14 | study 3, detection_runs.json (detection rules with the urban estimator: the five runs) | runs.<run> with run = trfree, trtraf, ctl, infree, intraf (rows in this order): status_urban, qualified_combinations, qualified_share_per_class (x 10 sites), n_eval_urban.n_eval, n_eval_urban.rows_below_min_eval, q_urban_profile (x 100), excess_between_site_sd (x 100, one decimal) |
+| Table S15 | decision simulation, decisions_levels.py | PROFILES (literal, read with ast) |
+| Table S16 | study 1, number file (speedpath-numbers.tex) | keys B\|sens_tyre\|tyre\|<profile>\|<nu>\|[inhouse\|]<metric>, printed as the paper prints them |
+| Table S17 | study 1, table_B.csv | rows of sections honest and badsites and the rows of section margin with a non-zero rate; columns governing_<metric> for punitive_per_year, punitive_ub95, punitive_union_per_year, punitive_union_ub95, escalation_per_year; <metric> and inhouse_<metric> for entries_per_epoch_mean, low_m_share (the paper's number formatter, key B\|<section>\|<row>\|[inhouse\|governing\|]<metric>) |
+| Table S18 | study 1, number file (speedpath-numbers.tex) | A\|<cell>\|{over_governing_k, k, over_governing_cp_lo, over_governing_cp_hi} |
 | Fig. S1 | sweep of our channel model, inhouse_k4_sens_inhouse.json | rows with impairments off and finite pass_sigma_pct: snr_db, K_db, pass_sigma_pct (solid), fisher_pass_pct (dashed); plotted as stored |
 
 ## 2. Further constants of the speed check and of its evaluation
@@ -50,12 +47,12 @@ constants below are used by the evaluation and are stated in the supplement wher
 | carrier frequency | 5.9 GHz | Section V-D1 of the paper |
 | standard and tool versions | TR 37.885 V15.3.0; TR 38.901; QuaDRiGa v2.8.1 | 3GPP (TR 38.901 in version V16.1.0); QuaDRiGa release |
 | beacon bandwidths (PRBs) | 10, 20, 50 | evaluation design |
-| coverage rating of a cell (Section S3 of the supplement): share of qualified draws for covered, partly covered | 0.7, 0.3 | evaluation design |
+| coverage rating of a cell (Section S4.1 of the supplement): share of qualified draws for covered, partly covered | 0.7, 0.3 | evaluation design |
 | significance level of the channel-agreement check | 0.025 | evaluation design |
 | Holm family size of the channel-agreement check, study 1 (study 2: three cells) | 6 | evaluation design |
 | bootstrap resamples | 10,000 | evaluation design |
 | line-of-sight probability constants | 1.05, 0.0114 | TR 37.885 Table 6.2-1 |
-| honest VSS offsets (Section S11.1 of the supplement) | U(-3, +6) %, 0.5 % epoch term | honest VSS model of the decision simulation, an assumption |
+| honest VSS offsets (Section S2 of the supplement) | U(-3, +6) %, 0.5 % epoch term | honest VSS model of the decision simulation, an assumption |
 | urban line-of-sight speed classes | 10–15 m/s | evaluation design |
 | highway line-of-sight speed classes | 20–38 m/s | evaluation design |
 | urban blocked-crossing speed | 15 m/s | evaluation design |
